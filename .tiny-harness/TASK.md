@@ -1,7 +1,6 @@
-# Synthetic sanitizer fixture — 2026-10-22
+# README badges — 2026-10-22
 
-Replace a credential-shaped fixture with a visibly invalid synthetic account/signature.
-Retain token-pattern and database-redaction coverage, including a direct assertion without a
-credential prefix or known-secret registration. Runtime sanitizer code is unchanged.
-Verification: focused sanitizer tests and the required checked initial commit.
-Release files remain disabled by default; no live employee work is part of this change.
+Add linked badges for the existing MIT license, Python 3.11+ requirement, offline validation
+and early-release status. These are static descriptive badges, not a live CI result or a
+Seren endorsement. Verified self-contained badge SVGs and local link targets; refreshed checksums.
+Documentation only; no runtime, test, permission or workflow changes. Repository stays private.

@@ -1,5 +1,10 @@
 # Seren Harness
 
+[![License: MIT](docs/assets/badges/license.svg)](LICENSE)
+[![Python: 3.11+](docs/assets/badges/python.svg)](docs/OPERATOR.md)
+[![Validation: offline](docs/assets/badges/validation.svg)](VALIDATION.md)
+[![Status: early release](docs/assets/badges/status.svg)](#what-it-does-and-does-not-establish)
+
 Automated functional testing of the [Seren](https://docs.serendb.com) AI-employee platform
 from a user's point of view. Seren Harness is an independent project; it is not made,
 reviewed or endorsed by Seren.
