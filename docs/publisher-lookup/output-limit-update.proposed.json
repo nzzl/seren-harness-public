@@ -1,0 +1,5 @@
+{
+  "workload_limits": {
+    "max_tool_output_chars": 32768
+  }
+}

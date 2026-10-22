@@ -1,0 +1,27 @@
+Please qualify the six leads below against our ideal-customer profile. Use only the records and rules in this message. Do not browse, look anything up, use any tool, contact anyone, schedule anything or write to any system. If a record does not state something the rules need, say so instead of assuming.
+
+Ideal-customer profile. A lead is qualified only if all three mandatory conditions are stated in its record and met:
+1. Sector is B2B software.
+2. Employee count is between 200 and 2,000 inclusive.
+3. Customer-support headcount is at least 20.
+
+Disposition rules:
+- disqualified: the record states a value that fails at least one mandatory condition.
+- needs information: no stated value fails a condition, but at least one mandatory value is not stated.
+- qualified: all three values are stated and all three conditions are met.
+Rank qualified leads by monthly support tickets, highest first.
+
+Lead records (all fictional):
+| Lead | Sector | Employees | Support headcount | Monthly support tickets |
+|---|---|---|---|---|
+| Quillmark Systems | B2B software (invoicing platform) | 640 | 45 | 18,000 |
+| Tarnwell Labs | B2B software (HR analytics) | 310 | 22 | 6,500 |
+| Brightfen Foods | Packaged food manufacturing | 900 | 30 | 20,000 |
+| Corvane Analytics | B2B software (data pipelines) | 150 | 24 | 9,000 |
+| Halvorne Cloud | B2B software (cloud backup) | 1,200 | not stated | 12,000 |
+| Moxbury Route Software | B2B software (fleet routing) | not stated | 35 | 7,000 |
+
+Reply with:
+1. For each of the six leads: its disposition (qualified, disqualified or needs information) and the record values that support it.
+2. A ranked shortlist of the qualified leads.
+3. For each lead that needs information, the specific question that would resolve it.

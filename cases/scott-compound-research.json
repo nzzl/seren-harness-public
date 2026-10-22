@@ -1,0 +1,44 @@
+{
+  "id": "scott.compound.saved-research.page-1",
+  "version": 1,
+  "command": "/bd research entity:Cedar Cooperative page:1",
+  "claim": "The supplied response accurately presents the saved Cedar Cooperative assessment and its sources.",
+  "basis": [
+    {
+      "kind": "synthetic",
+      "reference": "Fictional handover regression scenario; no customer record is included."
+    }
+  ],
+  "expectation_date": "2026-10-04T06:27:46.902Z",
+  "record_updated_at": "2026-09-29T18:42:45.009Z",
+  "limitations": [
+    "Fictional handover regression example only; not customer data or a live business assessment."
+  ],
+  "review": [
+    {
+      "id": "entity",
+      "claim": "The response identifies Cedar Cooperative, without confusing it with Cedar Foundation.",
+      "expected": "The saved entity is Cedar Cooperative; the Foundation is a separate governance participant."
+    },
+    {
+      "id": "saved_context",
+      "claim": "The response presents historical saved research without claiming fresh verification.",
+      "expected": "Fictional saved observations dated September 29, 2026. These are test inputs, not current business facts."
+    },
+    {
+      "id": "qualification",
+      "claim": "The response preserves the saved qualification decision.",
+      "expected": "State researching; recommendation investigate. Not qualified as a funding prospect: liquidity, authority for external allocations and an access/contact route remain unestablished."
+    },
+    {
+      "id": "distinctions",
+      "claim": "Observations, hypotheses and unresolved questions remain distinguishable.",
+      "expected": "Separate fictional observations, tentative purchasing hypotheses and unanswered questions. Do not imply approval."
+    },
+    {
+      "id": "sources",
+      "claim": "Source references are usable and support the displayed saved observations.",
+      "expected": "Use https://example.invalid/cedar as the fictional source. URL syntax is not source validation."
+    }
+  ]
+}

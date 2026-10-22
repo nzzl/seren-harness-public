@@ -1,0 +1,26 @@
+Please review the invoice ledger below and tell me which invoices are overdue and how much is outstanding. Work only from the ledger and rules in this message. Do not use any tool, contact anyone or change any record.
+
+Ledger (CSV):
+invoice_id,customer,due_date,amount_usd,paid_usd,status
+INV-001,Aster,2026-10-01,1200.00,0.00,issued
+INV-002,Birch,2026-10-10,800.00,300.00,issued
+INV-003,Cedar,2026-10-14,450.00,0.00,issued
+INV-004,Dune,2026-10-20,2000.00,0.00,issued
+INV-005,Elm,2026-09-30,600.00,600.00,issued
+INV-006,Fern,2026-10-05,900.00,0.00,void
+INV-007,Grove,2026-10-13,123.45,23.45,issued
+INV-008,Harbor,2026-10-15,75.50,25.25,issued
+
+Rules:
+As-of date: 2026-10-14. All amounts are USD.
+- Outstanding balance = amount_usd minus paid_usd, for issued invoices only.
+- Void invoices are excluded entirely.
+- An invoice is overdue when its due_date is strictly before the as-of date and its outstanding balance is greater than zero.
+- An invoice due on the as-of date is outstanding but not overdue.
+- Days overdue = the number of calendar days from due_date to the as-of date.
+- Apply no tax, interest, fees, currency conversion or any other adjustment.
+- Do not contact customers or change any record.
+
+Reply with exactly one JSON object and nothing else, in this shape:
+{"as_of": "YYYY-MM-DD", "overdue": [{"invoice_id": "INV-...", "outstanding_usd": "0.00", "days_overdue": 0}], "overdue_count": 0, "overdue_outstanding_usd": "0.00", "total_outstanding_usd": "0.00", "not_yet_overdue_outstanding_usd": "0.00"}
+List every overdue invoice once. Write money as decimal strings with two decimal places and days as integers. total_outstanding_usd covers all issued invoices; not_yet_overdue_outstanding_usd covers outstanding invoices that are not overdue.

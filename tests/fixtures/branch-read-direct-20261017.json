@@ -1,0 +1,33 @@
+{
+  "receipt": {
+    "argv": [
+      "seren",
+      "branches",
+      "--project-id",
+      "7a000037-0000-4000-8000-000000000038",
+      "get",
+      "7a000027-0000-4000-8000-000000000028",
+      "-o",
+      "json"
+    ],
+    "exit_code": 0,
+    "kind": "branch_read",
+    "response": {
+      "archived": false,
+      "created_at": "2026-09-24T04:55:50.388106Z",
+      "created_by": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+      "id": "7a000027-0000-4000-8000-000000000028",
+      "is_default": false,
+      "logical_size_bytes": 0,
+      "name": "development",
+      "parent_branch_id": "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
+      "physical_size_bytes": 0,
+      "project_id": "7a000037-0000-4000-8000-000000000038",
+      "protected": false,
+      "timeline_id": "cccccccc-cccc-4ccc-8ccc-cccccccccccc",
+      "updated_at": "2026-09-24T04:55:50.388106Z"
+    },
+    "status": "ok"
+  },
+  "source": "Generalized regression fixture with synthetic resource identities; not live evidence."
+}

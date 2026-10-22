@@ -1,0 +1,298 @@
+{
+  "id": "scott.saved-research.reading",
+  "version": 2,
+  "command": "/bd research entity:Cedar Cooperative",
+  "claim": "A user can obtain and understand Example Research Employee's saved Cedar Cooperative assessment in Discord: one concise first response, then the complete assessment without manual page commands.",
+  "scope": {
+    "statement": "Scoped to Example Research Employee, the saved Cedar Cooperative capital assessment and Discord saved-research retrieval. A pass is not certification of the employee, other entities, other commands or factual accuracy.",
+    "entry": "/bd research entity:Cedar Cooperative",
+    "accepted_provenance": [
+      "operator_supplied",
+      "independently_observed"
+    ],
+    "page_command_pattern": "\\bpage\\s*:\\s*\\d+",
+    "raw_json_pattern": "\\{\"[A-Za-z_]+\":",
+    "out_of_scope": [
+      "Factual accuracy of the research",
+      "Current database agreement",
+      "Other entities and commands"
+    ]
+  },
+  "basis": [
+    {
+      "kind": "synthetic",
+      "reference": "Fictional handover regression scenario; no customer record is included."
+    }
+  ],
+  "expectation_date": "2026-10-04T06:27:46.902Z",
+  "record_updated_at": "2026-09-29T18:42:45.009Z",
+  "limitations": [
+    "Fictional handover regression example only; not customer data or a live business assessment."
+  ],
+  "initial_elements": [
+    {
+      "id": "entity",
+      "label": "Entity",
+      "any_of": [
+        "Cedar Cooperative"
+      ]
+    },
+    {
+      "id": "reference_url",
+      "label": "Usable reference URL",
+      "any_of": [
+        "https://example.invalid/cedar"
+      ]
+    },
+    {
+      "id": "saved_label",
+      "label": "Saved-research label",
+      "any_of": [
+        "saved research",
+        "saved assessment"
+      ]
+    },
+    {
+      "id": "assessment_date",
+      "label": "Assessment date",
+      "any_of": [
+        "2026-09-29",
+        "29 Sep 2026",
+        "Sep 29, 2026",
+        "September 29, 2026"
+      ]
+    },
+    {
+      "id": "decision",
+      "label": "Saved decision value",
+      "any_of": [
+        "investigate",
+        "researching"
+      ]
+    },
+    {
+      "id": "reason",
+      "label": "Reason (saved text)",
+      "any_of": [
+        "Cedar Cooperative is a fictional research example. A planning record exists but purchasing authority and available budget are unknown. Keep the account under review until a dated policy establishes the missing facts. This deliberately complete paragraph provides enough text to test splitting and whole-field presentation."
+      ]
+    },
+    {
+      "id": "key_uncertainty",
+      "label": "Key uncertainty (saved text)",
+      "any_of": [
+        "Open question 1: verify the fictional purchasing condition for Cedar Cooperative using a dated source."
+      ]
+    },
+    {
+      "id": "next_action",
+      "label": "Next action (saved text)",
+      "any_of": [
+        "Review the fictional policy for Cedar Cooperative and record its purchasing authority with a dated source."
+      ]
+    }
+  ],
+  "complete_fields": [
+    {
+      "id": "rationale",
+      "text": "Cedar Cooperative is a fictional research example. A planning record exists but purchasing authority and available budget are unknown. Keep the account under review until a dated policy establishes the missing facts. This deliberately complete paragraph provides enough text to test splitting and whole-field presentation."
+    },
+    {
+      "id": "next_question",
+      "text": "Who can approve a purchase for Cedar Cooperative and which fictional policy establishes the available budget?"
+    },
+    {
+      "id": "next_action",
+      "text": "Review the fictional policy for Cedar Cooperative and record its purchasing authority with a dated source."
+    },
+    {
+      "id": "fact_1",
+      "text": "Fictional fact 1: a planning record exists for Cedar Cooperative; no purchasing commitment is established."
+    },
+    {
+      "id": "fact_2",
+      "text": "Fictional fact 2: a planning record exists for Cedar Cooperative; no purchasing commitment is established."
+    },
+    {
+      "id": "hypothesis_1",
+      "text": "Fictional hypothesis 1: Cedar Cooperative may need a service evaluation. This is not an approved order."
+    },
+    {
+      "id": "hypothesis_2",
+      "text": "Fictional hypothesis 2: Cedar Cooperative may need a service evaluation. This is not an approved order."
+    },
+    {
+      "id": "hypothesis_3",
+      "text": "Fictional hypothesis 3: Cedar Cooperative may need a service evaluation. This is not an approved order."
+    },
+    {
+      "id": "unknown_1",
+      "text": "Open question 1: verify the fictional purchasing condition for Cedar Cooperative using a dated source."
+    },
+    {
+      "id": "unknown_2",
+      "text": "Open question 2: verify the fictional purchasing condition for Cedar Cooperative using a dated source."
+    },
+    {
+      "id": "unknown_3",
+      "text": "Open question 3: verify the fictional purchasing condition for Cedar Cooperative using a dated source."
+    },
+    {
+      "id": "unknown_4",
+      "text": "Open question 4: verify the fictional purchasing condition for Cedar Cooperative using a dated source."
+    },
+    {
+      "id": "unknown_5",
+      "text": "Open question 5: verify the fictional purchasing condition for Cedar Cooperative using a dated source."
+    },
+    {
+      "id": "unknown_6",
+      "text": "Open question 6: verify the fictional purchasing condition for Cedar Cooperative using a dated source."
+    }
+  ],
+  "heading_pairs": [
+    {
+      "id": "hypotheses",
+      "heading": "Hypotheses, not customer statements",
+      "content": "Fictional hypothesis 1: Cedar Cooperative may need a service evaluation. This is not an approved order."
+    },
+    {
+      "id": "facts",
+      "heading": "Sourced facts",
+      "content": "Fictional fact 1: a planning record exists for Cedar Cooperative; no purchasing commitment is established."
+    }
+  ],
+  "source_texts": [
+    {
+      "id": "source_url",
+      "text": "https://example.invalid/cedar"
+    },
+    {
+      "id": "source_observed",
+      "text": "2026-09-29T07:36:00Z"
+    }
+  ],
+  "criteria": [
+    {
+      "id": "initial_summary",
+      "category": "usability",
+      "check": "initial_elements",
+      "required": true,
+      "finding": "reading",
+      "claim": "The first response alone states the entity, a usable reference URL, the saved-research label, the assessment date, the saved decision, its reason, a key uncertainty and the next action.",
+      "evidence": "Synthetic handover scenario. No historical observation, private report or customer outcome is included. Establish new recipient evidence before relying on this case."
+    },
+    {
+      "id": "complete_without_page_commands",
+      "category": "usability",
+      "check": "complete_without_pages",
+      "required": true,
+      "finding": "reading",
+      "claim": "Every saved assessment field is reachable from the first response without manual page commands.",
+      "evidence": "Synthetic handover scenario. No historical observation, private report or customer outcome is included. Establish new recipient evidence before relying on this case."
+    },
+    {
+      "id": "fields_whole",
+      "category": "textual_consistency",
+      "check": "fields_whole",
+      "required": true,
+      "finding": "reading",
+      "claim": "Each saved field text appears whole within one response or file, not split across messages.",
+      "evidence": "Synthetic handover scenario. No historical observation, private report or customer outcome is included. Establish new recipient evidence before relying on this case."
+    },
+    {
+      "id": "headings_with_content",
+      "category": "usability",
+      "check": "heading_pairs",
+      "required": true,
+      "finding": "reading",
+      "claim": "Section headings appear with their first item.",
+      "evidence": "Synthetic handover scenario. No historical observation, private report or customer outcome is included. Establish new recipient evidence before relying on this case."
+    },
+    {
+      "id": "no_raw_json",
+      "category": "usability",
+      "check": "no_raw_json",
+      "required": true,
+      "finding": "reading",
+      "claim": "The reading path does not present raw JSON.",
+      "evidence": "Synthetic handover scenario. No historical observation, private report or customer outcome is included. Establish new recipient evidence before relying on this case."
+    },
+    {
+      "id": "source_attribution",
+      "category": "textual_consistency",
+      "check": "source_texts",
+      "required": true,
+      "finding": "reading",
+      "claim": "The complete reading shows the source reference and its observation date.",
+      "evidence": "Synthetic handover scenario. No historical observation, private report or customer outcome is included. Establish new recipient evidence before relying on this case."
+    },
+    {
+      "id": "operator_reading_assessment",
+      "category": "human_assessment",
+      "check": "operator",
+      "required": true,
+      "claim": "A named operator confirms the first response is understandable and the complete assessment was read without page commands.",
+      "expected": "Conclusion, reason, uncertainty and next action are understandable; facts, hypotheses and open questions remain distinguishable.",
+      "evidence": "attributed assessment bound to this evidence bundle",
+      "finding": "reading"
+    },
+    {
+      "id": "source_support",
+      "category": "source_verification",
+      "check": "not_evaluated",
+      "required": false,
+      "claim": "The cited source supports the September 29 figures.",
+      "evidence": "Synthetic handover scenario. No historical observation, private report or customer outcome is included. Establish new recipient evidence before relying on this case.",
+      "finding": null,
+      "finding_exclusion": "Whether the cited source substantiates the September 29 figures is source verification, outside the reading-experience finding; it is not required."
+    }
+  ],
+  "findings": {
+    "reading": {
+      "classification": "defect",
+      "title": "Example Research Employee saved-research lookup needs six Discord responses and splits the assessment mid-sentence",
+      "impact": "To understand why Cedar Cooperative is not qualified, the user had to issue six separate ephemeral page commands. The first page showed only decision values; the rationale broke mid-sentence and the hypotheses heading was separated from its items. The prospect alternative produced no attachment.",
+      "expected": "One concise first response with entity, usable reference URL, saved-research label, assessment date, conclusion, reason, key uncertainty and next action, plus direct access to the complete assessment (facts, hypotheses, unanswered questions and sources) without manual page commands, whether or not attachments are permitted.",
+      "reproduction": [
+        "In the configured channel, run `/bd research entity:Cedar Cooperative page:1` (the path offered by `/bd help` and the summary follow-up).",
+        "Follow the `page:2` \u2026 `page:6` follow-ups to read the rationale, facts, hypotheses, next action and open questions.",
+        "Optionally run `/bd prospect name:Cedar Cooperative page:1` and look for an attached report."
+      ],
+      "source_explanation": "Fictional source reading: the scenario's detail pages pack one paragraph per line into 850 characters, so the 939-character rationale cannot follow the header, and the research command attaches no file. Why the prospect attachment was absent in the scenario is unverified.",
+      "retest": "After the fix is deployed, run `/bd research entity:Cedar Cooperative` once and choose the complete-reading control. Copy the first response and every complete-reading response in full (or save the file), record the revision, then run `python -m seren_harness review-workflow --case cases/scott-saved-research-reading.json --evidence <bundle.json> --state-dir <state> --out <new dir> --retest <finding key>` with an attributed operator assessment.",
+      "unknowns": [
+        "Message IDs, dates, timezone and latency were not supplied.",
+        "Why the prospect attachment was absent is unverified.",
+        "No-new-research, database mutation and current-record agreement are not established by copied responses."
+      ]
+    }
+  },
+  "unverified_always": [
+    {
+      "id": "no_new_research",
+      "claim": "No new research run",
+      "follow_up": "Separately authorized before/after task evidence is needed."
+    },
+    {
+      "id": "no_database_mutation",
+      "claim": "No database mutation",
+      "follow_up": "Separately authorized database evidence is needed."
+    },
+    {
+      "id": "correlation",
+      "claim": "Exact message correlation",
+      "follow_up": "Retain verified interaction and message identifiers."
+    },
+    {
+      "id": "latency",
+      "claim": "Response latency",
+      "follow_up": "Obtain verified request/response timestamps from the same interaction."
+    },
+    {
+      "id": "current_record",
+      "claim": "Agreement with the current authoritative database",
+      "follow_up": "Compare against a separately authorized current record snapshot."
+    }
+  ]
+}

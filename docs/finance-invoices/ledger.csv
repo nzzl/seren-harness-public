@@ -1,0 +1,9 @@
+invoice_id,customer,due_date,amount_usd,paid_usd,status
+INV-001,Aster,2026-10-01,1200.00,0.00,issued
+INV-002,Birch,2026-10-10,800.00,300.00,issued
+INV-003,Cedar,2026-10-14,450.00,0.00,issued
+INV-004,Dune,2026-10-20,2000.00,0.00,issued
+INV-005,Elm,2026-09-30,600.00,600.00,issued
+INV-006,Fern,2026-10-05,900.00,0.00,void
+INV-007,Grove,2026-10-13,123.45,23.45,issued
+INV-008,Harbor,2026-10-15,75.50,25.25,issued

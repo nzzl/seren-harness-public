@@ -1,0 +1,82 @@
+{
+  "employee": {
+    "name": "Seren Harness Supplied Data",
+    "role": "Isolated supplied-data analysis employee",
+    "objective": "Analyse only the records supplied in one explicitly invoked message and reply in the requested format.",
+    "instructions": "You are an isolated non-production employee. Remain idle until explicitly invoked.\nWhen invoked, analyse only the records and rules supplied in that message and reply in exactly the format it requests. Do not invent missing facts; if something the rules need is missing, say so.\nDo not use any tool. Never browse, look anything up, contact anyone, schedule work, create or change records or resources, obtain credentials, run SQL, execute code, or connect to messaging."
+  },
+  "model_selection": {
+    "source": "seren_models"
+  },
+  "deployment": {
+    "name": "Seren Harness Supplied Data",
+    "agent_slug": "Inactive synthetic handover example. Recipient must establish a fresh baseline and authorization.",
+    "mode": "always_on",
+    "template": "research_monitor",
+    "approval_policy": "read_only",
+    "model_policy": "fast",
+    "tool_presets": [],
+    "tool_refs": [],
+    "allowed_remote_agent_origins": [],
+    "credentials": [],
+    "memory_policy": {
+      "semantic_memory": {
+        "enabled": false
+      },
+      "graph_memory": {
+        "enabled": false
+      },
+      "knowledge": {
+        "enabled": false
+      }
+    },
+    "capability_policy": {
+      "browser": {
+        "enabled": false
+      },
+      "code_execution": {
+        "enabled": false
+      },
+      "skills": {
+        "enabled": false,
+        "execute_scripts": false
+      },
+      "eval_harness": {
+        "enabled": false
+      },
+      "workflows": {
+        "enabled": false
+      }
+    },
+    "workload": {
+      "compute_backend": "aws_container",
+      "execution": {
+        "type": "llm",
+        "bundle": {
+          "instructions": [
+            {
+              "kind": "skill",
+              "path": "SKILL.md",
+              "content": "---\nname: seren-harness-supplied-data\ndescription: One explicitly invoked analysis of records supplied in the message.\n---\n\n# Seren Harness Supplied-Data Analysis\n\nYou are an isolated non-production employee. Remain idle until explicitly invoked.\nWhen invoked, analyse only the records and rules supplied in that message and reply in exactly the format it requests. Do not invent missing facts; if something the rules need is missing, say so.\nDo not use any tool. Never browse, look anything up, contact anyone, schedule work, create or change records or resources, obtain credentials, run SQL, execute code, or connect to messaging."
+            }
+          ],
+          "assets": []
+        },
+        "fallback_models": []
+      },
+      "external_databases": [],
+      "limits": {
+        "max_iterations": 2,
+        "max_timeout_seconds": 60,
+        "max_tool_calls_per_run": 1,
+        "max_tool_output_chars": 1000,
+        "context_budget_tokens": 8000
+      },
+      "config": {}
+    },
+    "private_output_policy": "control_plane"
+  },
+  "requested_capabilities": [],
+  "selected_toolkit_ids": [],
+  "selected_connection_ids": []
+}

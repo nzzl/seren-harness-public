@@ -1,0 +1,78 @@
+{
+  "version": 1,
+  "seren": {
+    "executable": null,
+    "executable_sha256": null,
+    "config_home": null,
+    "profile": "default"
+  },
+  "deployment_id": null,
+  "output_dir": "~/seren-harness-live/reports",
+  "timeout_seconds": 30,
+  "campaign": {
+    "id": "functional-qa-1",
+    "authorization": {
+      "live_seren": false,
+      "create_employee": false,
+      "model_calls": false,
+      "resource_writes": false,
+      "approved_by": null,
+      "expires_at": null
+    },
+    "employee": {
+      "mode": "existing"
+    },
+    "scope": {
+      "families": {
+        "research_with_references": [
+          "single_fact",
+          "conflicting_sources",
+          "absent_answer",
+          "embedded_instruction"
+        ],
+        "structured_data_analysis": [
+          "filtered_sum",
+          "group_maximum",
+          "dirty_rows"
+        ],
+        "multi_step_synthesis": [
+          "action_plan",
+          "weekend_deadline"
+        ]
+      },
+      "required_tools": []
+    },
+    "limits": {
+      "max_tasks": 8,
+      "max_seren_requests": 160,
+      "max_model_calls": 24,
+      "max_cost_usd": 2.0,
+      "max_wall_seconds": 3600,
+      "max_reproductions": 1,
+      "task_seconds": 240
+    },
+    "planner": {
+      "runtime": "claude_cli",
+      "executable": null,
+      "executable_sha256": null,
+      "model": "claude-sonnet-5-5",
+      "max_usd_per_call": 0.2,
+      "timeout_seconds": 120
+    },
+    "corrections": [
+      "clarify_output_format"
+    ],
+    "github": {
+      "mode": "draft",
+      "repository": null,
+      "gh_executable": null
+    },
+    "journeys": {
+      "templates": [
+        "data_report_revision",
+        "document_brief_followup"
+      ],
+      "database": null
+    }
+  }
+}

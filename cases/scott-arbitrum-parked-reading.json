@@ -1,0 +1,302 @@
+{
+  "id": "scott.saved-research.parked-reading",
+  "version": 1,
+  "command": "/bd research entity:Maple Cooperative",
+  "claim": "A user can obtain and understand Example Research Employee's saved assessment of a parked prospect (Maple Cooperative) in Discord: one concise first response stating that it is parked, why, and when to reopen, then the complete assessment without manual page commands.",
+  "scope": {
+    "statement": "Scoped to Example Research Employee, the saved Maple Cooperative capital record (parked) and Discord saved-research retrieval through /bd research and its Read full assessment control. A pass is not certification of the employee, other entities, other commands or the accuracy of the research.",
+    "entry": "/bd research entity:Maple Cooperative",
+    "accepted_provenance": [
+      "operator_supplied",
+      "independently_observed"
+    ],
+    "page_command_pattern": "\\bpage\\s*:\\s*\\d+",
+    "raw_json_pattern": "\\{\"[A-Za-z_]+\":",
+    "out_of_scope": [
+      "Factual accuracy of the research or its sources",
+      "Current database agreement",
+      "Whether parking was the right business decision"
+    ]
+  },
+  "basis": [
+    {
+      "kind": "synthetic",
+      "reference": "Fictional handover regression scenario; no customer record is included."
+    }
+  ],
+  "expectation_date": "2026-10-04T06:27:46.902Z",
+  "record_updated_at": "2026-09-29T04:58:24.502Z",
+  "limitations": [
+    "Fictional handover regression example only; not customer data or a live business assessment."
+  ],
+  "initial_elements": [
+    {
+      "id": "entity",
+      "label": "Entity",
+      "any_of": [
+        "Maple Cooperative"
+      ]
+    },
+    {
+      "id": "reference_url",
+      "label": "Usable reference URL from the record",
+      "any_of": [
+        "https://example.invalid/maple/forum",
+        "https://example.invalid/maple/blog",
+        "https://example.invalid/maple"
+      ]
+    },
+    {
+      "id": "saved_label",
+      "label": "Saved-research label",
+      "any_of": [
+        "saved research",
+        "saved assessment"
+      ]
+    },
+    {
+      "id": "assessment_date",
+      "label": "Assessment date",
+      "any_of": [
+        "2026-09-29",
+        "29 Sep 2026",
+        "Sep 29, 2026",
+        "September 29, 2026"
+      ]
+    },
+    {
+      "id": "decision",
+      "label": "Saved decision value",
+      "any_of": [
+        "park",
+        "parked"
+      ]
+    },
+    {
+      "id": "reason",
+      "label": "Reason (saved text)",
+      "any_of": [
+        "Maple Cooperative is a fictional research example. A planning record exists but purchasing authority and available budget are unknown. Keep the account under review until a dated policy establishes the missing facts. This deliberately complete paragraph provides enough text to test splitting and whole-field presentation."
+      ]
+    },
+    {
+      "id": "key_uncertainty",
+      "label": "Key uncertainty (saved text)",
+      "any_of": [
+        "Open question 1: verify the fictional purchasing condition for Maple Cooperative using a dated source."
+      ]
+    },
+    {
+      "id": "reopen_condition",
+      "label": "When to reopen (saved text)",
+      "any_of": [
+        "Revisit Maple Cooperative when a fictional policy establishes the purchasing authority."
+      ]
+    }
+  ],
+  "complete_fields": [
+    {
+      "id": "rationale",
+      "text": "Maple Cooperative is a fictional research example. A planning record exists but purchasing authority and available budget are unknown. Keep the account under review until a dated policy establishes the missing facts. This deliberately complete paragraph provides enough text to test splitting and whole-field presentation."
+    },
+    {
+      "id": "next_question",
+      "text": "Who can approve a purchase for Maple Cooperative and which fictional policy establishes the available budget?"
+    },
+    {
+      "id": "next_action",
+      "text": "Review the fictional policy for Maple Cooperative and record its purchasing authority with a dated source."
+    },
+    {
+      "id": "revisit_condition",
+      "text": "Revisit Maple Cooperative when a fictional policy establishes the purchasing authority."
+    },
+    {
+      "id": "fact_1",
+      "text": "Fictional fact 1: a planning record exists for Maple Cooperative; no purchasing commitment is established."
+    },
+    {
+      "id": "fact_2",
+      "text": "Fictional fact 2: a planning record exists for Maple Cooperative; no purchasing commitment is established."
+    },
+    {
+      "id": "fact_3",
+      "text": "Fictional fact 3: a planning record exists for Maple Cooperative; no purchasing commitment is established."
+    },
+    {
+      "id": "hypothesis_1",
+      "text": "Fictional hypothesis 1: Maple Cooperative may need a service evaluation. This is not an approved order."
+    },
+    {
+      "id": "hypothesis_2",
+      "text": "Fictional hypothesis 2: Maple Cooperative may need a service evaluation. This is not an approved order."
+    },
+    {
+      "id": "hypothesis_3",
+      "text": "Fictional hypothesis 3: Maple Cooperative may need a service evaluation. This is not an approved order."
+    },
+    {
+      "id": "unknown_1",
+      "text": "Open question 1: verify the fictional purchasing condition for Maple Cooperative using a dated source."
+    },
+    {
+      "id": "unknown_2",
+      "text": "Open question 2: verify the fictional purchasing condition for Maple Cooperative using a dated source."
+    },
+    {
+      "id": "unknown_3",
+      "text": "Open question 3: verify the fictional purchasing condition for Maple Cooperative using a dated source."
+    },
+    {
+      "id": "unknown_4",
+      "text": "Open question 4: verify the fictional purchasing condition for Maple Cooperative using a dated source."
+    },
+    {
+      "id": "unknown_5",
+      "text": "Open question 5: verify the fictional purchasing condition for Maple Cooperative using a dated source."
+    }
+  ],
+  "heading_pairs": [
+    {
+      "id": "hypotheses",
+      "heading": "Hypotheses, not customer statements",
+      "content": "Fictional hypothesis 1: Maple Cooperative may need a service evaluation. This is not an approved order."
+    },
+    {
+      "id": "facts",
+      "heading": "Sourced facts",
+      "content": "Fictional fact 1: a planning record exists for Maple Cooperative; no purchasing commitment is established."
+    }
+  ],
+  "source_texts": [
+    {
+      "id": "primary_source",
+      "text": "https://example.invalid/maple/update"
+    },
+    {
+      "id": "primary_source_reviewed",
+      "text": "2026-09-29T03:54:00Z"
+    }
+  ],
+  "criteria": [
+    {
+      "id": "initial_summary",
+      "category": "usability",
+      "check": "initial_elements",
+      "required": true,
+      "finding": "parked-reading",
+      "claim": "The first response alone states the entity, a usable reference URL, the saved-research label, the assessment date, the parked decision, its reason, a key uncertainty and when to reopen.",
+      "evidence": "Synthetic handover scenario. No historical observation, private report or customer outcome is included. Establish new recipient evidence before relying on this case."
+    },
+    {
+      "id": "complete_without_page_commands",
+      "category": "usability",
+      "check": "complete_without_pages",
+      "required": true,
+      "finding": "parked-reading",
+      "claim": "Every saved assessment field, including the revisit condition, is reachable from the first response without manual page commands.",
+      "evidence": "Synthetic handover scenario. No historical observation, private report or customer outcome is included. Establish new recipient evidence before relying on this case."
+    },
+    {
+      "id": "fields_whole",
+      "category": "textual_consistency",
+      "check": "fields_whole",
+      "required": true,
+      "finding": "parked-reading",
+      "claim": "Each saved field text appears whole within one response or file.",
+      "evidence": "Synthetic handover scenario. No historical observation, private report or customer outcome is included. Establish new recipient evidence before relying on this case."
+    },
+    {
+      "id": "headings_with_content",
+      "category": "usability",
+      "check": "heading_pairs",
+      "required": true,
+      "finding": "parked-reading",
+      "claim": "Section headings appear with their first item.",
+      "evidence": "Synthetic handover scenario. No historical observation, private report or customer outcome is included. Establish new recipient evidence before relying on this case."
+    },
+    {
+      "id": "no_raw_json",
+      "category": "usability",
+      "check": "no_raw_json",
+      "required": true,
+      "finding": "parked-reading",
+      "claim": "The reading path does not present raw JSON.",
+      "evidence": "Synthetic handover scenario. No historical observation, private report or customer outcome is included. Establish new recipient evidence before relying on this case."
+    },
+    {
+      "id": "source_attribution",
+      "category": "textual_consistency",
+      "check": "source_texts",
+      "required": true,
+      "finding": "parked-reading",
+      "claim": "The complete reading shows a primary source link and its review time.",
+      "evidence": "Synthetic handover scenario. No historical observation, private report or customer outcome is included. Establish new recipient evidence before relying on this case."
+    },
+    {
+      "id": "operator_reading_assessment",
+      "category": "human_assessment",
+      "check": "operator",
+      "required": true,
+      "finding": "parked-reading",
+      "claim": "A named operator confirms the first response makes clear that the prospect is parked, why, and what would reopen it, and that the complete assessment is readable without page commands.",
+      "expected": "Parked decision, reason and reopen condition are understandable; facts, hypotheses, open questions and the inaccessible-source limitation remain distinguishable.",
+      "evidence": "attributed assessment bound to this evidence bundle"
+    },
+    {
+      "id": "source_support",
+      "category": "source_verification",
+      "check": "not_evaluated",
+      "required": false,
+      "finding": null,
+      "finding_exclusion": "Whether the cited governance posts support the claims is source verification, outside the reading finding; it is not required.",
+      "claim": "The cited sources support the saved governance and treasury claims.",
+      "evidence": "Synthetic handover scenario. No historical observation, private report or customer outcome is included. Establish new recipient evidence before relying on this case."
+    }
+  ],
+  "findings": {
+    "parked-reading": {
+      "classification": "defect",
+      "title": "Example Research Employee saved-research reading for a parked prospect does not meet the reading requirements",
+      "impact": "A user checking why a prospect was parked, and what would reopen it, cannot rely on the saved-research lookup for that answer.",
+      "expected": "One concise first response with entity, usable reference URL, saved-research label, assessment date, the parked decision, reason, a key uncertainty and when to reopen, plus the complete assessment (facts, hypotheses, open questions, revisit condition, sources) without manual page commands.",
+      "reproduction": [
+        "In the configured channel, run `/bd research entity:Maple Cooperative`.",
+        "Choose **Read full assessment** and read every resulting message or file."
+      ],
+      "source_explanation": "",
+      "retest": "After a fix is deployed, repeat the reproduction, copy every response in full, record the revision, and run `review-workflow --case cases/scott-arbitrum-parked-reading.json --evidence <bundle.json> --state-dir <state> --out <new dir> --retest <finding key>` with an attributed operator assessment.",
+      "unknowns": [
+        "Message IDs, dates, timezone and latency are not captured from copied responses.",
+        "No-new-research, database mutation and current-record agreement are not established by copied responses."
+      ]
+    }
+  },
+  "unverified_always": [
+    {
+      "id": "no_new_research",
+      "claim": "No new research run",
+      "follow_up": "Separately authorized before/after task evidence is needed."
+    },
+    {
+      "id": "no_database_mutation",
+      "claim": "No database mutation",
+      "follow_up": "Separately authorized database evidence is needed."
+    },
+    {
+      "id": "correlation",
+      "claim": "Exact message correlation",
+      "follow_up": "Retain verified interaction and message identifiers."
+    },
+    {
+      "id": "latency",
+      "claim": "Response latency",
+      "follow_up": "Obtain verified request/response timestamps from the same interaction."
+    },
+    {
+      "id": "current_record",
+      "claim": "Agreement with the current authoritative database",
+      "follow_up": "Compare against a separately authorized current record snapshot."
+    }
+  ]
+}

@@ -1,0 +1,118 @@
+{
+  "id": "seren.employee-tool.constant-query",
+  "version": 1,
+  "interface": "seren_cli",
+  "target_status": "unresolved",
+  "command": "isolated employee run: one approval-gated seren_db_query",
+  "claim": "An isolated employee invokes the specified database tool and answers from its recorded result.",
+  "scope": {
+    "statement": "One isolated employee-mediated table-free query, verified from correlated run/tool/result events and a subsequent stopped read-back. Live execution is blocked pending fixture setup and selective-approval transport.",
+    "entry": "agent cloud run start/get; selective run resume API",
+    "accepted_provenance": [
+      "independently_observed"
+    ],
+    "out_of_scope": [
+      "Example Research Employee changes",
+      "Application-table reads or writes",
+      "Broad agent quality or grant auditing"
+    ]
+  },
+  "basis": [
+    {
+      "kind": "documented_interface",
+      "reference": "Seren v0.10.0 37654244: CloudDeploymentRunEvent, CloudRunOutputEvent, CloudRunPendingApprovalsResponse, CloudDeploymentRunResumeRequest; cli cloud_run, cloud_run_get, resolve_cloud_run_pending_approvals."
+    },
+    {
+      "kind": "historical_shape",
+      "reference": "Handover example. Synthetic identifiers and generalized regression expectations; no live result or authority is transferred."
+    },
+    {
+      "kind": "independent_oracle",
+      "reference": "Integer arithmetic: 6 multiplied by 7 equals 42. No response-derived expectation or application record needed."
+    }
+  ],
+  "expectation_date": "2026-10-11T00:00:00Z",
+  "employee_tool": {
+    "deployment_id": "7a00003a-0000-4000-8000-00000000003b",
+    "tool": "seren_db_query",
+    "arguments": {
+      "query": "SELECT 6 * 7 AS answer"
+    },
+    "result": {
+      "columns": [
+        "answer"
+      ],
+      "row_count": 1,
+      "rows": [
+        [
+          42
+        ]
+      ]
+    },
+    "answer": "42",
+    "message": "Call seren_db_query exactly once with query SELECT 6 * 7 AS answer. Use no other tool and no application tables. After the tool result, reply with exactly 42. Do not answer without executing the tool."
+  },
+  "criteria": [
+    {
+      "id": "run_identity",
+      "category": "service_outcome",
+      "check": "employee_run_identity",
+      "required": true,
+      "claim": "Completed run belongs to the requested employee and invocation",
+      "evidence": "Deployment, returned run ID, execution ID and invocation payload match the captured request.",
+      "finding": "employee_tool_result"
+    },
+    {
+      "id": "tool_execution",
+      "category": "service_outcome",
+      "check": "employee_tool_execution",
+      "required": true,
+      "claim": "Exactly one matching call returns the expected structured result",
+      "evidence": "Complete outer event trace: exact tool/arguments, linked call/result ID, result [[42]], successful done.",
+      "finding": "employee_tool_result"
+    },
+    {
+      "id": "answer",
+      "category": "service_outcome",
+      "check": "employee_tool_answer",
+      "required": true,
+      "claim": "Employee answer follows and agrees with tool result",
+      "evidence": "Exact final answer 42 after the tool result; model text alone cannot pass.",
+      "finding": "employee_tool_result"
+    },
+    {
+      "id": "shutdown",
+      "category": "service_outcome",
+      "check": "employee_tool_shutdown",
+      "required": true,
+      "claim": "Target is confirmed stopped after completion",
+      "evidence": "Authoritative target status and desired state stopped; supplied observation timestamp after completion.",
+      "finding": "employee_tool_result"
+    }
+  ],
+  "findings": {
+    "employee_tool_result": {
+      "classification": "uncertain",
+      "title": "Isolated employee tool workflow lacks the required execution evidence",
+      "expected": "One exact seren_db_query call returns 42, employee answers 42, target confirmed stopped.",
+      "impact": "A correct-looking answer cannot be trusted as evidence of actual tool execution.",
+      "unknowns": [
+        "Current isolated fixture configuration and tool availability",
+        "Current service event compatibility"
+      ],
+      "retest": "Do not run yet: establish isolated fixture setup and selective approval transport, then authorize one bounded execution."
+    }
+  },
+  "unverified_always": [
+    {
+      "id": "live_route",
+      "claim": "Live execution and isolated fixture setup demonstrated",
+      "follow_up": "Not yet: offline verifier and selective request builder only; no live driver enabled."
+    },
+    {
+      "id": "server_build",
+      "claim": "Exact answering server build",
+      "follow_up": "Use provider version evidence if available; never infer it."
+    }
+  ]
+}

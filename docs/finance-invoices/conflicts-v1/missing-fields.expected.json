@@ -1,0 +1,30 @@
+{
+  "as_of": "2026-10-14",
+  "status": "needs_review",
+  "resolved_invoices": [
+    {
+      "invoice_id": "MISS-4",
+      "outstanding_usd": "80.00",
+      "overdue": true,
+      "days_overdue": 1
+    }
+  ],
+  "issues": [
+    {
+      "invoice_id": "MISS-1",
+      "reason": "missing_paid"
+    },
+    {
+      "invoice_id": "MISS-2",
+      "reason": "missing_due_date"
+    },
+    {
+      "invoice_id": "MISS-3",
+      "reason": "missing_currency"
+    }
+  ],
+  "known_outstanding_usd": "80.00",
+  "known_overdue_usd": "80.00",
+  "complete_outstanding_usd": null,
+  "complete_overdue_usd": null
+}

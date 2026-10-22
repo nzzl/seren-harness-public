@@ -1,0 +1,69 @@
+{
+  "version": 1,
+  "seren": {
+    "executable": null,
+    "executable_sha256": null,
+    "config_home": null,
+    "profile": "default"
+  },
+  "deployment_id": null,
+  "output_dir": "~/seren-harness-live/reports",
+  "timeout_seconds": 30,
+  "campaign": {
+    "id": "revenue-smoke-20261021",
+    "authorization": {
+      "live_seren": false,
+      "create_employee": false,
+      "model_calls": false,
+      "resource_writes": false,
+      "approved_by": null,
+      "expires_at": null
+    },
+    "employee": {
+      "mode": "existing"
+    },
+    "scope": {
+      "families": {},
+      "required_tools": [
+        "seren_db_query"
+      ]
+    },
+    "limits": {
+      "max_tasks": 2,
+      "max_seren_requests": 100,
+      "max_model_calls": 0,
+      "max_cost_usd": 0,
+      "max_wall_seconds": 900,
+      "max_reproductions": 0,
+      "task_seconds": 180
+    },
+    "planner": {
+      "runtime": "heuristic",
+      "executable": null,
+      "executable_sha256": null,
+      "model": "claude-sonnet-5-5",
+      "max_usd_per_call": 0.2,
+      "timeout_seconds": 120
+    },
+    "corrections": [],
+    "github": {
+      "mode": "draft",
+      "repository": null,
+      "gh_executable": null
+    },
+    "journeys": {
+      "templates": [
+        "data_report_revision"
+      ],
+      "database": {
+        "project_id": null,
+        "branch_id": null,
+        "database": null,
+        "schema": "harness_revenue_smoke",
+        "psql_executable": null,
+        "psql_sha256": null,
+        "attachment": null
+      }
+    }
+  }
+}

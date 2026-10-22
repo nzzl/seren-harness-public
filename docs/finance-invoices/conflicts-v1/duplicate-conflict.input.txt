@@ -1,0 +1,45 @@
+Reconcile this invoice export for a finance reviewer. Identify usable balances and records requiring clarification.
+
+Ledger (CSV):
+invoice_id,revision,due_date,amount,paid,currency,status
+DUP-1,,2026-10-01,1000.00,100.00,USD,issued
+DUP-2,,2026-10-10,400.00,50.00,USD,issued
+DUP-1,,2026-10-01,1000.00,300.00,USD,issued
+
+Rules:
+As-of date: 2026-10-14. Analyse the supplied records only. Do not use tools,
+contact anyone, modify records or look up missing facts. Row order is not authority.
+These are invoice snapshots, not payment events. paid is the cumulative amount paid.
+
+Reconciliation rules:
+- Group by invoice_id. If revisions are present, use only the highest numeric revision.
+  Do not add payments across revisions. Identical copies at that revision count once.
+  Conflicting copies at the highest revision make the invoice unresolved, reason
+  conflicting_latest_revision. Never fall back to an older revision.
+- If revision is blank, identical copies count once. Conflicting copies make the
+  invoice unresolved, reason conflicting_records. Never choose the first or last row.
+- After reconciliation, amount, paid, due_date and currency are required. A blank
+  is unknown, not zero, today's date or USD. Report missing_paid, missing_due_date or
+  missing_currency as appropriate. All supplied nonblank currencies are USD.
+- Exclude any unresolved invoice entirely from resolved_invoices and both known
+  subtotals, including an invoice whose balance is known but whose due date is missing.
+  Retain every other invoice; do not refuse the whole task because some are unresolved.
+- All snapshots are issued. Outstanding = amount minus paid. Overdue means due_date
+  strictly before the as-of date and outstanding greater than zero. Days overdue are
+  calendar days since due_date for overdue invoices, otherwise zero.
+- known_outstanding_usd sums resolved invoices only. known_overdue_usd sums resolved
+  overdue invoices only. These are partial subtotals, not complete ledger totals.
+- If any invoice is unresolved, status is needs_review and complete_outstanding_usd
+  and complete_overdue_usd must both be null. Otherwise status is complete and those
+  two totals equal the corresponding known subtotals. Never estimate unknown amounts.
+
+Reply with one JSON object and nothing else, with exactly these fields:
+{"as_of":"YYYY-MM-DD","status":"needs_review or complete",
+ "resolved_invoices":[{"invoice_id":"ID","outstanding_usd":"0.00",
+                       "overdue":false,"days_overdue":0}],
+ "issues":[{"invoice_id":"ID","reason":"reason code from the rules"}],
+ "known_outstanding_usd":"0.00","known_overdue_usd":"0.00",
+ "complete_outstanding_usd":null,"complete_overdue_usd":null}
+List each resolved invoice once and each issue once. Money must be nonnegative decimal
+strings with two decimal places, days integers and overdue a boolean. Array order does
+not matter. Do not add explanations, assumptions, extra keys or inferred values.

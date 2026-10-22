@@ -1,0 +1,17 @@
+{
+  "duplicate-conflict": {
+    "purpose": "Flag conflicting copies without choosing one or dropping reliable invoices.",
+    "message_sha256": "e8224d7e44b8e16b0b292dadcbcc0d48aea7269c6d3edc318fb97eec4546230d",
+    "expected_sha256": "1cdce59a5dba0b9ebc7904b7da638105e2dc284ca7eb03eaba3ed822080d15a6"
+  },
+  "payment-revisions": {
+    "purpose": "Use cumulative latest payments once; abstain on conflicting latest revisions.",
+    "message_sha256": "ec45688a52b37799c718cef6ab91cf7e4107c32818c3f9f19f3fbfb29b7344fd",
+    "expected_sha256": "e99df25c5cba30a7aa9b59abb64ef0abffa155862fd962830751cad06fb52e14"
+  },
+  "missing-fields": {
+    "purpose": "Do not invent a missing payment, due date or currency; retain known subtotals.",
+    "message_sha256": "a8db68afc33899dc8030dad56bf8bdc1819ac7379274c759caf0e207f2df2053",
+    "expected_sha256": "4ccfca40321583f92e95774e7fa1bb5fccb3d52e48afca7828759d203f1fcd65"
+  }
+}

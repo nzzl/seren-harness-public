@@ -1,0 +1,41 @@
+{
+  "kind": "journey_authorization",
+  "status": "proposed",
+  "active": false,
+  "journey": "employee-retrieval.branch-metadata",
+  "package": "docs/journeys/employee-retrieval/package-v4.json",
+  "package_version": 4,
+  "package_sha256": "576cb5ec243b16f75f70615402bbfdabbd6902e885e4030b2cc09517eefbedf7",
+  "supersedes": {
+    "package_sha256": "6818e21a32c83d80a0616dc9c8493ca555a4b6cef3fd7b6b3010a752659f5b62",
+    "status": "Inactive synthetic handover example. Recipient must establish a fresh baseline and authorization.",
+    "outcome": "Synthetic predecessor scenario: branch-response parsing fails before mutation; cleanup is not required. This is regression input, not a historical receipt."
+  },
+  "implementation_revision": "Recipient must validate and bind the exact new local revision; no former operator commit is included.",
+  "covers": [
+    "one attempt (package v4) on Seren Harness Clock Test 7a000021-0000-4000-8000-000000000022 through the live gate's journey path (live_discovery.journey_gate -> retrieval_journey)",
+    "O4: reading the recipient API key from Keychain service 'seren-harness-api-key' inside the trusted gate process and using it only for the fixed-host preview, update and at most one action read (grant_transport)",
+    "O1: adding exactly the prompt-surface ref seren-db / seren_db_get_branch together with the branch-read instruction, then removing both by rollback",
+    "O2: temporarily displacing the supplied-data instruction, restoring the captured original configuration by managed-rollback, and the invoice lane accepting the restored revision only through the verified rebinding record",
+    "O3: one metadata-only read of application branch 7a000027-0000-4000-8000-000000000028 in project 7a000037-0000-4000-8000-000000000038: the preflight read with the owner's existing OAuth, and the employee's single seren_publisher_request",
+    "the package's preflight, setup, execution, shutdown and restore calls, stopping rules and cleanup, within 31 calls and the 420 s window"
+  ],
+  "budgets": "Counted inside the existing standing ledger and gates: 1 of 200 attempts and at most 31 of 3,100 calls for that configured UTC+07:00 day, within the existing 420 s attempt window and its reserves. No separate allowance, no reset.",
+  "spending_and_sessions": "No paid Claude overage. No live spending authority is included; recipient must approve explicit limits before execution.",
+  "stopping_conditions": "Any preflight mismatch, preparation-receipt or grant failure, budget shortfall, stop switch, lock, preview drift, uncertain mutation, read-back drift, unconfirmed shutdown or unconfirmed restore stops dependent steps as written in the package; no retry, re-send or second invocation.",
+  "does_not_cover": [
+    "any repeat, retry, re-sent update or second invocation",
+    "contact with Seren maintainers",
+    "creating employees, projects, branches, buckets or fixtures",
+    "any other ref, grant, attachment, preset, policy, model or limit change",
+    "SQL, table rows, credentials or connection strings",
+    "Any disclosure to any external channel without separate explicit approval.",
+    "the brace-origin route or further issue #5 arithmetic repeats",
+    "re-running the synthetic predecessor v3 package",
+    "any further attempt of this v4 package after its one attempt"
+  ],
+  "activation": "The owner replaces the private live-authority journeys entry with: {\"employee-retrieval.branch-metadata\": {\"active\": true, \"approved\": true, \"package_sha256\": \"576cb5ec243b16f75f70615402bbfdabbd6902e885e4030b2cc09517eefbedf7\"}}. Nothing else changes.",
+  "approved": false,
+  "approved_by": null,
+  "approved_at": null
+}

@@ -1,0 +1,73 @@
+{
+  "_status": "INACTIVE SYNTHETIC TEMPLATE. No authorization or prior execution is transferred. Configure recipient resources and obtain explicit authority before live use.",
+  "kind": "prerequisite_read_package",
+  "id": "seren.lifecycle.prerequisite-read.1",
+  "version": 2,
+  "classifier": "seren_harness/cli_errors.py at the commit recording version 2: a token-refresh HTTP failure (Unexpected Response or Error Response) is category unknown, rule token_refresh_http_error, stage token_refresh, with no HTTP status; communication failures are network_failure and payload failures malformed_response; conflicting signatures are unknown.",
+  "purpose": "Establish whether the dedicated fixture can be read from the stated execution environment, and if not, record a fixed, source-backed failure category. Follows preview diagnostic 1, whose two prerequisite reads exited 1 after about 6 ms each with no retained cause.",
+  "target": {
+    "deployment_id": "7a00003a-0000-4000-8000-00000000003b",
+    "name": "Seren Harness Test",
+    "config": "~/seren-harness-live/config.json (private; existing Seren CLI OAuth session by reference)"
+  },
+  "baseline": {
+    "recorded_by_run": "synthetic-run-example",
+    "active_revision_id": "7a00002b-0000-4000-8000-00000000002c",
+    "agent_identity_id": "7a000004-0000-4000-8000-000000000005",
+    "last_observed": "Inactive synthetic handover example. Recipient must establish a fresh baseline and authorization."
+  },
+  "correction": {
+    "current_file": "docs/lifecycle-setup/SKILL.current.md",
+    "current_sha256": "39394b777cb1eb5d76602bfaae679151e92cb2b6877bf9e7e45247aa18c61865",
+    "corrected_file": "docs/lifecycle-setup/SKILL.corrected.md",
+    "corrected_sha256": "1e74a60ba4a601f99d132d087e475415e1fc177de78157e960e16ff37725384e",
+    "corrected_trimmed_sha256": "13fde8036f3cbff168a4c769fe7d19ea294171c7296be6cf4cf8077ee37eae2a",
+    "use": "only to check whether the read shows the recorded original instruction (a boolean); nothing is previewed or sent"
+  },
+  "command": "python -m seren_harness prerequisite-read --config ~/seren-harness-live/config.json --package docs/lifecycle-setup/prerequisite-read.proposed.json",
+  "sequence": [
+    "agent managed-get 7a00003a-0000-4000-8000-00000000003b -o json"
+  ],
+  "limits": {
+    "service_invocations": 1,
+    "mutations": 0,
+    "timeout_seconds": 60,
+    "retries": 0,
+    "http_upper": 12,
+    "oauth_refresh_upper": 1,
+    "wall_seconds_upper": 62,
+    "window_minutes": 10,
+    "invocations": 1,
+    "basis": "Pinned v0.10.0: managed_agent_get builds the client (cli/src/command_context.rs client -> commands/auth.rs get_bearer_token, which refreshes the OAuth token only when the stored token is near expiry: at most one token request, redirects disabled), then sends one GET. The SDK client (sdk/src/lib.rs from_config) uses reqwest's default redirect policy (up to 10 redirects) and has no retry logic, so the GET is one request plus any redirects: at most 12 HTTP requests, normally 1 or 2. The 60 s harness timeout kills and reaps the CLI process. One CLI invocation is therefore not guaranteed to be one HTTP request."
+  },
+  "execution_environment": {
+    "host": "Inactive synthetic handover example. Recipient must establish a fresh baseline and authorization.",
+    "working_directory": "/opt/seren-handover",
+    "python": "the repository's .venv interpreter",
+    "executable": "the config's seren.executable, pinned by seren.executable_sha256 ddf617c4\u2026 (CLI 0.10.0); checked locally before the call; no substitute binary",
+    "credentials": "the Seren CLI's stored OAuth session for profile default, under the CLI's own config directory (cli/src/config.rs config_root/profile_dir). Used only by the CLI; never read, copied or inspected by the harness. No API key, new login or refresh is requested by the procedure; the CLI may refresh by itself near expiry.",
+    "known": [
+      "Preview diagnostic 1 ran from the agent's shell tool and both reads exited 1 after about 6 ms; the cause was not retained.",
+      "Recipient must establish and record a fresh successful read before dependent operations.",
+      "On every invocation the pinned CLI creates its config directories if missing and sets them to mode 0700 (config_root/profile_dir), and saves the session after a refresh, so it needs write access to its own config directory, not only read access."
+    ],
+    "unknown": [
+      "whether the agent's shell tool restricts network or file access for child processes (no sandbox setting in the user's Claude settings files; other policy sources not checked)",
+      "whether the stored OAuth session is currently valid; it is not inspected"
+    ],
+    "choice": "The owner states, when authorizing, where the command runs: (a) the agent's shell tool, as before, or (b) the owner's own shell, for example by typing `! <command>` in the session. The procedure does not move execution between environments by itself."
+  },
+  "evidence": {
+    "journal": "<config state_dir>/prerequisite-read/seren.lifecycle.prerequisite-read.1/journal.json (separate from every earlier journal)",
+    "kept_on_success": "deployment matches target, identity and revision match the baseline (booleans), active_revision_id (UUID only), detail status (allowlisted enum), approval applied (boolean), instruction is the original or the corrected text (booleans), conditions by allowlisted type and state",
+    "kept_on_failure": "a fixed classification: category, rule identifier, stage, HTTP status only when parsed from the CLI's own 'unexpected response <code>' format, and source-backed booleans before_main_request / http_response_received (null when not established)",
+    "never_kept": "the response, config, secret_keys, stderr, messages, paths, URLs, headers, tokens or any hash of them"
+  },
+  "stop_conditions": [
+    "local pins, CLI checksum or version differ: refused before any call",
+    "a recorded journal whose inputs differ: refused before any call, journal untouched",
+    "after the one read (any outcome, including timeout or interruption): stop; it is never resent"
+  ],
+  "excluded": "No cloud deployment status, preview, update, provisioning, Passwords action, start, stop, login, credential repair, Discord request, probe or model session. A successful read ends the task; any further step needs its own decision and authorization.",
+  "acceptance": "Either result read_matches_fixture / read_differs_from_fixture with the safe projection, or result not_read with a fixed failure category (possibly unknown) and its stated uncertainty."
+}

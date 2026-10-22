@@ -1,0 +1,121 @@
+{
+  "id": "seren.employee-tool.branch-read",
+  "version": 1,
+  "interface": "seren_cli",
+  "target_status": "unresolved",
+  "command": "Call seren_publisher_request exactly once with {\"operation\":\"get\",\"path\":\"/projects/7a000037-0000-4000-8000-000000000038/branches/7a000027-0000-4000-8000-000000000028\",\"publisher\":\"seren-db\"}. Read the returned branch record and reply with exactly its id. Do not guess. Use no other tool, query or operation.",
+  "claim": "An isolated employee retrieves one existing branch record through the Seren DB publisher API and answers with its verified identity.",
+  "scope": {
+    "statement": "One employee-mediated Seren DB branch-metadata read through the publisher API: exact path, recorded project/branch identity, correlated result, matching answer and confirmed shutdown. No SQL or application-table reads.",
+    "entry": "agent cloud run start/get; publisher branch-metadata GET; no SQL, attachment, approval resume or Discord",
+    "accepted_provenance": [
+      "independently_observed"
+    ],
+    "out_of_scope": [
+      "SQL and application data",
+      "Database attachment or grant verification",
+      "Example Research Employee changes and Discord activity",
+      "Tool isolation",
+      "General employee quality",
+      "All branch metadata fields or present branch health"
+    ]
+  },
+  "basis": [
+    {
+      "kind": "dated_target_record",
+      "reference": "Handover example. Synthetic identifiers and generalized regression expectations; no live result or authority is transferred."
+    },
+    {
+      "kind": "pinned_contract",
+      "reference": "Handover example. Synthetic identifiers and generalized regression expectations; no live result or authority is transferred."
+    },
+    {
+      "kind": "saved_tool_contract",
+      "reference": "synthetic-run-example catalog: seren_publisher_request allowed, side_effecting false, approval_type none, checkpoint_required false; get is allowed under read_only policy. Fresh catalog must agree before starting; this is not a claim of exact-path enforcement."
+    }
+  ],
+  "expectation_date": "2026-10-13T00:00:00Z",
+  "employee_tool": {
+    "deployment_id": "7a000021-0000-4000-8000-000000000022",
+    "tool": "seren_publisher_request",
+    "arguments": {
+      "publisher": "seren-db",
+      "operation": "get",
+      "path": "/projects/7a000037-0000-4000-8000-000000000038/branches/7a000027-0000-4000-8000-000000000028"
+    },
+    "result_type": "branch_metadata",
+    "result": {
+      "id": "7a000027-0000-4000-8000-000000000028",
+      "project_id": "7a000037-0000-4000-8000-000000000038"
+    },
+    "answer": "7a000027-0000-4000-8000-000000000028",
+    "message": "Call seren_publisher_request exactly once with {\"operation\":\"get\",\"path\":\"/projects/7a000037-0000-4000-8000-000000000038/branches/7a000027-0000-4000-8000-000000000028\",\"publisher\":\"seren-db\"}. Read the returned branch record and reply with exactly its id. Do not guess. Use no other tool, query or operation."
+  },
+  "criteria": [
+    {
+      "id": "run_identity",
+      "category": "service_outcome",
+      "check": "employee_run_identity",
+      "required": true,
+      "claim": "Completed run belongs to the requested employee and invocation",
+      "evidence": "Deployment, returned run ID, execution ID and invocation payload match the captured request.",
+      "finding": "employee_tool_result"
+    },
+    {
+      "id": "tool_execution",
+      "category": "service_outcome",
+      "check": "employee_tool_execution",
+      "required": true,
+      "claim": "One read-only publisher operation returns the expected branch in the expected project",
+      "evidence": "One exact seren_publisher_request GET, correlated non-error complete supported JSON; id/project_id match the dated record and name is nonempty. Other branch fields are not certified.",
+      "finding": "employee_tool_result"
+    },
+    {
+      "id": "answer",
+      "category": "service_outcome",
+      "check": "employee_tool_answer",
+      "required": true,
+      "claim": "Employee answer follows and repeats the returned branch ID",
+      "evidence": "Text after the correlated result exactly equals the independently expected branch ID; an answer alone cannot pass.",
+      "finding": "employee_tool_result"
+    },
+    {
+      "id": "shutdown",
+      "category": "service_outcome",
+      "check": "employee_tool_shutdown",
+      "required": true,
+      "claim": "Target is confirmed stopped after completion",
+      "evidence": "Authoritative target status and desired state stopped; supplied observation timestamp after completion.",
+      "finding": "employee_tool_result"
+    }
+  ],
+  "findings": {
+    "employee_tool_result": {
+      "classification": "uncertain",
+      "title": "Employee branch read lacks the required data-operation evidence",
+      "expected": "One exact branch metadata GET, known project/branch IDs, matching answer and confirmed shutdown.",
+      "impact": "An owner cannot rely on the employee to retrieve the selected branch record through Seren.",
+      "unknowns": [
+        "Current target existence/access and runtime result encoding are not established offline."
+      ],
+      "retest": "After separate authorization, one employee-data session on the same isolated fixture with verified instructions and the existing limits; no automatic retry."
+    }
+  },
+  "unverified_always": [
+    {
+      "id": "tool_isolation",
+      "claim": "Other tools unavailable or impossible to execute",
+      "follow_up": "Other built-in/publisher tools remain available. The one-call cap is not path isolation; trace verification detects an unexpected operation after execution."
+    },
+    {
+      "id": "server_build",
+      "claim": "Exact answering server build",
+      "follow_up": "Use provider version evidence if available; never infer it."
+    },
+    {
+      "id": "access_and_cost",
+      "claim": "Access restricted to only this branch and exact monetary cost",
+      "follow_up": "Neither is established. No attachment is added; normal platform metering/logging may occur. Other available-tool risks require explicit authorization."
+    }
+  ]
+}

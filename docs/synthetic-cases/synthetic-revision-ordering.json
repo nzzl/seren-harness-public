@@ -1,0 +1,211 @@
+{
+  "id": "synthetic-revision-ordering",
+  "proposal": {
+    "customer_job": "A finance reviewer asks the Clock Test employee to reconcile an invoice export in which corrected snapshots carry revision numbers that have grown past one digit (9 to 10, 99 to 100), to decide which balances are still owed and which invoices need manual review.",
+    "consequence": "Hypothetical: if revisions are ordered as text, the employee uses a stale snapshot (revision 9 over 10, 99 over 100, 2 over 10), so a reviewer chases a customer for money already paid, misses an extended due date, or treats a conflicting or incomplete latest revision as settled. The answer stays well-formed, so the reviewer cannot see it without recomputing. Exposure unknown.",
+    "hypothesis": "Hypothetical regression: the employee may misapply the fixed reconciliation rules for revision ordering.",
+    "evidence": "Synthetic test rationale only; no prior private execution or finding is included.",
+    "new_information": "Synthetic test rationale only; no prior private execution or finding is included.",
+    "alternative": "Select a different synthetic rule family if it would provide more useful evidence.",
+    "decision_if_pass": "Record a pass for this synthetic input only; do not infer a service-wide rate.",
+    "decision_if_fail": "Preserve exact mismatched fields and investigate reproducibility and attribution before classifying a finding.",
+    "basis": "new_hypothesis",
+    "repeat_reason": ""
+  },
+  "rows": [
+    {
+      "invoice_id": "SYN-R1",
+      "revision": "10",
+      "due_date": "2026-10-31",
+      "amount": "2000.00",
+      "paid": "1500.00",
+      "currency": "USD",
+      "status": "issued"
+    },
+    {
+      "invoice_id": "SYN-R3",
+      "revision": "100",
+      "due_date": "2026-12-01",
+      "amount": "3000.00",
+      "paid": "1000.00",
+      "currency": "USD",
+      "status": "issued"
+    },
+    {
+      "invoice_id": "SYN-R2",
+      "revision": "1",
+      "due_date": "2026-11-15",
+      "amount": "1200.00",
+      "paid": "200.00",
+      "currency": "USD",
+      "status": "issued"
+    },
+    {
+      "invoice_id": "SYN-R5",
+      "revision": "10",
+      "due_date": "2026-10-30",
+      "amount": "900.00",
+      "paid": "100.00",
+      "currency": "USD",
+      "status": "issued"
+    },
+    {
+      "invoice_id": "SYN-R4",
+      "revision": "10",
+      "due_date": "2026-10-20",
+      "amount": "400.00",
+      "paid": "",
+      "currency": "USD",
+      "status": "issued"
+    },
+    {
+      "invoice_id": "SYN-R6",
+      "revision": "11",
+      "due_date": "2026-10-14",
+      "amount": "800.00",
+      "paid": "300.00",
+      "currency": "USD",
+      "status": "issued"
+    },
+    {
+      "invoice_id": "SYN-R2",
+      "revision": "10",
+      "due_date": "2026-11-15",
+      "amount": "1200.00",
+      "paid": "1200.00",
+      "currency": "USD",
+      "status": "issued"
+    },
+    {
+      "invoice_id": "SYN-C1",
+      "revision": "",
+      "due_date": "2026-10-25",
+      "amount": "150.00",
+      "paid": "0.00",
+      "currency": "USD",
+      "status": "issued"
+    },
+    {
+      "invoice_id": "SYN-R1",
+      "revision": "9",
+      "due_date": "2026-10-31",
+      "amount": "2000.00",
+      "paid": "500.00",
+      "currency": "USD",
+      "status": "issued"
+    },
+    {
+      "invoice_id": "SYN-R5",
+      "revision": "9",
+      "due_date": "2026-10-30",
+      "amount": "900.00",
+      "paid": "100.00",
+      "currency": "USD",
+      "status": "issued"
+    },
+    {
+      "invoice_id": "SYN-R3",
+      "revision": "99",
+      "due_date": "2026-09-30",
+      "amount": "3000.00",
+      "paid": "1000.00",
+      "currency": "USD",
+      "status": "issued"
+    },
+    {
+      "invoice_id": "SYN-R6",
+      "revision": "10",
+      "due_date": "2026-10-14",
+      "amount": "800.00",
+      "paid": "100.00",
+      "currency": "USD",
+      "status": "issued"
+    },
+    {
+      "invoice_id": "SYN-R4",
+      "revision": "9",
+      "due_date": "2026-10-20",
+      "amount": "400.00",
+      "paid": "400.00",
+      "currency": "USD",
+      "status": "issued"
+    },
+    {
+      "invoice_id": "SYN-R2",
+      "revision": "2",
+      "due_date": "2026-11-15",
+      "amount": "1200.00",
+      "paid": "500.00",
+      "currency": "USD",
+      "status": "issued"
+    },
+    {
+      "invoice_id": "SYN-R5",
+      "revision": "10",
+      "due_date": "2026-10-30",
+      "amount": "900.00",
+      "paid": "250.00",
+      "currency": "USD",
+      "status": "issued"
+    },
+    {
+      "invoice_id": "SYN-R6",
+      "revision": "11",
+      "due_date": "2026-10-14",
+      "amount": "800.00",
+      "paid": "300.00",
+      "currency": "USD",
+      "status": "issued"
+    }
+  ],
+  "expected": {
+    "as_of": "2026-10-14",
+    "status": "needs_review",
+    "resolved_invoices": [
+      {
+        "invoice_id": "SYN-C1",
+        "outstanding_usd": "150.00",
+        "overdue": false,
+        "days_overdue": 0
+      },
+      {
+        "invoice_id": "SYN-R1",
+        "outstanding_usd": "500.00",
+        "overdue": false,
+        "days_overdue": 0
+      },
+      {
+        "invoice_id": "SYN-R2",
+        "outstanding_usd": "0.00",
+        "overdue": false,
+        "days_overdue": 0
+      },
+      {
+        "invoice_id": "SYN-R3",
+        "outstanding_usd": "2000.00",
+        "overdue": false,
+        "days_overdue": 0
+      },
+      {
+        "invoice_id": "SYN-R6",
+        "outstanding_usd": "500.00",
+        "overdue": false,
+        "days_overdue": 0
+      }
+    ],
+    "issues": [
+      {
+        "invoice_id": "SYN-R4",
+        "reason": "missing_paid"
+      },
+      {
+        "invoice_id": "SYN-R5",
+        "reason": "conflicting_latest_revision"
+      }
+    ],
+    "known_outstanding_usd": "3150.00",
+    "known_overdue_usd": "0.00",
+    "complete_outstanding_usd": null,
+    "complete_overdue_usd": null
+  }
+}

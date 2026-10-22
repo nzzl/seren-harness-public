@@ -1,0 +1,1287 @@
+{
+  "baseline_receipt": {
+    "argv": [
+      "seren",
+      "agent",
+      "managed-get",
+      "7a000021-0000-4000-8000-000000000022",
+      "-o",
+      "json"
+    ],
+    "exit_code": 0,
+    "kind": "baseline_detail",
+    "response": {
+      "data": {
+        "active_revision_id": "7a000031-0000-4000-8000-000000000032",
+        "agent_slug": "[redacted]",
+        "allowed_publisher_operations": [
+          "get",
+          "estimate",
+          "mcp_list_tools",
+          "mcp_read_resource"
+        ],
+        "approval_policy": "read_only",
+        "bundle": {
+          "instructions": [
+            {
+              "content": "---\nname: [redacted]\ndescription: One explicitly invoked analysis of records supplied in the message.\n---\n\n# Seren Harness Supplied-Data Analysis\n\nYou are an isolated non-production employee. Remain idle until explicitly invoked.\nWhen invoked, analyse only the records and rules supplied in that message and reply in exactly the format it requests. Do not invent missing facts; if something the rules need is missing, say so.\nDo not use any tool. Never browse, look anything up, contact anyone, schedule work, create or change records or resources, obtain credentials, run SQL, execute code, or connect to messaging.",
+              "kind": "skill",
+              "path": "SKILL.md"
+            }
+          ]
+        },
+        "capability_policy": "[redacted]",
+        "compute_backend": "aws_container",
+        "conditions": [
+          {
+            "last_transition_time": "2026-10-17T02:13:31.610833Z",
+            "reason": "stopped",
+            "status": "True",
+            "type": "Accepted"
+          },
+          {
+            "last_transition_time": "2026-10-17T02:13:31.610833Z",
+            "reason": "Stopped",
+            "status": "False",
+            "type": "Ready"
+          },
+          {
+            "last_transition_time": "2026-10-17T02:13:31.610833Z",
+            "reason": "Stopped",
+            "status": "True",
+            "type": "Suspended"
+          }
+        ],
+        "config": {
+          "[redacted]": {
+            "storage": {
+              "memory": {
+                "database_name": "seren_cloud",
+                "engine": "postgres",
+                "provider": "[redacted]",
+                "url_secret_key": "[redacted]"
+              },
+              "sensitive_payloads": {
+                "database_name": "seren_cloud",
+                "engine": "postgres",
+                "provider": "[redacted]",
+                "url_secret_key": null
+              },
+              "session": {
+                "database_name": "seren_cloud",
+                "engine": "postgres",
+                "provider": "[redacted]",
+                "url_secret_key": "[redacted]"
+              }
+            }
+          }
+        },
+        "context_budget_tokens": "[redacted]",
+        "deployment_id": "7a000021-0000-4000-8000-000000000022",
+        "effective_model_candidates": [
+          "openai/gpt-5.6-luna"
+        ],
+        "fallback_models": [],
+        "managed_agent_secret_requirements": "[redacted]",
+        "max_iterations": 2,
+        "max_timeout_seconds": 60,
+        "max_tool_calls_per_run": 1,
+        "max_tool_output_chars": 32768,
+        "memory_policy": {
+          "graph_memory": {
+            "enabled": false,
+            "read_policy": "explicit_tool",
+            "store": "seren_managed",
+            "write_policy": "explicit_tool"
+          },
+          "knowledge": {
+            "enabled": false,
+            "index_policy": "encrypted_scan",
+            "read_policy": "explicit_tool",
+            "source": "agent_instructions",
+            "store": "seren_managed"
+          },
+          "semantic_memory": {
+            "enabled": false,
+            "read_policy": "explicit_tool",
+            "store": "seren_managed",
+            "write_policy": "explicit_tool"
+          }
+        },
+        "mode": "always_on",
+        "model_config": {},
+        "model_id": "openai/gpt-5.6-luna",
+        "model_policy": "fast",
+        "name": "Seren Harness Clock Test",
+        "private_output_policy": "control_plane",
+        "requirements": [],
+        "resolved_tools": [
+          "system_time",
+          "[redacted]",
+          "[redacted]",
+          "[redacted]",
+          "[redacted]",
+          "[redacted]",
+          "[redacted]",
+          "[redacted]"
+        ],
+        "routing_reason": "Managed routing honored the aws_container override and selected the managed seren-agent runtime.",
+        "runtime_adapter": "seren_agent",
+        "runtime_kind": "python",
+        "secret_keys": "[redacted]",
+        "status": "stopped",
+        "template": "research_monitor",
+        "tool_definitions": [
+          {
+            "description": "Get the current UTC date and time for this runtime. Use this instead of guessing today's date or current time.",
+            "input_schema": {
+              "additionalProperties": false,
+              "properties": {},
+              "type": "object"
+            },
+            "name": "system_time",
+            "side_effecting": false
+          },
+          {
+            "description": "Call an MCP tool exposed by a Seren publisher. Use this after inspecting the publisher and, when needed, listing the available MCP tools.",
+            "input_schema": {
+              "additionalProperties": false,
+              "properties": {
+                "body": {
+                  "description": "JSON arguments for the MCP tool invocation.",
+                  "type": "object"
+                },
+                "connection_id": {
+                  "description": "Optional OAuth connection UUID for BYOC publishers.",
+                  "format": "uuid",
+                  "type": "string"
+                },
+                "idempotency_key": {
+                  "description": "Stable key for this logical operation. Seren sends it as the publisher idempotency header and does not include it in the MCP tool arguments.",
+                  "type": "string"
+                },
+                "publisher": {
+                  "description": "Publisher slug to call through the MCP boundary.",
+                  "type": "string"
+                },
+                "tool_name": {
+                  "description": "Exact MCP tool name exposed by the publisher.",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "publisher",
+                "tool_name"
+              ],
+              "type": "object"
+            },
+            "name": "seren_mcp_call_tool",
+            "side_effecting": true
+          },
+          {
+            "description": "Schedule this employee to run again later. Use this when the user asks for a reminder, follow-up, recurring check, or delayed task this deployed employee should handle.",
+            "input_schema": {
+              "additionalProperties": false,
+              "properties": {
+                "conversation_id": {
+                  "description": "Optional opaque conversation id to continue when the scheduled run fires.",
+                  "type": "string"
+                },
+                "cron": {
+                  "description": "Standard 5-field cron expression for a recurring schedule. Mutually exclusive with run_at and delay_seconds.",
+                  "type": "string"
+                },
+                "delay_seconds": {
+                  "description": "Delay for a one-time future run. Mutually exclusive with run_at and cron.",
+                  "minimum": 1,
+                  "type": "integer"
+                },
+                "max_attempts": {
+                  "description": "Maximum dispatch attempts before marking the schedule failed.",
+                  "maximum": 50,
+                  "minimum": 1,
+                  "type": "integer"
+                },
+                "message": {
+                  "description": "Instruction or reminder message to send to the employee when the schedule fires. Required when payload is omitted.",
+                  "type": "string"
+                },
+                "payload": {
+                  "description": "Advanced JSON run payload. Use message for normal follow-ups; payload is for callers that need exact run fields.",
+                  "type": "object"
+                },
+                "run_at": {
+                  "description": "UTC or offset RFC3339 timestamp for a one-time future run. Mutually exclusive with delay_seconds and cron.",
+                  "format": "date-time",
+                  "type": "string"
+                },
+                "schedule_key": {
+                  "description": "Optional stable idempotency key for this logical schedule. Reusing it updates the active schedule.",
+                  "type": "string"
+                },
+                "timezone": {
+                  "description": "IANA timezone for cron schedules, for example UTC or America/New_York.",
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "name": "seren_schedule_run",
+            "side_effecting": true
+          },
+          {
+            "description": "Discover the best Seren publishers for a task before using generic web or data access. Returns ranked publisher suggestions with match reasons and capabilities.",
+            "input_schema": {
+              "additionalProperties": false,
+              "properties": {
+                "limit": {
+                  "type": "integer"
+                },
+                "query": {
+                  "type": "string"
+                },
+                "type": {
+                  "enum": [
+                    "publisher",
+                    "agent",
+                    "both"
+                  ],
+                  "type": "string"
+                }
+              },
+              "required": [
+                "query"
+              ],
+              "type": "object"
+            },
+            "name": "seren_publishers_suggest",
+            "side_effecting": false
+          },
+          {
+            "description": "Get metadata for a specific Seren publisher by slug, including capabilities, pricing, and endpoint definitions.",
+            "input_schema": {
+              "additionalProperties": false,
+              "properties": {
+                "slug": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "slug"
+              ],
+              "type": "object"
+            },
+            "name": "seren_publishers_get",
+            "side_effecting": false
+          },
+          {
+            "description": "List MCP tools exposed by a specific Seren publisher before attempting an MCP tool call.",
+            "input_schema": {
+              "additionalProperties": false,
+              "properties": {
+                "connection_id": {
+                  "description": "Optional OAuth connection UUID for BYOC publishers.",
+                  "format": "uuid",
+                  "type": "string"
+                },
+                "publisher": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "publisher"
+              ],
+              "type": "object"
+            },
+            "name": "seren_mcp_list_tools",
+            "side_effecting": false
+          },
+          {
+            "description": "Read an MCP resource exposed by a Seren publisher.",
+            "input_schema": {
+              "additionalProperties": false,
+              "properties": {
+                "connection_id": {
+                  "description": "Optional OAuth connection UUID for BYOC publishers.",
+                  "format": "uuid",
+                  "type": "string"
+                },
+                "publisher": {
+                  "type": "string"
+                },
+                "resource_uri": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "publisher",
+                "resource_uri"
+              ],
+              "type": "object"
+            },
+            "name": "seren_mcp_read_resource",
+            "side_effecting": false
+          },
+          {
+            "description": "Read from a Seren publisher through the platform proxy after identifying the right publisher. Use this for publisher API GET requests, catalog-declared POST reads, Seren-reviewed MCP read tools, and estimates; state-changing operations must use an approval-required action tool.",
+            "input_schema": {
+              "additionalProperties": false,
+              "properties": {
+                "body": {
+                  "description": "JSON request body. Mutually exclusive with body_base64.",
+                  "type": "object"
+                },
+                "body_base64": {
+                  "description": "Raw request body, base64-encoded. Mutually exclusive with body. When set, headers.Content-Type controls upstream encoding and defaults to application/octet-stream when omitted.",
+                  "type": "string"
+                },
+                "connection_id": {
+                  "description": "Optional OAuth connection UUID for BYOC publishers.",
+                  "format": "uuid",
+                  "type": "string"
+                },
+                "headers": {
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "type": "object"
+                },
+                "idempotency_key": {
+                  "description": "Required for mutating operations. Use a stable UUID or other unique key for the real-world action; repeated use in one run is blocked before a second external call.",
+                  "type": "string"
+                },
+                "operation": {
+                  "enum": [
+                    "get",
+                    "post",
+                    "estimate",
+                    "mcp_list_tools",
+                    "mcp_call_tool",
+                    "mcp_read_resource"
+                  ],
+                  "type": "string"
+                },
+                "operation_id": {
+                  "description": "Optional publisher operation identifier used to match typed publisher grants.",
+                  "type": "string"
+                },
+                "path": {
+                  "type": "string"
+                },
+                "publisher": {
+                  "type": "string"
+                },
+                "query": {
+                  "type": "object"
+                },
+                "resource_uri": {
+                  "type": "string"
+                },
+                "tool_name": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "publisher",
+                "operation"
+              ],
+              "type": "object"
+            },
+            "name": "seren_publisher_request",
+            "side_effecting": false
+          }
+        ],
+        "tool_presets": [
+          "live_data"
+        ],
+        "visibility": "open"
+      }
+    },
+    "status": "ok"
+  },
+  "preview_receipt": {
+    "http_status": 200,
+    "kind": "preview",
+    "method": "POST",
+    "outcome": "ok",
+    "request_id": null,
+    "response": {
+      "changed_fields": [
+        {
+          "current_value": {
+            "instructions": [
+              {
+                "content": "---\nname: [redacted]\ndescription: One explicitly invoked analysis of records supplied in the message.\n---\n\n# Seren Harness Supplied-Data Analysis\n\nYou are an isolated non-production employee. Remain idle until explicitly invoked.\nWhen invoked, analyse only the records and rules supplied in that message and reply in exactly the format it requests. Do not invent missing facts; if something the rules need is missing, say so.\nDo not use any tool. Never browse, look anything up, contact anyone, schedule work, create or change records or resources, obtain credentials, run SQL, execute code, or connect to messaging.",
+                "kind": "skill",
+                "path": "SKILL.md"
+              }
+            ]
+          },
+          "field": "bundle",
+          "label": "Bundle",
+          "proposed_value": {
+            "instructions": [
+              {
+                "content": "---\nname: [redacted]\ndescription: One explicitly invoked read-only branch metadata request.\n---\n\n# Seren Harness Branch Read\n\nYou are an isolated non-production employee. Remain idle until explicitly invoked.\nCall [redacted] exactly once with {\"operation\":\"get\",\"operation_id\":\"[redacted]\",\"path\":\"/projects/7a000037-0000-4000-8000-000000000038/branches/7a000027-0000-4000-8000-000000000028\",\"publisher\":\"seren-db\"}. Read the returned branch record and reply with exactly its id. Do not guess. Use no other tool, query or operation.\nNever obtain credentials or connection strings, read application tables, run SQL, create or change resources, schedule work, browse, execute code, or connect to messaging.",
+                "kind": "skill",
+                "path": "SKILL.md"
+              }
+            ]
+          }
+        },
+        {
+          "current_value": [],
+          "field": "tool_refs",
+          "label": "Tool References",
+          "proposed_value": [
+            {
+              "execution_surface": "prompt",
+              "kind": "publisher",
+              "operation_id": "[redacted]",
+              "publisher_slug": "seren-db",
+              "require_approval": false
+            }
+          ]
+        },
+        {
+          "current_value": 0,
+          "field": "tool_refs.count",
+          "label": "Tool references count",
+          "proposed_value": 1
+        }
+      ],
+      "current": {
+        "agent_slug": "[redacted]",
+        "allowed_publisher_operations": [
+          "get",
+          "estimate",
+          "mcp_list_tools",
+          "mcp_read_resource"
+        ],
+        "allowed_remote_agent_origins": [],
+        "approval_policy": "read_only",
+        "bundle": {
+          "instructions": [
+            {
+              "content": "---\nname: [redacted]\ndescription: One explicitly invoked analysis of records supplied in the message.\n---\n\n# Seren Harness Supplied-Data Analysis\n\nYou are an isolated non-production employee. Remain idle until explicitly invoked.\nWhen invoked, analyse only the records and rules supplied in that message and reply in exactly the format it requests. Do not invent missing facts; if something the rules need is missing, say so.\nDo not use any tool. Never browse, look anything up, contact anyone, schedule work, create or change records or resources, obtain credentials, run SQL, execute code, or connect to messaging.",
+              "kind": "skill",
+              "path": "SKILL.md"
+            }
+          ]
+        },
+        "capability_policy": {
+          "browser": {
+            "enabled": false,
+            "profile": "minimal"
+          },
+          "code_execution": {
+            "enabled": false,
+            "sandbox": "disabled"
+          },
+          "eval_harness": {
+            "enabled": false
+          },
+          "skills": {
+            "enabled": false,
+            "execute_scripts": false,
+            "selection": {
+              "max_selected": 1,
+              "mode": "auto"
+            }
+          },
+          "workflows": {
+            "enabled": false
+          }
+        },
+        "compute_backend": "aws_container",
+        "conditions": [
+          {
+            "last_transition_time": "2026-10-17T02:13:31.610833Z",
+            "reason": "stopped",
+            "status": "True",
+            "type": "Accepted"
+          },
+          {
+            "last_transition_time": "2026-10-17T02:13:31.610833Z",
+            "reason": "Stopped",
+            "status": "False",
+            "type": "Ready"
+          },
+          {
+            "last_transition_time": "2026-10-17T02:13:31.610833Z",
+            "reason": "Stopped",
+            "status": "True",
+            "type": "Suspended"
+          }
+        ],
+        "config": {
+          "[redacted]": {
+            "storage": {
+              "memory": {
+                "database_name": "seren_cloud",
+                "engine": "postgres",
+                "provider": "[redacted]",
+                "url_secret_key": "SEREN_INTERNAL_CLOUD_RUNTIME_DATABASE_URL"
+              },
+              "sensitive_payloads": {
+                "database_name": "seren_cloud",
+                "engine": "postgres",
+                "provider": "[redacted]",
+                "url_secret_key": null
+              },
+              "session": {
+                "database_name": "seren_cloud",
+                "engine": "postgres",
+                "provider": "[redacted]",
+                "url_secret_key": "SEREN_INTERNAL_CLOUD_RUNTIME_DATABASE_URL"
+              }
+            }
+          }
+        },
+        "context_budget_tokens": 8000,
+        "cron_schedule": null,
+        "deployment_id": "7a000021-0000-4000-8000-000000000022",
+        "effective_model_candidates": [
+          "openai/gpt-5.6-luna"
+        ],
+        "fallback_models": [],
+        "max_iterations": 2,
+        "max_timeout_seconds": 60,
+        "max_tool_calls_per_run": 1,
+        "max_tool_output_chars": 32768,
+        "memory_policy": {
+          "graph_memory": {
+            "enabled": false,
+            "read_policy": "explicit_tool",
+            "store": "seren_managed",
+            "write_policy": "explicit_tool"
+          },
+          "knowledge": {
+            "enabled": false,
+            "index_policy": "encrypted_scan",
+            "read_policy": "explicit_tool",
+            "source": "agent_instructions",
+            "store": "seren_managed"
+          },
+          "semantic_memory": {
+            "enabled": false,
+            "read_policy": "explicit_tool",
+            "store": "seren_managed",
+            "write_policy": "explicit_tool"
+          }
+        },
+        "mode": "always_on",
+        "model_config": {},
+        "model_id": "openai/gpt-5.6-luna",
+        "model_policy": "fast",
+        "name": "Seren Harness Clock Test",
+        "private_output_policy": "control_plane",
+        "requirements": [],
+        "resolved_tools": [
+          "system_time",
+          "[redacted]",
+          "[redacted]",
+          "[redacted]",
+          "[redacted]",
+          "[redacted]",
+          "[redacted]",
+          "[redacted]"
+        ],
+        "routing_reason": "Managed routing honored the aws_container override and selected the managed seren-agent runtime.",
+        "runtime_adapter": "seren_agent",
+        "runtime_kind": "python",
+        "secret_keys": [
+          "SEREN_INTERNAL_CLOUD_RUNTIME_DATABASE_URL"
+        ],
+        "status": "stopped",
+        "template": "research_monitor",
+        "tool_definitions": [
+          {
+            "description": "Get the current UTC date and time for this runtime. Use this instead of guessing today's date or current time.",
+            "input_schema": {
+              "additionalProperties": false,
+              "properties": {},
+              "type": "object"
+            },
+            "name": "system_time",
+            "side_effecting": false
+          },
+          {
+            "description": "Call an MCP tool exposed by a Seren publisher. Use this after inspecting the publisher and, when needed, listing the available MCP tools.",
+            "input_schema": {
+              "additionalProperties": false,
+              "properties": {
+                "body": {
+                  "description": "JSON arguments for the MCP tool invocation.",
+                  "type": "object"
+                },
+                "connection_id": {
+                  "description": "Optional OAuth connection UUID for BYOC publishers.",
+                  "format": "uuid",
+                  "type": "string"
+                },
+                "idempotency_key": {
+                  "description": "Stable key for this logical operation. Seren sends it as the publisher idempotency header and does not include it in the MCP tool arguments.",
+                  "type": "string"
+                },
+                "publisher": {
+                  "description": "Publisher slug to call through the MCP boundary.",
+                  "type": "string"
+                },
+                "tool_name": {
+                  "description": "Exact MCP tool name exposed by the publisher.",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "publisher",
+                "tool_name"
+              ],
+              "type": "object"
+            },
+            "name": "seren_mcp_call_tool",
+            "side_effecting": true
+          },
+          {
+            "description": "Schedule this employee to run again later. Use this when the user asks for a reminder, follow-up, recurring check, or delayed task this deployed employee should handle.",
+            "input_schema": {
+              "additionalProperties": false,
+              "properties": {
+                "conversation_id": {
+                  "description": "Optional opaque conversation id to continue when the scheduled run fires.",
+                  "type": "string"
+                },
+                "cron": {
+                  "description": "Standard 5-field cron expression for a recurring schedule. Mutually exclusive with run_at and delay_seconds.",
+                  "type": "string"
+                },
+                "delay_seconds": {
+                  "description": "Delay for a one-time future run. Mutually exclusive with run_at and cron.",
+                  "minimum": 1,
+                  "type": "integer"
+                },
+                "max_attempts": {
+                  "description": "Maximum dispatch attempts before marking the schedule failed.",
+                  "maximum": 50,
+                  "minimum": 1,
+                  "type": "integer"
+                },
+                "message": {
+                  "description": "Instruction or reminder message to send to the employee when the schedule fires. Required when payload is omitted.",
+                  "type": "string"
+                },
+                "payload": {
+                  "description": "Advanced JSON run payload. Use message for normal follow-ups; payload is for callers that need exact run fields.",
+                  "type": "object"
+                },
+                "run_at": {
+                  "description": "UTC or offset RFC3339 timestamp for a one-time future run. Mutually exclusive with delay_seconds and cron.",
+                  "format": "date-time",
+                  "type": "string"
+                },
+                "schedule_key": {
+                  "description": "Optional stable idempotency key for this logical schedule. Reusing it updates the active schedule.",
+                  "type": "string"
+                },
+                "timezone": {
+                  "description": "IANA timezone for cron schedules, for example UTC or America/New_York.",
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "name": "seren_schedule_run",
+            "side_effecting": true
+          },
+          {
+            "description": "Discover the best Seren publishers for a task before using generic web or data access. Returns ranked publisher suggestions with match reasons and capabilities.",
+            "input_schema": {
+              "additionalProperties": false,
+              "properties": {
+                "limit": {
+                  "type": "integer"
+                },
+                "query": {
+                  "type": "string"
+                },
+                "type": {
+                  "enum": [
+                    "publisher",
+                    "agent",
+                    "both"
+                  ],
+                  "type": "string"
+                }
+              },
+              "required": [
+                "query"
+              ],
+              "type": "object"
+            },
+            "name": "seren_publishers_suggest",
+            "side_effecting": false
+          },
+          {
+            "description": "Get metadata for a specific Seren publisher by slug, including capabilities, pricing, and endpoint definitions.",
+            "input_schema": {
+              "additionalProperties": false,
+              "properties": {
+                "slug": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "slug"
+              ],
+              "type": "object"
+            },
+            "name": "seren_publishers_get",
+            "side_effecting": false
+          },
+          {
+            "description": "List MCP tools exposed by a specific Seren publisher before attempting an MCP tool call.",
+            "input_schema": {
+              "additionalProperties": false,
+              "properties": {
+                "connection_id": {
+                  "description": "Optional OAuth connection UUID for BYOC publishers.",
+                  "format": "uuid",
+                  "type": "string"
+                },
+                "publisher": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "publisher"
+              ],
+              "type": "object"
+            },
+            "name": "seren_mcp_list_tools",
+            "side_effecting": false
+          },
+          {
+            "description": "Read an MCP resource exposed by a Seren publisher.",
+            "input_schema": {
+              "additionalProperties": false,
+              "properties": {
+                "connection_id": {
+                  "description": "Optional OAuth connection UUID for BYOC publishers.",
+                  "format": "uuid",
+                  "type": "string"
+                },
+                "publisher": {
+                  "type": "string"
+                },
+                "resource_uri": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "publisher",
+                "resource_uri"
+              ],
+              "type": "object"
+            },
+            "name": "seren_mcp_read_resource",
+            "side_effecting": false
+          },
+          {
+            "description": "Read from a Seren publisher through the platform proxy after identifying the right publisher. Use this for publisher API GET requests, catalog-declared POST reads, Seren-reviewed MCP read tools, and estimates; state-changing operations must use an approval-required action tool.",
+            "input_schema": {
+              "additionalProperties": false,
+              "properties": {
+                "body": {
+                  "description": "JSON request body. Mutually exclusive with body_base64.",
+                  "type": "object"
+                },
+                "body_base64": {
+                  "description": "Raw request body, base64-encoded. Mutually exclusive with body. When set, headers.Content-Type controls upstream encoding and defaults to application/octet-stream when omitted.",
+                  "type": "string"
+                },
+                "connection_id": {
+                  "description": "Optional OAuth connection UUID for BYOC publishers.",
+                  "format": "uuid",
+                  "type": "string"
+                },
+                "headers": {
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "type": "object"
+                },
+                "idempotency_key": {
+                  "description": "Required for mutating operations. Use a stable UUID or other unique key for the real-world action; repeated use in one run is blocked before a second external call.",
+                  "type": "string"
+                },
+                "operation": {
+                  "enum": [
+                    "get",
+                    "post",
+                    "estimate",
+                    "mcp_list_tools",
+                    "mcp_call_tool",
+                    "mcp_read_resource"
+                  ],
+                  "type": "string"
+                },
+                "operation_id": {
+                  "description": "Optional publisher operation identifier used to match typed publisher grants.",
+                  "type": "string"
+                },
+                "path": {
+                  "type": "string"
+                },
+                "publisher": {
+                  "type": "string"
+                },
+                "query": {
+                  "type": "object"
+                },
+                "resource_uri": {
+                  "type": "string"
+                },
+                "tool_name": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "publisher",
+                "operation"
+              ],
+              "type": "object"
+            },
+            "name": "seren_publisher_request",
+            "side_effecting": false
+          }
+        ],
+        "tool_presets": [
+          "live_data"
+        ],
+        "visibility": "open"
+      },
+      "deployment_id": "7a000021-0000-4000-8000-000000000022",
+      "proposed": {
+        "agent_slug": "[redacted]",
+        "allowed_publisher_operations": [
+          "get",
+          "estimate",
+          "mcp_list_tools",
+          "mcp_read_resource"
+        ],
+        "allowed_remote_agent_origins": [],
+        "approval_policy": "read_only",
+        "bundle": {
+          "instructions": [
+            {
+              "content": "---\nname: [redacted]\ndescription: One explicitly invoked read-only branch metadata request.\n---\n\n# Seren Harness Branch Read\n\nYou are an isolated non-production employee. Remain idle until explicitly invoked.\nCall [redacted] exactly once with {\"operation\":\"get\",\"operation_id\":\"[redacted]\",\"path\":\"/projects/7a000037-0000-4000-8000-000000000038/branches/7a000027-0000-4000-8000-000000000028\",\"publisher\":\"seren-db\"}. Read the returned branch record and reply with exactly its id. Do not guess. Use no other tool, query or operation.\nNever obtain credentials or connection strings, read application tables, run SQL, create or change resources, schedule work, browse, execute code, or connect to messaging.",
+              "kind": "skill",
+              "path": "SKILL.md"
+            }
+          ]
+        },
+        "capability_policy": {
+          "browser": {
+            "enabled": false,
+            "profile": "minimal"
+          },
+          "code_execution": {
+            "enabled": false,
+            "sandbox": "disabled"
+          },
+          "eval_harness": {
+            "enabled": false
+          },
+          "skills": {
+            "enabled": false,
+            "execute_scripts": false,
+            "selection": {
+              "max_selected": 1,
+              "mode": "auto"
+            }
+          },
+          "workflows": {
+            "enabled": false
+          }
+        },
+        "compute_backend": "aws_container",
+        "conditions": [
+          {
+            "last_transition_time": "2026-10-17T02:13:31.610833Z",
+            "reason": "stopped",
+            "status": "True",
+            "type": "Accepted"
+          },
+          {
+            "last_transition_time": "2026-10-17T02:13:31.610833Z",
+            "reason": "Stopped",
+            "status": "False",
+            "type": "Ready"
+          },
+          {
+            "last_transition_time": "2026-10-17T02:13:31.610833Z",
+            "reason": "Stopped",
+            "status": "True",
+            "type": "Suspended"
+          }
+        ],
+        "config": {
+          "[redacted]": {
+            "storage": {
+              "memory": {
+                "database_name": "seren_cloud",
+                "engine": "postgres",
+                "provider": "[redacted]",
+                "url_secret_key": "SEREN_INTERNAL_CLOUD_RUNTIME_DATABASE_URL"
+              },
+              "sensitive_payloads": {
+                "database_name": "seren_cloud",
+                "engine": "postgres",
+                "provider": "[redacted]",
+                "url_secret_key": null
+              },
+              "session": {
+                "database_name": "seren_cloud",
+                "engine": "postgres",
+                "provider": "[redacted]",
+                "url_secret_key": "SEREN_INTERNAL_CLOUD_RUNTIME_DATABASE_URL"
+              }
+            }
+          }
+        },
+        "context_budget_tokens": 8000,
+        "cron_schedule": null,
+        "deployment_id": "7a000021-0000-4000-8000-000000000022",
+        "effective_model_candidates": [
+          "openai/gpt-5.6-luna"
+        ],
+        "fallback_models": [],
+        "max_iterations": 2,
+        "max_timeout_seconds": 60,
+        "max_tool_calls_per_run": 1,
+        "max_tool_output_chars": 32768,
+        "memory_policy": {
+          "graph_memory": {
+            "enabled": false,
+            "read_policy": "explicit_tool",
+            "store": "seren_managed",
+            "write_policy": "explicit_tool"
+          },
+          "knowledge": {
+            "enabled": false,
+            "index_policy": "encrypted_scan",
+            "read_policy": "explicit_tool",
+            "source": "agent_instructions",
+            "store": "seren_managed"
+          },
+          "semantic_memory": {
+            "enabled": false,
+            "read_policy": "explicit_tool",
+            "store": "seren_managed",
+            "write_policy": "explicit_tool"
+          }
+        },
+        "mode": "always_on",
+        "model_config": {},
+        "model_id": "openai/gpt-5.6-luna",
+        "model_policy": "fast",
+        "name": "Seren Harness Clock Test",
+        "private_output_policy": "control_plane",
+        "requirements": [],
+        "resolved_tools": [
+          "system_time",
+          "[redacted]",
+          "[redacted]",
+          "[redacted]",
+          "[redacted]",
+          "[redacted]",
+          "[redacted]",
+          "[redacted]"
+        ],
+        "routing_reason": "Managed routing honored the aws_container override and selected the managed seren-agent runtime.",
+        "runtime_adapter": "seren_agent",
+        "runtime_kind": "python",
+        "secret_keys": [
+          "SEREN_INTERNAL_CLOUD_RUNTIME_DATABASE_URL"
+        ],
+        "status": "stopped",
+        "template": "research_monitor",
+        "tool_definitions": [
+          {
+            "description": "Get the current UTC date and time for this runtime. Use this instead of guessing today's date or current time.",
+            "input_schema": {
+              "additionalProperties": false,
+              "properties": {},
+              "type": "object"
+            },
+            "name": "system_time",
+            "side_effecting": false
+          },
+          {
+            "description": "Call an MCP tool exposed by a Seren publisher. Use this after inspecting the publisher and, when needed, listing the available MCP tools.",
+            "input_schema": {
+              "additionalProperties": false,
+              "properties": {
+                "body": {
+                  "description": "JSON arguments for the MCP tool invocation.",
+                  "type": "object"
+                },
+                "connection_id": {
+                  "description": "Optional OAuth connection UUID for BYOC publishers.",
+                  "format": "uuid",
+                  "type": "string"
+                },
+                "idempotency_key": {
+                  "description": "Stable key for this logical operation. Seren sends it as the publisher idempotency header and does not include it in the MCP tool arguments.",
+                  "type": "string"
+                },
+                "publisher": {
+                  "description": "Publisher slug to call through the MCP boundary.",
+                  "type": "string"
+                },
+                "tool_name": {
+                  "description": "Exact MCP tool name exposed by the publisher.",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "publisher",
+                "tool_name"
+              ],
+              "type": "object"
+            },
+            "name": "seren_mcp_call_tool",
+            "side_effecting": true
+          },
+          {
+            "description": "Schedule this employee to run again later. Use this when the user asks for a reminder, follow-up, recurring check, or delayed task this deployed employee should handle.",
+            "input_schema": {
+              "additionalProperties": false,
+              "properties": {
+                "conversation_id": {
+                  "description": "Optional opaque conversation id to continue when the scheduled run fires.",
+                  "type": "string"
+                },
+                "cron": {
+                  "description": "Standard 5-field cron expression for a recurring schedule. Mutually exclusive with run_at and delay_seconds.",
+                  "type": "string"
+                },
+                "delay_seconds": {
+                  "description": "Delay for a one-time future run. Mutually exclusive with run_at and cron.",
+                  "minimum": 1,
+                  "type": "integer"
+                },
+                "max_attempts": {
+                  "description": "Maximum dispatch attempts before marking the schedule failed.",
+                  "maximum": 50,
+                  "minimum": 1,
+                  "type": "integer"
+                },
+                "message": {
+                  "description": "Instruction or reminder message to send to the employee when the schedule fires. Required when payload is omitted.",
+                  "type": "string"
+                },
+                "payload": {
+                  "description": "Advanced JSON run payload. Use message for normal follow-ups; payload is for callers that need exact run fields.",
+                  "type": "object"
+                },
+                "run_at": {
+                  "description": "UTC or offset RFC3339 timestamp for a one-time future run. Mutually exclusive with delay_seconds and cron.",
+                  "format": "date-time",
+                  "type": "string"
+                },
+                "schedule_key": {
+                  "description": "Optional stable idempotency key for this logical schedule. Reusing it updates the active schedule.",
+                  "type": "string"
+                },
+                "timezone": {
+                  "description": "IANA timezone for cron schedules, for example UTC or America/New_York.",
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "name": "seren_schedule_run",
+            "side_effecting": true
+          },
+          {
+            "description": "Discover the best Seren publishers for a task before using generic web or data access. Returns ranked publisher suggestions with match reasons and capabilities.",
+            "input_schema": {
+              "additionalProperties": false,
+              "properties": {
+                "limit": {
+                  "type": "integer"
+                },
+                "query": {
+                  "type": "string"
+                },
+                "type": {
+                  "enum": [
+                    "publisher",
+                    "agent",
+                    "both"
+                  ],
+                  "type": "string"
+                }
+              },
+              "required": [
+                "query"
+              ],
+              "type": "object"
+            },
+            "name": "seren_publishers_suggest",
+            "side_effecting": false
+          },
+          {
+            "description": "Get metadata for a specific Seren publisher by slug, including capabilities, pricing, and endpoint definitions.",
+            "input_schema": {
+              "additionalProperties": false,
+              "properties": {
+                "slug": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "slug"
+              ],
+              "type": "object"
+            },
+            "name": "seren_publishers_get",
+            "side_effecting": false
+          },
+          {
+            "description": "List MCP tools exposed by a specific Seren publisher before attempting an MCP tool call.",
+            "input_schema": {
+              "additionalProperties": false,
+              "properties": {
+                "connection_id": {
+                  "description": "Optional OAuth connection UUID for BYOC publishers.",
+                  "format": "uuid",
+                  "type": "string"
+                },
+                "publisher": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "publisher"
+              ],
+              "type": "object"
+            },
+            "name": "seren_mcp_list_tools",
+            "side_effecting": false
+          },
+          {
+            "description": "Read an MCP resource exposed by a Seren publisher.",
+            "input_schema": {
+              "additionalProperties": false,
+              "properties": {
+                "connection_id": {
+                  "description": "Optional OAuth connection UUID for BYOC publishers.",
+                  "format": "uuid",
+                  "type": "string"
+                },
+                "publisher": {
+                  "type": "string"
+                },
+                "resource_uri": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "publisher",
+                "resource_uri"
+              ],
+              "type": "object"
+            },
+            "name": "seren_mcp_read_resource",
+            "side_effecting": false
+          },
+          {
+            "description": "Read from a Seren publisher through the platform proxy after identifying the right publisher. Use this for publisher API GET requests, catalog-declared POST reads, Seren-reviewed MCP read tools, and estimates; state-changing operations must use an approval-required action tool.",
+            "input_schema": {
+              "additionalProperties": false,
+              "properties": {
+                "body": {
+                  "description": "JSON request body. Mutually exclusive with body_base64.",
+                  "type": "object"
+                },
+                "body_base64": {
+                  "description": "Raw request body, base64-encoded. Mutually exclusive with body. When set, headers.Content-Type controls upstream encoding and defaults to application/octet-stream when omitted.",
+                  "type": "string"
+                },
+                "connection_id": {
+                  "description": "Optional OAuth connection UUID for BYOC publishers.",
+                  "format": "uuid",
+                  "type": "string"
+                },
+                "headers": {
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "type": "object"
+                },
+                "idempotency_key": {
+                  "description": "Required for mutating operations. Use a stable UUID or other unique key for the real-world action; repeated use in one run is blocked before a second external call.",
+                  "type": "string"
+                },
+                "operation": {
+                  "enum": [
+                    "get",
+                    "post",
+                    "estimate",
+                    "mcp_list_tools",
+                    "mcp_call_tool",
+                    "mcp_read_resource"
+                  ],
+                  "type": "string"
+                },
+                "operation_id": {
+                  "description": "Optional publisher operation identifier used to match typed publisher grants.",
+                  "type": "string"
+                },
+                "path": {
+                  "type": "string"
+                },
+                "publisher": {
+                  "type": "string"
+                },
+                "query": {
+                  "type": "object"
+                },
+                "resource_uri": {
+                  "type": "string"
+                },
+                "tool_name": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "publisher",
+                "operation"
+              ],
+              "type": "object"
+            },
+            "name": "seren_publisher_request",
+            "side_effecting": false
+          }
+        ],
+        "tool_presets": [
+          "live_data"
+        ],
+        "tool_refs": [
+          {
+            "execution_surface": "prompt",
+            "kind": "publisher",
+            "operation_id": "[redacted]",
+            "publisher_slug": "seren-db",
+            "require_approval": false
+          }
+        ],
+        "visibility": "open"
+      }
+    },
+    "url": "https://api.serendb.com/publishers/seren-agent/deployments/[redacted]/managed/preview"
+  },
+  "source": "Generalized regression fixture with synthetic resource identities; not live evidence."
+}

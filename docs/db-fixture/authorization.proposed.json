@@ -1,0 +1,21 @@
+{
+  "_status": "PROPOSAL ONLY. Not authority: it has no approved_by, approved_at or window timestamps, so every dbread and fixture command refuses it. On the owner's explicit approval, the agent writes this record privately to ~/seren-harness-reviews/campaign-authorizations/seren.db-read-campaign.json with approved_by, approved_at = not_before = the approval time, expires_at = +90 minutes and cleanup_expires_at = +240 minutes, and drops this key.",
+  "kind": "db_read_campaign_authorization",
+  "package": "seren.db-read.dedicated-project",
+  "package_sha256": "a0e123af69ac300b67ecaa07d097c95717cae6b651427cd0e68e02953952907e",
+  "manifest_sha256": "218a20182411382b8735007677b02ea6a6298919140843a8dc1e407fd7bce14e",
+  "target_sha256": "f683d93b4c03269bf38248878fe9ce37d32a0a968e8d5a48abc9f5ffb72d32bf",
+  "max_service_requests": 25,
+  "budgets": {
+    "fixture": 19,
+    "reads": 6
+  },
+  "cases": [
+    "case_open_invoices",
+    "case_first_page_by_due_date",
+    "case_missing_values"
+  ],
+  "max_sessions": 2,
+  "window_minutes": 90,
+  "cleanup_window_minutes": 240
+}

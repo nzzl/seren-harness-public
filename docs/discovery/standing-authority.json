@@ -1,0 +1,43 @@
+{
+  "granted_by": "RECIPIENT_REQUIRED",
+  "granted_at": null,
+  "record": "Inactive handover template; recipient must review and authorize.",
+  "live": false,
+  "allowed_kinds": [
+    "tier0-offline"
+  ],
+  "covers": [
+    "the pinned Seren CLI 0.10.0 (2317949) against disposable loopback fake services",
+    "static source and bundled-specification analysis",
+    "local harness improvements needed for this loop"
+  ],
+  "prohibited": [
+    "live_seren_calls",
+    "real_employee_tasks",
+    "production_credentials",
+    "real_oauth_refresh",
+    "publication",
+    "push",
+    "messages_to_others",
+    "invoice_campaigns"
+  ],
+  "model_worker": {
+    "enabled": false,
+    "note": "Model worker sessions (Claude Code, subscription login only, never an API key) need an owner-added local permission rule; until then candidate derivation is done in owner-started sessions and committed to the catalog."
+  },
+  "limits": {
+    "tick_seconds": 120,
+    "worker_wall_seconds": 1200,
+    "worker_max_cases": 2,
+    "worker_stall_seconds": 300,
+    "repeats": 3,
+    "max_attempts_per_case": 3,
+    "worker_log_bytes": 1000000,
+    "max_sessions_per_day": 48,
+    "backoff_seconds": [
+      300,
+      1800,
+      7200
+    ]
+  }
+}

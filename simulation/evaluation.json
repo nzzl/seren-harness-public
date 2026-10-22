@@ -1,0 +1,158 @@
+{
+  "version": 1,
+  "evidence_mode": "synthetic simulation",
+  "boundary": "Every case is a synthetic challenge run against the simulated Seren CLI and channel. A passing evaluation shows harness behavior only; it is not evidence about the Seren service, and the case set is too small for statistical or general-effectiveness claims.",
+  "verdict_rule": "accept: the run completed cleanly (journey passed, shutdown confirmed, no unknown mutation). inconclusive: the journey was blocked or not run, with no failed step. reject: anything else, including a passed journey whose shutdown is unconfirmed.",
+  "baseline": {
+    "name": "start/health-only",
+    "definition": "accept when the start command answered with acceptance and the first observed top-level health status is ok; otherwise reject. It checks nothing else (no readiness, reply, shutdown or recovery)."
+  },
+  "cases": [
+    {
+      "id": "valid_reply",
+      "title": "Valid reply to the current probe",
+      "assertions": [
+        "passwords.approval_applied",
+        "discord.reply_to_probe",
+        "runtime.shutdown_confirmed"
+      ],
+      "scenario": {},
+      "expected": {
+        "verdict": "accept",
+        "outcome": "passed",
+        "step": "verify_reply",
+        "step_outcome": "passed",
+        "clean_completion": true
+      },
+      "rationale": "The employee answering this probe, with confirmed shutdown, is the customer acceptance condition.",
+      "source": "docs/IMPLEMENTATION-PLAN.md operational steps 4-6; docs/SEREN-PILOT.md acceptance",
+      "existing_tests": [
+        "test_seren_journeys.ReadinessTests.test_successful_simulated_journey"
+      ],
+      "baseline_applicable": true
+    },
+    {
+      "id": "healthy_connector_failure",
+      "title": "Healthy status with connector failure",
+      "assertions": [
+        "discord.reply_to_probe"
+      ],
+      "scenario": {
+        "readiness": "binding_failure"
+      },
+      "expected": {
+        "verdict": "reject",
+        "outcome": "failed",
+        "step": "runtime_ready",
+        "step_outcome": "failed",
+        "clean_completion": false
+      },
+      "rationale": "Start accepted and health ok while connector dispatch fails must not pass.",
+      "source": "serenorg/seren issue #232 (incident pattern); docs/IMPLEMENTATION-PLAN.md stage 3 acceptance",
+      "existing_tests": [
+        "test_seren_journeys.ReadinessTests.test_accepted_start_and_healthy_flag_cannot_hide_failed_connector"
+      ],
+      "baseline_applicable": true
+    },
+    {
+      "id": "wrong_author_reply",
+      "title": "Old, unrelated or wrong-author reply",
+      "assertions": [
+        "discord.reply_to_probe"
+      ],
+      "scenario": {
+        "reply": "wrong_author"
+      },
+      "expected": {
+        "verdict": "reject",
+        "outcome": "failed",
+        "step": "verify_reply",
+        "step_outcome": "failed",
+        "clean_completion": false
+      },
+      "rationale": "A message not from the employee, or not bound to this probe, is not an answer.",
+      "source": "docs/IMPLEMENTATION-PLAN.md operational step 5: old or unrelated messages cannot pass",
+      "existing_tests": [
+        "test_seren_journeys.CorrelationTests.test_wrong_author_and_unrelated_replies_cannot_pass",
+        "test_seren_foundation.CorrelationTests.test_stale_unrelated_wrong_author_and_late_replies_cannot_pass"
+      ],
+      "baseline_applicable": true
+    },
+    {
+      "id": "missing_reader_access",
+      "title": "Missing reader access",
+      "assertions": [
+        "discord.reply_to_probe"
+      ],
+      "scenario": {},
+      "config": {
+        "discord": {
+          "observer": "discord_rest",
+          "reader_token_env": "SEREN_HARNESS_EVAL_UNSET_READER"
+        }
+      },
+      "expected": {
+        "verdict": "inconclusive",
+        "outcome": "blocked",
+        "step": "send_probe",
+        "step_outcome": "blocked",
+        "clean_completion": false
+      },
+      "rationale": "Without channel read access the reply cannot be observed; that is a blocked observation, not proof of an employee defect.",
+      "source": "docs/IMPLEMENTATION-PLAN.md stage 3 acceptance: inaccessible Discord is blocked",
+      "existing_tests": [
+        "test_seren_journeys.ObservationAccessTests.test_missing_reader_access_blocks_without_an_employee_defect"
+      ],
+      "baseline_applicable": true
+    },
+    {
+      "id": "ambiguous_start",
+      "title": "Ambiguous start outcome",
+      "assertions": [
+        "runtime.shutdown_confirmed"
+      ],
+      "scenario": {
+        "start": "timeout_applied",
+        "sleep_seconds": 6
+      },
+      "expected": {
+        "verdict": "accept",
+        "outcome": "passed",
+        "step": "start_runtime",
+        "step_outcome": "passed",
+        "clean_completion": true,
+        "managed_start_calls": 1
+      },
+      "rationale": "An unanswered start is reconciled by reading state, never retried blindly; here it applied, so the journey continues.",
+      "source": "docs/IMPLEMENTATION-PLAN.md result and recovery contract: inspect state before retrying",
+      "existing_tests": [
+        "test_seren_journeys.MutationTests.test_unanswered_start_that_applied_is_reconciled_not_retried"
+      ],
+      "baseline_applicable": true
+    },
+    {
+      "id": "unconfirmed_shutdown",
+      "title": "Unconfirmed shutdown",
+      "assertions": [
+        "runtime.shutdown_confirmed"
+      ],
+      "scenario": {
+        "stop": "reject"
+      },
+      "expected": {
+        "verdict": "reject",
+        "outcome": "passed",
+        "step": "verify_reply",
+        "step_outcome": "passed",
+        "clean_completion": false
+      },
+      "rationale": "A journey that passed but whose shutdown is unconfirmed must not be reported as a clean completion.",
+      "source": "docs/IMPLEMENTATION-PLAN.md: failed or unconfirmed shutdown is visible",
+      "existing_tests": [
+        "test_seren_journeys.CleanupTests.test_failed_cleanup_stays_visible_and_blocks_the_next_run"
+      ],
+      "baseline_applicable": false,
+      "baseline_not_applicable_reason": "The baseline does not observe shutdown."
+    }
+  ]
+}

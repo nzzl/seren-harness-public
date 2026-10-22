@@ -1,0 +1,26 @@
+{
+  "_proposal": "PROPOSED, not applied. BindConnectorSecretsRequest body for PUT /publishers/seren-cloud/deployments/7a00003a-0000-4000-8000-00000000003b/connectors/discord-gateway. Only after the owner's Passwords vault mapping has produced the deployment's Secrets identity and an opaque seren-secrets:// reference for the test bot token; the agent never sees the token. Drop this _proposal key before sending. One guild, one channel, mentions or replies only, no DMs or threads, no lifecycle commands from Discord, reply delivered by the runtime (no tool call needed).",
+  "secret_refs": {
+    "DISCORD_BOT_TOKEN": null
+  },
+  "channel_policy": {
+    "platform": "discord",
+    "activation": "mention_or_reply",
+    "allowed_guild_ids": [
+      null
+    ],
+    "allowed_channel_ids": [
+      null
+    ],
+    "outbound_channel_ids": [
+      null
+    ],
+    "thread_policy": "deny",
+    "allowed_thread_ids": [],
+    "dm_policy": "deny",
+    "allowed_dm_sender_ids": [],
+    "owner_id": null,
+    "operator_actor_ids": [],
+    "reply_delivery": "runtime_owned"
+  }
+}

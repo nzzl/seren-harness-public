@@ -1,0 +1,62 @@
+{
+  "_status": "INACTIVE SYNTHETIC TEMPLATE. No authorization or prior execution is transferred. Configure recipient resources and obtain explicit authority before live use.",
+  "kind": "preview_diagnostic_package",
+  "id": "seren.lifecycle.preview-diagnostic.1",
+  "version": 1,
+  "purpose": "Inspect a hypothetical preview/read-back discrepancy using a recipient-approved isolated fixture. This template is inactive.",
+  "target": {
+    "deployment_id": "7a00003a-0000-4000-8000-00000000003b",
+    "name": "Seren Harness Test",
+    "config": "~/seren-harness-live/config.json (private; existing Seren CLI OAuth session by reference)"
+  },
+  "baseline": {
+    "recorded_by_run": "synthetic-run-example",
+    "active_revision_id": "7a00002b-0000-4000-8000-00000000002c",
+    "agent_identity_id": "7a000004-0000-4000-8000-000000000005",
+    "last_observed": "Inactive synthetic handover example. Recipient must establish a fresh baseline and authorization."
+  },
+  "correction": {
+    "current_file": "docs/lifecycle-setup/SKILL.current.md",
+    "current_sha256": "39394b777cb1eb5d76602bfaae679151e92cb2b6877bf9e7e45247aa18c61865",
+    "corrected_file": "docs/lifecycle-setup/SKILL.corrected.md",
+    "corrected_sha256": "1e74a60ba4a601f99d132d087e475415e1fc177de78157e960e16ff37725384e",
+    "corrected_trimmed_sha256": "13fde8036f3cbff168a4c769fe7d19ea294171c7296be6cf4cf8077ee37eae2a",
+    "use": "previewed only, using the frozen example input, as one --prompt=<contents> argument; never sent as an update"
+  },
+  "command": "python -m seren_harness preview-diagnostic --config ~/seren-harness-live/config.json --package docs/lifecycle-setup/preview-diagnostic.proposed.json",
+  "sequence": [
+    "agent managed-get 7a00003a-\u2026 -o json",
+    "agent cloud deployment status 7a00003a-\u2026 -o json",
+    "agent managed-preview 7a00003a-\u2026 --prompt=<exact contents of SKILL.corrected.md> -o json",
+    "agent managed-get 7a00003a-\u2026 -o json",
+    "agent cloud deployment status 7a00003a-\u2026 -o json"
+  ],
+  "limits": {
+    "service_invocations": 5,
+    "managed_preview": 1,
+    "mutations": 0,
+    "timeout_seconds": 60,
+    "retries": 0,
+    "http_upper": 5,
+    "oauth_refresh_upper": 5,
+    "wall_seconds_upper": 310,
+    "window_minutes": 15,
+    "invocations": 1,
+    "basis": "Each step runs at most once through the SerenCli wrapper with the pinned 60 s timeout (the CLI process is killed and reaped on expiry). By the pinned v0.10.0 source, managed-preview is one direct POST, not a managed mutation, so the CLI's same-request-id re-send does not apply; each read is one GET. Wall bound assumes 60 s plus about 2 s local overhead per invocation. One command invocation is authorized; a re-invocation would only resume (never repeat a step)."
+  },
+  "side_effects": "The preview's server-side effects are uncertain and not assumed absent. The post-preview reads record what is observed; a change is reported, not attributed or repaired.",
+  "excluded": "No managed-update, provisioning, Passwords setup or apply, start, stop, Discord request, probe, model session or instruction-update. The command has no route to any of them.",
+  "evidence": {
+    "journal": "<config state_dir>/preview-diagnostic/seren.lifecycle.preview-diagnostic.1/journal.json (separate from both instruction-update journals)",
+    "kept": "binding digests (config, package, instruction files, CLI executable and version); per step: purpose, command name, times, status class and exit code; structural observations of config, secret_keys, guarded and policy fields, bundle, changed_fields and pre/post state",
+    "never_kept": "raw responses, values, unlisted key names, labels, condition messages, stderr, secret values, or any hash of response content"
+  },
+  "stop_conditions": [
+    "local pins, CLI checksum or version differ: refused before any call",
+    "a recorded journal whose inputs differ: refused before any call, journal untouched",
+    "prerequisite reads do not show the recorded deployment, identity, revision 7a00002b, original instruction and stopped/stopped: stop before the preview",
+    "after the preview is attempted (answered, failed, timed out or malformed): only the two post-preview reads, then stop",
+    "an interruption before the preview: no preview on re-invocation; after the preview: only the post-preview reads not yet started"
+  ],
+  "acceptance": "Either result=complete with structural observations of config and secret_keys in the pre-preview read, preview current, preview proposed and post-preview read, plus the post-preview state; or an explicit stopped/incomplete result that lists each unavailable observation."
+}

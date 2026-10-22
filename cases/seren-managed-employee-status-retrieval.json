@@ -1,0 +1,138 @@
+{
+  "id": "seren.managed-employee.status-retrieval",
+  "version": 1,
+  "interface": "seren_cli",
+  "command": "seren agent cloud deployment status 7a00003a-0000-4000-8000-00000000003b -o json",
+  "claim": "An owner can retrieve the managed employee's observed deployment state and desired lifecycle state as separate values.",
+  "scope": {
+    "statement": "Status retrieval for the isolated Seren Harness Test deployment 7a00003a-0000-4000-8000-00000000003b. A pass verifies the requested identity and the documented state fields in the response, not readiness, health, convergence, a successful employee workflow or independently measured runtime state.",
+    "entry": "seren agent cloud deployment status <deployment-id> -o json",
+    "accepted_provenance": [
+      "independently_observed"
+    ],
+    "out_of_scope": [
+      "Starting, stopping or modifying the deployment",
+      "Credential approval, Discord readiness, message delivery and answer quality",
+      "Judging a running, stopped or failed status as the desired business outcome"
+    ]
+  },
+  "basis": [
+    {
+      "kind": "documented_interface",
+      "reference": "serenorg/seren v0.10.0 (37654244e3aa3d955eee762a88bbf697f186c6eb), cli/src/commands/agent.rs cloud_status and cli/src/main.rs CloudDeploymentAction::Status: single seren_cloud_get_deployment GET, JSON output; sdk/openapi/openapi-seren-cloud.json GET /deployments/{id}, DataResponse_CloudDeploymentView."
+    },
+    {
+      "kind": "documented_contract",
+      "reference": "Handover example. Synthetic identifiers and generalized regression expectations; no live result or authority is transferred."
+    },
+    {
+      "kind": "target_record",
+      "reference": "Handover example. Synthetic identifiers and generalized regression expectations; no live result or authority is transferred."
+    }
+  ],
+  "expectation_date": "2026-10-11T00:00:00Z",
+  "expectation_notes": [
+    "An observed/desired mismatch is reported verbatim, not treated as malformed: the documented fields have different meanings.",
+    "A stopped or failed deployment can pass this retrieval-only test. Health=ok cannot replace either state field or establish readiness.",
+    "No live state read was made while defining this case."
+  ],
+  "api": {
+    "data_path": [
+      "data"
+    ],
+    "equals": {
+      "id": "7a00003a-0000-4000-8000-00000000003b"
+    },
+    "failure_patterns": [
+      "\\b404\\b",
+      "deployment not found"
+    ],
+    "field_values": {
+      "status": [
+        "pending",
+        "building",
+        "running",
+        "stopped",
+        "failed"
+      ],
+      "desired_lifecycle_state": [
+        "running",
+        "stopping",
+        "stopped"
+      ]
+    }
+  },
+  "criteria": [
+    {
+      "id": "status_returned",
+      "category": "service_outcome",
+      "check": "api_answered",
+      "required": true,
+      "claim": "The service returns a deployment response object",
+      "evidence": "Exit 0 and a data object; target-not-found fails provisionally; access or unclassified errors stay unverified.",
+      "finding": "status_unavailable"
+    },
+    {
+      "id": "target_deployment",
+      "category": "service_outcome",
+      "check": "api_equals",
+      "required": true,
+      "claim": "The response identifies the requested isolated deployment",
+      "evidence": "data.id equals the requested deployment UUID.",
+      "finding": "status_unavailable"
+    },
+    {
+      "id": "state_fields",
+      "category": "service_outcome",
+      "check": "api_fields_in",
+      "required": true,
+      "claim": "Observed status and desired lifecycle are separately present with documented values",
+      "evidence": "Synthetic handover scenario. No historical observation, private report or customer outcome is included. Establish new recipient evidence before relying on this case.",
+      "finding": "state_contract"
+    }
+  ],
+  "findings": {
+    "status_unavailable": {
+      "classification": "uncertain",
+      "title": "Managed employee status could not be retrieved for the requested deployment",
+      "expected": "A deployment response identifying 7a00003a-0000-4000-8000-00000000003b.",
+      "impact": "The owner cannot inspect the intended employee state.",
+      "unknowns": [
+        "Whether the target was deliberately removed or access changed"
+      ],
+      "retest": "When authorized, run python -m seren_harness collect seren.managed-employee.status-retrieval --target targets/seren.json."
+    },
+    "state_contract": {
+      "classification": "defect",
+      "title": "Managed employee status response lacks usable documented state fields",
+      "expected": "Separate observed status and desired_lifecycle_state values from the v0.10.0 contract.",
+      "impact": "The owner cannot distinguish the reported runtime state from operator intent.",
+      "unknowns": [
+        "Whether the service contract changed after the pinned CLI specification"
+      ],
+      "retest": "When authorized, run python -m seren_harness collect seren.managed-employee.status-retrieval --target targets/seren.json."
+    }
+  },
+  "unverified_always": [
+    {
+      "id": "runtime_truth",
+      "claim": "The reported state independently matches the underlying runtime",
+      "follow_up": "This case observes a service report only; independent runtime verification requires separately scoped evidence."
+    },
+    {
+      "id": "readiness",
+      "claim": "The employee is healthy, ready and can reply",
+      "follow_up": "Use the separately authorized lifecycle journey; no readiness inference is made from status or an extra health field."
+    },
+    {
+      "id": "intent_convergence",
+      "claim": "The observed runtime state has converged to operator intent",
+      "follow_up": "A single read reports the two values, not transition progress or correctness."
+    },
+    {
+      "id": "server_build",
+      "claim": "The exact server build that answered",
+      "follow_up": "This CLI response contract does not establish a server build."
+    }
+  ]
+}

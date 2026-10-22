@@ -1,0 +1,9 @@
+[
+  {
+    "op": "add",
+    "path": "/deployment/workload/execution/bundle/instructions/0/allowed_tools",
+    "value": [
+      "system_time"
+    ]
+  }
+]

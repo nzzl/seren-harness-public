@@ -1,0 +1,177 @@
+{
+  "kind": "catalog",
+  "id": "seren.read-only-catalog",
+  "version": 2,
+  "purpose": "Finite candidate set for automatic selection: existing, offline-verified, single-request read-only Seren cases runnable by the campaign runner through collect. Membership is not live authority.",
+  "target": "targets/seren.json",
+  "request_timeout_seconds": 30,
+  "entries": [
+    {
+      "case": "seren.managed-tools.catalog-retrieval",
+      "version": 2,
+      "digest": "9685ca91a61288bf",
+      "args": [
+        "agent",
+        "managed-deployment-tools",
+        "7a00002f-0000-4000-8000-000000000030"
+      ],
+      "expectation_sources": [
+        "pinned v0.10.0 managed-deployment-tools contract (case basis)"
+      ],
+      "prerequisites": [],
+      "max_requests": 1
+    },
+    {
+      "case": "seren.managed-employee.status-retrieval",
+      "version": 1,
+      "digest": "0d1f16fc418bbd02",
+      "args": [
+        "agent",
+        "cloud",
+        "deployment",
+        "status",
+        "7a00003a-0000-4000-8000-00000000003b"
+      ],
+      "expectation_sources": [
+        "pinned v0.10.0 GET /deployments/{id} contract (case basis)"
+      ],
+      "prerequisites": [],
+      "max_requests": 1
+    },
+    {
+      "case": "seren.database.constant-query",
+      "version": 1,
+      "digest": "bf167fd639bc5eac",
+      "args": [
+        "psql",
+        "--project-id",
+        "7a000037-0000-4000-8000-000000000038",
+        "--branch-id",
+        "7a000027-0000-4000-8000-000000000028",
+        "--database",
+        "serendb",
+        "--ssl",
+        "require",
+        "--",
+        "-X",
+        "-w",
+        "-A",
+        "-t",
+        "--set=ON_ERROR_STOP=1",
+        "-c",
+        "SELECT pg_catalog.json_build_object('database', pg_catalog.current_database(), 'answer', 6 * 7, 'read_only', pg_catalog.current_setting('transaction_read_only'));"
+      ],
+      "expectation_sources": [
+        "fixed SQL result defined in the case before execution (docs/COLLECTION.md)"
+      ],
+      "prerequisites": [
+        {
+          "id": "pinned-psql",
+          "status": "met",
+          "source": "targets/seren.json psql_sha256, checked locally before any request"
+        }
+      ],
+      "max_requests": 1
+    },
+    {
+      "case": "seren.managed-tools.declared-grants",
+      "version": 2,
+      "digest": "90b0ddbaac9d9251",
+      "args": [
+        "agent",
+        "managed-deployment-tools",
+        "7a000009-0000-4000-8000-00000000000a"
+      ],
+      "expectation_sources": [
+        "dated grant baseline for 7a000009-... (case basis)"
+      ],
+      "prerequisites": [
+        {
+          "id": "established-grant-target",
+          "status": "unresolved",
+          "source": "case target_status unresolved; .tiny-harness/TASK.md grant verification unresolved"
+        }
+      ],
+      "max_requests": 1
+    },
+    {
+      "case": "seren.cloud-run.record-retrieval",
+      "version": 1,
+      "digest": "c2ef64200904b42f",
+      "args": [
+        "agent",
+        "cloud",
+        "run",
+        "get",
+        "--deployment-id",
+        "7a000021-0000-4000-8000-000000000022",
+        "7a00002c-0000-4000-8000-00000000002d"
+      ],
+      "expectation_sources": [
+        "pinned v0.10.0 seren_cloud_deployment_run contract",
+        "dated receipt 2026-10-13T04:13:54Z (case basis)"
+      ],
+      "prerequisites": [],
+      "max_requests": 1
+    },
+    {
+      "case": "seren.cloud-run.other-deployment",
+      "version": 1,
+      "digest": "8f62714a481ec877",
+      "args": [
+        "agent",
+        "cloud",
+        "run",
+        "get",
+        "--deployment-id",
+        "7a00003a-0000-4000-8000-00000000003b",
+        "7a00002c-0000-4000-8000-00000000002d"
+      ],
+      "expectation_sources": [
+        "pinned v0.10.0 seren_cloud_deployment_run 404 contract"
+      ],
+      "prerequisites": [],
+      "max_requests": 1
+    },
+    {
+      "case": "seren.cloud-run.generated-id",
+      "version": 1,
+      "digest": "cbb945836ca8dd1e",
+      "args": [
+        "agent",
+        "cloud",
+        "run",
+        "get",
+        "--deployment-id",
+        "7a000021-0000-4000-8000-000000000022",
+        "7a000003-0000-4000-8000-000000000004"
+      ],
+      "expectation_sources": [
+        "pinned v0.10.0 seren_cloud_deployment_run 404 contract"
+      ],
+      "prerequisites": [],
+      "max_requests": 1
+    },
+    {
+      "case": "seren.managed-employee.status-unknown-deployment",
+      "version": 1,
+      "digest": "3842f4098bf866f9",
+      "args": [
+        "agent",
+        "cloud",
+        "deployment",
+        "status",
+        "7a000033-0000-4000-8000-000000000034"
+      ],
+      "expectation_sources": [
+        "pinned v0.10.0 GET /deployments/{id} 404 contract (case basis)"
+      ],
+      "prerequisites": [],
+      "max_requests": 1,
+      "history": {
+        "never_run_live_as_of": "2026-10-13",
+        "source": "Handover example. Synthetic identifiers and generalized regression expectations; no live result or authority is transferred."
+      }
+    }
+  ]
+}

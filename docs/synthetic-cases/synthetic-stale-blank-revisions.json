@@ -1,0 +1,147 @@
+{
+  "id": "synthetic-stale-blank-revisions",
+  "proposal": {
+    "customer_job": "A finance reviewer asks the Clock Test employee to reconcile an invoice export where early snapshots were captured before payment, due date or currency were filled in, and later revisions are complete, to decide which balances are owed and overdue.",
+    "consequence": "Hypothetical: if blanks on superseded revisions are treated as missing, the employee flags complete invoices as missing_paid, missing_due_date or missing_currency and drops them from the known subtotals, so 2,900.00 of overdue balance is hidden from the collections plan and the reviewer spends time on false review items. Exposure unknown.",
+    "hypothesis": "Hypothetical regression: the employee may misapply the fixed reconciliation rules for stale blank revisions.",
+    "evidence": "Synthetic test rationale only; no prior private execution or finding is included.",
+    "new_information": "Synthetic test rationale only; no prior private execution or finding is included.",
+    "alternative": "Select a different synthetic rule family if it would provide more useful evidence.",
+    "decision_if_pass": "Record a pass for this synthetic input only; do not infer a service-wide rate.",
+    "decision_if_fail": "Preserve exact mismatched fields and investigate reproducibility and attribution before classifying a finding.",
+    "basis": "new_hypothesis",
+    "repeat_reason": ""
+  },
+  "rows": [
+    {
+      "invoice_id": "SYN-B1",
+      "revision": "1",
+      "due_date": "2026-09-30",
+      "amount": "1500.00",
+      "paid": "",
+      "currency": "USD",
+      "status": "issued"
+    },
+    {
+      "invoice_id": "SYN-B2",
+      "revision": "3",
+      "due_date": "2026-11-15",
+      "amount": "820.50",
+      "paid": "20.50",
+      "currency": "USD",
+      "status": "issued"
+    },
+    {
+      "invoice_id": "SYN-B4",
+      "revision": "1",
+      "due_date": "2026-09-30",
+      "amount": "1500.00",
+      "paid": "100.00",
+      "currency": "USD",
+      "status": "issued"
+    },
+    {
+      "invoice_id": "SYN-B3",
+      "revision": "2",
+      "due_date": "2026-10-01",
+      "amount": "2400.00",
+      "paid": "600.00",
+      "currency": "USD",
+      "status": "issued"
+    },
+    {
+      "invoice_id": "SYN-B2",
+      "revision": "1",
+      "due_date": "",
+      "amount": "820.50",
+      "paid": "0.00",
+      "currency": "USD",
+      "status": "issued"
+    },
+    {
+      "invoice_id": "SYN-B5",
+      "revision": "",
+      "due_date": "2026-10-20",
+      "amount": "300.00",
+      "paid": "0.00",
+      "currency": "USD",
+      "status": "issued"
+    },
+    {
+      "invoice_id": "SYN-B1",
+      "revision": "2",
+      "due_date": "2026-09-30",
+      "amount": "1500.00",
+      "paid": "400.00",
+      "currency": "USD",
+      "status": "issued"
+    },
+    {
+      "invoice_id": "SYN-B3",
+      "revision": "1",
+      "due_date": "2026-10-01",
+      "amount": "2400.00",
+      "paid": "",
+      "currency": "",
+      "status": "issued"
+    },
+    {
+      "invoice_id": "SYN-B2",
+      "revision": "2",
+      "due_date": "2026-11-15",
+      "amount": "820.50",
+      "paid": "0.00",
+      "currency": "",
+      "status": "issued"
+    },
+    {
+      "invoice_id": "SYN-B4",
+      "revision": "2",
+      "due_date": "2026-09-30",
+      "amount": "1500.00",
+      "paid": "",
+      "currency": "USD",
+      "status": "issued"
+    }
+  ],
+  "expected": {
+    "as_of": "2026-10-14",
+    "status": "needs_review",
+    "resolved_invoices": [
+      {
+        "invoice_id": "SYN-B1",
+        "outstanding_usd": "1100.00",
+        "overdue": true,
+        "days_overdue": 14
+      },
+      {
+        "invoice_id": "SYN-B2",
+        "outstanding_usd": "800.00",
+        "overdue": false,
+        "days_overdue": 0
+      },
+      {
+        "invoice_id": "SYN-B3",
+        "outstanding_usd": "1800.00",
+        "overdue": true,
+        "days_overdue": 13
+      },
+      {
+        "invoice_id": "SYN-B5",
+        "outstanding_usd": "300.00",
+        "overdue": false,
+        "days_overdue": 0
+      }
+    ],
+    "issues": [
+      {
+        "invoice_id": "SYN-B4",
+        "reason": "missing_paid"
+      }
+    ],
+    "known_outstanding_usd": "4000.00",
+    "known_overdue_usd": "2900.00",
+    "complete_outstanding_usd": null,
+    "complete_overdue_usd": null
+  }
+}

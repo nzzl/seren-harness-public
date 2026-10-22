@@ -1,0 +1,94 @@
+{
+  "version": 1,
+  "seren": {
+    "executable": "/absolute/path/to/seren",
+    "executable_sha256": null,
+    "config_home": "/absolute/path/to/seren/login/config",
+    "profile": "default"
+  },
+  "deployment_id": "00000000-0000-4000-8000-000000000000",
+  "output_dir": "/absolute/path/to/private/reports",
+  "timeout_seconds": 30,
+  "campaign": {
+    "id": "research-smoke-example",
+    "authorization": {
+      "live_seren": false,
+      "create_employee": false,
+      "model_calls": false,
+      "resource_writes": false,
+      "shared_assignments": false,
+      "live_sources": false,
+      "approved_by": null,
+      "expires_at": null
+    },
+    "employee": {
+      "mode": "shared_running",
+      "expected": {
+        "name": "Name shown by managed-get at inspection",
+        "active_revision_id": "00000000-0000-4000-8000-000000000001",
+        "instructions_path": "Path of the instruction document in managed-get bundle.instructions",
+        "instructions_sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "isolation": {
+        "context_isolation": null,
+        "concurrent_work": null
+      },
+      "use": "owner_designated_test",
+      "designation": null,
+      "routing": {
+        "no_outbound_messaging": null
+      }
+    },
+    "scope": {
+      "families": {},
+      "required_tools": []
+    },
+    "limits": {
+      "max_tasks": 2,
+      "max_assignments": 2,
+      "max_seren_requests": 96,
+      "max_source_requests": 6,
+      "max_model_calls": 0,
+      "max_cost_usd": 0,
+      "max_wall_seconds": 900,
+      "max_reproductions": 0,
+      "task_seconds": 300,
+      "poll_seconds": 15
+    },
+    "planner": {
+      "runtime": "heuristic",
+      "executable": null,
+      "executable_sha256": null,
+      "model": "claude-sonnet-5-5",
+      "max_usd_per_call": 0.2,
+      "timeout_seconds": 120
+    },
+    "corrections": [],
+    "github": {
+      "mode": "draft",
+      "repository": null,
+      "gh_executable": null
+    },
+    "journeys": {
+      "templates": [
+        "research_brief_revision"
+      ],
+      "database": null
+    },
+    "research": {
+      "allowed_origins": [
+        "https://esp.ethereum.foundation",
+        "https://ethereum.foundation",
+        "https://grants.web3.foundation",
+        "https://web3.foundation"
+      ],
+      "retrieval_tools": [
+        "browser_navigate",
+        "seren_publisher_request"
+      ],
+      "max_sources": 4,
+      "max_source_bytes": 300000,
+      "source_timeout_seconds": 10
+    }
+  }
+}

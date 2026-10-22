@@ -1,0 +1,21 @@
+{
+  "id": "seren.run-record-retrieval",
+  "version": 1,
+  "purpose": "Retrieve one recorded employee run under its deployment, the same run under the other owned isolated deployment, and a generated negative-test run ID: three read-only requests with expectations fixed before execution.",
+  "target": "targets/seren.json",
+  "cases": [
+    "seren.cloud-run.record-retrieval",
+    "seren.cloud-run.other-deployment",
+    "seren.cloud-run.generated-id"
+  ],
+  "attempts_per_case": 1,
+  "retries": 0,
+  "max_service_requests": 3,
+  "request_timeout_seconds": 30,
+  "rules": [
+    "Cases are independent read-only requests; a case-specific result (including a timeout, 403, not-found, fixture or service error) does not stop later cases.",
+    "Stop the campaign on a failed local pre-request check (checksum, CLI version, command allowlist or target match) or rejected authentication (401).",
+    "Stop when the authorization window ends or the request budget is exhausted.",
+    "An interrupted or timed-out request is recorded as uncertain and never replayed."
+  ]
+}

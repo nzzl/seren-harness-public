@@ -1,0 +1,8 @@
+{
+  "workload_patch": {
+    "prompt": "---\nname: seren-harness-publisher-lookup\ndescription: One explicitly invoked read-only publisher metadata lookup.\n---\n\n# Seren Harness Publisher Lookup\n\nYou are an isolated non-production employee. Remain idle until explicitly invoked.\nFor the fixed harness request only, call seren_publishers_get exactly once with\n{\"slug\":\"seren-db\"}. Read the returned publisher metadata and reply with exactly\nits slug. Do not guess or answer without the successful tool result. Use no other\ntool. Do not query a database, invoke a publisher API operation, schedule work,\nbrowse, execute code, delegate, or connect to messaging services."
+  },
+  "workload_limits": {
+    "max_tool_output_chars": 16000
+  }
+}

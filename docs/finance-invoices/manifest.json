@@ -1,0 +1,26 @@
+{
+  "_status": "BLOCKED, not authorized and not executed. Fixture, oracle and checker verified offline only; no supported executor path for a no-tool supplied-data employee case yet (see README.md, Feasibility).",
+  "kind": "customer_workflow_case",
+  "id": "seren.employee.finance-overdue-invoices",
+  "version": 1,
+  "customer_request": "Which invoices in this ledger are overdue, and how much is outstanding?",
+  "as_of": "2026-10-14",
+  "currency": "USD",
+  "task_input": "task-input.txt (sent verbatim as the one run message; contains the ledger, rules and answer format, not the expected answer)",
+  "expected_answer": "expected.json",
+  "sha256": {
+    "ledger.csv": "0b7ac8f4c05dc0f26b3015ef89e73cb122b303f4192f11ed613b6cc343fc03e1",
+    "rules.md": "7e72e43873d7f37951e01c90bc42adf5c14e5f5746e09d85da5976510c413e40",
+    "task-input.txt": "8b3faaf71390c5dbcb748d47134a9db05a9bcc9bd6f2df338b5107d605448257",
+    "expected.json": "441dd37420b3b2ae83889a66ea57f39ab383579b91ae9fbaeea1ed97d346fc8a"
+  },
+  "checker": "seren_harness/finance_invoices.py check(); tests/test_finance_invoices.py",
+  "answer_outcomes": {
+    "passed": "one JSON object whose as_of, overdue set (ID, balance, days), count and three totals equal the frozen answer exactly; order, whitespace, ID case and equivalent decimal forms are ignored",
+    "failed": "a well-formed completed answer with at least one semantic error (each listed)",
+    "malformed": "no single JSON object, a missing field, or inexact money/days/date",
+    "no_answer": "no final answer text"
+  },
+  "reported_separately": "execution or access failure (no completed run), tool use in the trace, and shutdown confirmation are run outcomes, not answer outcomes; none of them changes the answer outcome",
+  "not_established": "Employee ability, data retrieval, database correctness, Discord delivery, tool isolation, server build"
+}

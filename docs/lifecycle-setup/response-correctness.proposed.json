@@ -1,0 +1,273 @@
+{
+  "_status": "INACTIVE SYNTHETIC TEMPLATE. No authorization or prior execution is transferred. Configure recipient resources and obtain explicit authority before live use.",
+  "kind": "response_correctness_package",
+  "id": "seren.lifecycle.response-correctness.attempt-2",
+  "version": 4,
+  "target": {
+    "deployment_id": "7a00003a-0000-4000-8000-00000000003b",
+    "name": "Seren Harness Test",
+    "channel_id": "100000000000000001",
+    "employee_user_id": "100000000000000002",
+    "human_sender_user_id": "100000000000000003",
+    "config": "~/seren-harness-live/config.json (private; existing reader-token mechanism by reference)"
+  },
+  "baseline": {
+    "recorded_by_run": "synthetic-run-example",
+    "recorded_at": "synthetic",
+    "active_revision_id": "7a00002b-0000-4000-8000-00000000002c",
+    "agent_identity_id": "7a000004-0000-4000-8000-000000000005",
+    "policy_digest": "RECIPIENT_REQUIRED",
+    "secret_resolution_result_id": "RECIPIENT_REQUIRED",
+    "last_observed": "Inactive synthetic handover example. Recipient must establish a fresh baseline and authorization."
+  },
+  "correction": {
+    "current_file": "docs/lifecycle-setup/SKILL.current.md",
+    "current_sha256": "39394b777cb1eb5d76602bfaae679151e92cb2b6877bf9e7e45247aa18c61865",
+    "current_source": "Inactive synthetic handover example. Recipient must establish a fresh baseline and authorization.",
+    "removed_sentence": "Until the isolated channel and employee credential have been explicitly configured and approved, do no work.",
+    "corrected_file": "docs/lifecycle-setup/SKILL.corrected.md",
+    "corrected_sha256": "1e74a60ba4a601f99d132d087e475415e1fc177de78157e960e16ff37725384e",
+    "corrected_trimmed_sha256": "13fde8036f3cbff168a4c769fe7d19ea294171c7296be6cf4cf8077ee37eae2a",
+    "basis": "The sentence makes the reply depend on approval state the employee has no way to observe (no tool or message reports it). Approval stays enforced where it is observable: the platform's Passwords binding (secret_resolution_result_id, AwaitingApproval) and the harness's verify_fixture. Nothing claims approval occurred. Scope, the ACK-plus-marker task, the channel restriction, the prohibitions and the anti-injection sentence are unchanged.",
+    "status": "test-fixture correction only; not a Seren fix and not proven to change the answer"
+  },
+  "update_route": {
+    "source": "Handover example. Synthetic identifiers and generalized regression expectations; no live result or authority is transferred.",
+    "preview": [
+      "agent",
+      "managed-preview",
+      "7a00003a-0000-4000-8000-00000000003b",
+      "--prompt",
+      "<exact contents of SKILL.corrected.md>",
+      "-o",
+      "json"
+    ],
+    "update": [
+      "agent",
+      "managed-update",
+      "7a00003a-0000-4000-8000-00000000003b",
+      "--prompt",
+      "<exact contents of SKILL.corrected.md>",
+      "-o",
+      "json"
+    ],
+    "preview_gate": "changed_fields names only the main instruction; proposed.bundle.instructions[0].content trimmed equals SKILL.corrected.md trimmed; proposed keeps deployment_id, agent_identity_id, policy fields, tool refs, channel binding, model and limits; proposed is not AwaitingApproval. Any other difference: stop before update.",
+    "readback_gate": "managed-get: same deployment and agent identity, status stopped, instruction trimmed sha256 13fde803\u2026, a new active_revision_id. The approval binding is recorded as observed (unchanged, cleared or pending); it is not assumed.",
+    "baseline_effect": "The harness baseline includes active_revision_id, so verify_fixture blocks every operational run after the update ('re-provision before testing'). The contract does not establish that a prompt-only revision keeps the applied credential approval (secret requirements record an active_revision_id; rollback requests carry a secret_resolution_result_id). The only supported baseline transition is a fresh provisioning run: a new Passwords setup, owner approval in Seren's UI, apply and read-back, which records the new baseline. No baseline is edited by hand.",
+    "rollback": "None in this package. If update or re-provisioning cannot complete, the employee stays stopped at whatever revision the read-back shows and the stop is reported.",
+    "procedure": [
+      "1. limits --config (local) exits 0.",
+      "2. instruction-update (as above) exits 0. Any other exit: stop; nothing is retried."
+    ],
+    "command": "python -m seren_harness instruction-update --config ~/seren-harness-live/config.json --package docs/lifecycle-setup/response-correctness.proposed.json",
+    "timeout_seconds": 60,
+    "execution": "Every update-phase invocation (2 prerequisite reads, preview, pre-update read, the update, up to 2 read-backs; at most 7) goes through the existing SerenCli wrapper with the pinned 60 s command timeout; on expiry subprocess.run kills and reaps the CLI process (it starts no child process for these commands). The command first checks the pins, the CLI checksum and version locally. The update is journaled before it is sent and is never sent again, by this or any later invocation; a timed-out or ambiguous update is an unknown outcome settled only by the read-backs. Exit 0 only when the corrected instruction is read back on a new revision of the stopped fixture; any other exit stops before provisioning. Journal: <config state_dir>/instruction-update/seren.lifecycle.response-correctness.attempt-2/journal.json (distinct from the stopped version-3 journal). Every invocation, including a resumed one, repeats the local checks before any service call. The journal is bound at its creation to non-secret digests of the inputs (config digest, command timeout, package file, current and corrected instruction files, deployment, CLI executable and version); a resumed or completed journal is used only under identical inputs. A missing, incompatible or unreadable binding or any changed input is refused before any call and the journal is left unchanged. An update interrupted after its journaled intent is treated as an unknown outcome: only the remaining read-backs within the cumulative 7-invocation allowance.",
+    "prompt_encoding": "one argument, --prompt=<exact contents of SKILL.corrected.md>. The pinned CLI declares prompt as #[arg(long)] without allow_hyphen_values (cli/src/main.rs ManagedPreview/ManagedUpdate), so a separate value beginning with '-' is parsed as an unknown argument; the = form is taken verbatim and then trimmed by the CLI."
+  },
+  "test": {
+    "command": "python -m seren_harness run --config ~/seren-harness-live/config.json",
+    "config_addition": {
+      "seren": {
+        "command_timeout_seconds": 60,
+        "poll_interval_seconds": 5,
+        "readiness_timeout_seconds": 180,
+        "shutdown_timeout_seconds": 120,
+        "max_apply_attempts": 1
+      },
+      "discord": {
+        "expected_reply": {
+          "template": "ACK {marker}",
+          "source": "Fixture SKILL.md (corrected; trimmed sha256 13fde8036f3cbff168a4c769fe7d19ea294171c7296be6cf4cf8077ee37eae2a; task sentence unchanged from revision 7a00002b, sha256 39394b77\u2026): 'When the message includes one marker beginning SH-, reply once with ACK followed by that marker unchanged, using a direct reply to the message when supported.'"
+        },
+        "reply_timeout_seconds": 120
+      }
+    },
+    "probe": "<@100000000000000002> Reply to this message with ACK followed by this marker, unchanged: SH-<12 hex, generated by the harness at run time>",
+    "comparison": "discord.content_matches: whitespace trim/collapse only, case-sensitive equality with 'ACK <marker>'",
+    "criteria_separate": [
+      "verify_fixture (readiness of the approved fixture identity)",
+      "runtime_ready",
+      "send_probe / verify_reply (delivery bound to the human probe)",
+      "verify_reply_content (complete content)",
+      "cleanup (confirmed shutdown)"
+    ]
+  },
+  "owner_actions": {
+    "passwords_approval": "When the provisioning run prints the one-time Passwords link: open it, unlock Passwords yourself and approve the requested Discord bot credential for Seren Harness Test. Then the agent resumes the run.",
+    "probe": "When the operational run prints the probe line: post that exact line, unedited, as yourself in the isolated test channel, as a new message (not a reply or edit), once."
+  },
+  "limits": {
+    "derived_by": "seren_harness/execution_limits.py ceilings() from the pinned settings; checked against real step code in tests/test_execution_limits.py",
+    "loop_reads": {
+      "readiness": 37,
+      "probe": 25,
+      "reply": 25,
+      "shutdown_confirmation": 25
+    },
+    "phases": {
+      "update": {
+        "by_command": {
+          "managed-get": 4,
+          "cloud deployment status": 1,
+          "managed-preview": 1,
+          "managed-update": 1
+        },
+        "service_invocations": 7,
+        "mutations": {
+          "managed-update": 1
+        },
+        "http_upper": 39,
+        "wall_seconds_upper": 434
+      },
+      "provisioning": {
+        "by_command": {
+          "managed-get": 9,
+          "managed-passwords-setup": 1,
+          "managed-passwords-status": 13,
+          "managed-passwords-apply": 1
+        },
+        "service_invocations": 24,
+        "mutations": {
+          "managed-passwords-setup": 1,
+          "managed-passwords-apply": 1
+        },
+        "http_upper": 62,
+        "wall_seconds_upper": 1488
+      },
+      "operational": {
+        "by_command": {
+          "managed-get": 40,
+          "cloud deployment status": 2,
+          "managed-deployment-activity": 38,
+          "managed-start": 1,
+          "managed-deployment-health": 37
+        },
+        "service_invocations": 118,
+        "mutations": {
+          "managed-start": 1
+        },
+        "http_upper": 118,
+        "wall_seconds_upper": 1099
+      },
+      "cleanup": {
+        "by_command": {
+          "managed-get": 27,
+          "cloud deployment status": 2,
+          "managed-stop": 1
+        },
+        "service_invocations": 30,
+        "mutations": {
+          "managed-stop": 1
+        },
+        "http_upper": 30,
+        "wall_seconds_upper": 497
+      },
+      "stop_recovery": {
+        "by_command": {
+          "managed-get": 30,
+          "cloud deployment status": 3,
+          "managed-stop": 1,
+          "managed-deployment-activity": 2,
+          "managed-deployment-health": 1
+        },
+        "service_invocations": 37,
+        "mutations": {
+          "managed-stop": 1
+        },
+        "http_upper": 37,
+        "wall_seconds_upper": 931
+      }
+    },
+    "totals": {
+      "service_invocations": {
+        "ordinary": 149,
+        "cleanup_reserve": 67
+      },
+      "http_upper": {
+        "ordinary": 219,
+        "cleanup_reserve": 67
+      },
+      "discord_reads": 50,
+      "oauth_refresh_upper": 216
+    },
+    "provisioning_resumes": 4,
+    "enforcement": {
+      "code": "operational and cleanup loops (deadline then floor(L/I)+1 reads), per-command 60 s timeout, one start, one stop per stop_and_confirm, one apply (max_apply_attempts 1), no probe or mutation retries, cleanup after any stop; the update phase's invocations, timeout, single update and read-back allowance (instruction-update)",
+      "procedure": "at most 4 provisioning resumes, at most one stop-recovery control run, the owner approval wait and the overall window gates"
+    },
+    "probes": 1,
+    "operational_runs": 1,
+    "provisioning_runs": 1,
+    "stop_recovery_runs": 1,
+    "time_model": {
+      "assumptions": {
+        "command_timeout_seconds": 60,
+        "local_overhead_seconds_per_invocation": 2,
+        "recovery_start_delay_seconds_max": 600,
+        "owner_approval_wait_seconds_max": 1200
+      },
+      "ordinary_execution_seconds": 1099,
+      "initial_shutdown_seconds": 497,
+      "stop_recovery_seconds": 931,
+      "runtime_until_confirmed_stop_seconds": {
+        "confirmed_by_initial_cleanup": 1348,
+        "confirmed_by_stop_recovery": 2879,
+        "unconfirmed": null
+      },
+      "operational_start_gate_seconds": 3127,
+      "window_minutes": 105,
+      "window_budget_seconds": {
+        "update": 434,
+        "provisioning": 2688
+      }
+    },
+    "window": {
+      "overall_minutes": 105,
+      "budget_seconds": {
+        "update": 434,
+        "provisioning": 2688,
+        "operational_gate": 3127
+      },
+      "operational_gate": "Start the operational run only if at least operational_start_gate_seconds (3127 s, 53 min) remain: ordinary execution 1099 s + initial shutdown 497 s + recovery delay 600 s + stop recovery 931 s.",
+      "recovery": "If the run's cleanup leaves shutdown unconfirmed, start the one stop-recovery control run within 600 s of the run ending. A later recovery is still permitted for safety until 60 minutes after the window ends, for this stop only, but then no runtime bound holds.",
+      "unconfirmed_shutdown": "If recovery does not confirm the stop, the employee may still be running: runtime and cost are unknown and continue, the cleanup obligation stays open, and the report says so with the deployment ID. No runtime or cost cap is claimed.",
+      "qualifications": "Bounds assume each invocation ends within the 60 s timeout plus about 2 s local overhead, and the operator starts recovery within 600 s; operator delays and the approval wait are procedure limits, not code-enforced."
+    }
+  },
+  "settings_pins": {
+    "values": {
+      "command_timeout_seconds": 60,
+      "poll_interval_seconds": 5,
+      "readiness_timeout_seconds": 180,
+      "shutdown_timeout_seconds": 120,
+      "reply_timeout_seconds": 120,
+      "max_apply_attempts": 1
+    },
+    "where": "seren.* and discord.reply_timeout_seconds in the private config, plus discord.expected_reply (test.config_addition), sender human and observer discord_rest",
+    "check": "python -m seren_harness limits --config ~/seren-harness-live/config.json must exit 0 (pins match) before the first service call; the config digest then binds every resume of the runs to the same settings"
+  },
+  "counting_units": {
+    "service_invocations": "Seren CLI invocations the harness or the procedure issues to the service (the local --version check excluded). The harness's own unit, recorded in each run's command history. Code- or procedure-enforced as stated per phase.",
+    "http_requests_upper": "Seren API requests those invocations can make, from the pinned CLI v0.10.0 source: one per read; managed-passwords-setup 2; managed-update up to 3 + floor(60/2) pending polls = 33 (send, status lookup, one same-request-id re-send by the CLI, polling until the harness's 60 s command timeout); managed-passwords-apply up to 38. Not observable by the harness; the CLI-internal same-id re-send cannot be disabled and is not a harness retry.",
+    "oauth_refresh_upper": "At most one token request per CLI invocation, only near expiry (auth.rs). Unobservable; ceiling equal to the service invocations; not counted from file changes.",
+    "discord_reads": "Reader REST GETs, one per observation, 20 s timeout each."
+  },
+  "retry_policy": {
+    "managed-update": "one invocation, through instruction-update; the CLI may internally re-send once with the same request id after an ambiguous error (not disableable). A timed-out or ambiguous update is an unknown outcome settled only by up to 2 read-backs; it is never sent again (journaled).",
+    "managed-passwords-setup": "one; an unknown outcome blocks the run (existing behaviour), no second setup",
+    "managed-passwords-apply": "one attempt (config seren.max_apply_attempts = 1). An unknown outcome is settled only by reads: the step's own setup-status read and one per resume. A later resume never re-issues apply; if still unknown, stop and report",
+    "managed-start": "one; an unknown outcome is reconciled from lifecycle reads, never re-sent",
+    "managed-stop": "one in the run's cleanup (unknown outcome reconciled by lifecycle reads); if shutdown is unconfirmed, at most one recovery: one `python -m seren_harness control --config ~/seren-harness-live/config.json` run, whose pre-check re-issues one stop and confirms, then reads only (stop_recovery ceilings). If still unconfirmed, the obligation stays open and is reported",
+    "probe": "one owner-posted message; never repeated",
+    "reads": "no read is retried beyond its loop; a failed read ends its step"
+  },
+  "supersedes": {
+    "package_id": "Synthetic predecessor; no historical outcome included.",
+    "version": 3,
+    "package_sha256": "Synthetic predecessor; no historical outcome included.",
+    "attempted_at": "Synthetic predecessor; no historical outcome included.",
+    "outcome": "Synthetic predecessor; no historical outcome included.",
+    "journal": "Synthetic predecessor; no historical outcome included.",
+    "authorization": "Synthetic predecessor; no historical outcome included."
+  }
+}

@@ -1,0 +1,115 @@
+{
+  "id": "seren.employee-tool.publisher-lookup",
+  "version": 1,
+  "interface": "seren_cli",
+  "target_status": "unresolved",
+  "command": "Call seren_publishers_get exactly once with {\"slug\":\"seren-db\"}. Read the returned publisher record and reply with exactly its slug, without commentary. Use no other tool; do not guess or answer without the tool result.",
+  "claim": "An isolated employee retrieves the known Seren DB publisher record using one read-only tool call and answers from that record.",
+  "scope": {
+    "statement": "One employee-mediated read-only Seren DB publisher metadata lookup: known slug, typed identity metadata, correlated successful tool trace, exact slug answer and confirmed shutdown. No publisher API execution, SQL or grant verification.",
+    "entry": "agent cloud run start/get; no approval resume, database or Discord",
+    "accepted_provenance": [
+      "independently_observed"
+    ],
+    "out_of_scope": [
+      "Database access",
+      "Example Research Employee changes",
+      "Discord activity",
+      "Precision clock synchronization",
+      "General employee quality",
+      "Tool isolation or proof that other tools cannot execute",
+      "Publisher pricing or availability guarantees",
+      "Publisher API/data-source execution"
+    ]
+  },
+  "basis": [
+    {
+      "kind": "official_documentation",
+      "reference": "Handover example. Synthetic identifiers and generalized regression expectations; no live result or authority is transferred."
+    },
+    {
+      "kind": "saved_catalog",
+      "reference": "Handover example. Synthetic identifiers and generalized regression expectations; no live result or authority is transferred."
+    },
+    {
+      "kind": "pinned_contract",
+      "reference": "Seren v0.10.0 sdk/openapi/openapi.json GET /publishers/{slug}, DataResponse_PublisherResponse/PublisherResponse: id UUID, name string, slug string. Runtime may return object or data envelope; unsupported/truncated encoding remains unverified."
+    }
+  ],
+  "expectation_date": "2026-10-13T00:00:00Z",
+  "employee_tool": {
+    "deployment_id": "7a000021-0000-4000-8000-000000000022",
+    "tool": "seren_publishers_get",
+    "arguments": {
+      "slug": "seren-db"
+    },
+    "result_type": "publisher_metadata",
+    "result": {
+      "slug": "seren-db"
+    },
+    "answer": "seren-db",
+    "message": "Call seren_publishers_get exactly once with {\"slug\":\"seren-db\"}. Read the returned publisher record and reply with exactly its slug, without commentary. Use no other tool; do not guess or answer without the tool result."
+  },
+  "criteria": [
+    {
+      "id": "run_identity",
+      "category": "service_outcome",
+      "check": "employee_run_identity",
+      "required": true,
+      "claim": "Completed run belongs to the requested employee and invocation",
+      "evidence": "Deployment, returned run ID, execution ID and invocation payload match the captured request.",
+      "finding": "employee_tool_result"
+    },
+    {
+      "id": "tool_execution",
+      "category": "service_outcome",
+      "check": "employee_tool_execution",
+      "required": true,
+      "claim": "One read-only publisher lookup returns the known Seren DB record",
+      "evidence": "Exactly one seren_publishers_get call with slug seren-db; correlated successful result has UUID id, nonempty name and exact known slug, then done/ok.",
+      "finding": "employee_tool_result"
+    },
+    {
+      "id": "answer",
+      "category": "service_outcome",
+      "check": "employee_tool_answer",
+      "required": true,
+      "claim": "Employee answer follows and repeats the returned publisher slug",
+      "evidence": "Text following the tool result exactly equals seren-db; guessed text without the correlated result cannot pass.",
+      "finding": "employee_tool_result"
+    },
+    {
+      "id": "shutdown",
+      "category": "service_outcome",
+      "check": "employee_tool_shutdown",
+      "required": true,
+      "claim": "Target is confirmed stopped after completion",
+      "evidence": "Authoritative target status and desired state stopped; supplied observation timestamp after completion.",
+      "finding": "employee_tool_result"
+    }
+  ],
+  "findings": {
+    "employee_tool_result": {
+      "classification": "uncertain",
+      "title": "Employee publisher lookup lacks the required retrieval evidence",
+      "expected": "One fixed read-only lookup, known publisher slug with typed identity metadata, exact corresponding answer and confirmed shutdown.",
+      "impact": "A correct-looking answer cannot be trusted as evidence of actual tool execution.",
+      "unknowns": [
+        "Current publisher metadata and runtime result encoding not yet observed for this tool."
+      ],
+      "retest": "After authorization, one bounded employee-lookup session on the retained isolated fixture with verified lookup instructions and existing one-call/runtime/shutdown limits. No SQL, other publisher operation, or automatic retry."
+    }
+  },
+  "unverified_always": [
+    {
+      "id": "tool_isolation",
+      "claim": "Other tools unavailable or impossible to execute",
+      "follow_up": "Not established and not claimed: the default built-in and live_data tools remain available. The cap limits calls; trace verification detects an unexpected call after execution. A successful clock trace does not prove access isolation."
+    },
+    {
+      "id": "server_build",
+      "claim": "Exact answering server build",
+      "follow_up": "Use provider version evidence if available; never infer it."
+    }
+  ]
+}

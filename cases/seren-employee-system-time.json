@@ -1,0 +1,117 @@
+{
+  "id": "seren.employee-tool.system-time",
+  "version": 3,
+  "interface": "seren_cli",
+  "target_status": "unresolved",
+  "command": "isolated employee: call system_time once with {} and repeat its UTC timestamp",
+  "claim": "A dedicated unbound employee executes system_time once and answers from its correlated result; other tools remain available.",
+  "scope": {
+    "statement": "One employee-mediated system_time call under a runtime one-call cap, verified by a complete correlated trace, independent clock window, matching answer and confirmed shutdown. Other tools remain available; this is not a tool-isolation test.",
+    "entry": "agent cloud run start/get; no approval resume, database or Discord",
+    "accepted_provenance": [
+      "independently_observed"
+    ],
+    "out_of_scope": [
+      "Database access",
+      "Example Research Employee changes",
+      "Discord activity",
+      "Precision clock synchronization",
+      "General employee quality",
+      "Tool isolation or proof that other tools cannot execute"
+    ]
+  },
+  "basis": [
+    {
+      "kind": "observed_catalog",
+      "reference": "Handover example. Synthetic identifiers and generalized regression expectations; no live result or authority is transferred."
+    },
+    {
+      "kind": "documented_interface",
+      "reference": "Pinned Seren v0.10.0 CloudDeploymentRunEvent/CloudRunOutputEvent: correlated run and tool_call/tool_result/text/done events."
+    },
+    {
+      "kind": "independent_oracle",
+      "reference": "Handover example. Synthetic identifiers and generalized regression expectations; no live result or authority is transferred."
+    },
+    {
+      "kind": "maintainer_contract",
+      "reference": "Handover example. Synthetic identifiers and generalized regression expectations; no live result or authority is transferred."
+    },
+    {
+      "kind": "observed_result_encoding",
+      "reference": "Handover example. Synthetic identifiers and generalized regression expectations; no live result or authority is transferred."
+    }
+  ],
+  "expectation_date": "2026-10-11T00:00:00Z",
+  "employee_tool": {
+    "deployment_id": "7a00003a-0000-4000-8000-00000000003b",
+    "tool": "system_time",
+    "arguments": {},
+    "result_type": "utc_time",
+    "clock_tolerance_seconds": 5,
+    "max_observation_seconds": 120,
+    "message": "Call system_time exactly once with empty arguments {}. Use no other tool. After the result, reply with exactly the UTC timestamp returned by that tool, without commentary. Do not guess the time or answer without executing the tool."
+  },
+  "criteria": [
+    {
+      "id": "run_identity",
+      "category": "service_outcome",
+      "check": "employee_run_identity",
+      "required": true,
+      "claim": "Completed run belongs to the requested employee and invocation",
+      "evidence": "Deployment, returned run ID, execution ID and invocation payload match the captured request.",
+      "finding": "employee_tool_result"
+    },
+    {
+      "id": "tool_execution",
+      "category": "service_outcome",
+      "check": "employee_tool_execution",
+      "required": true,
+      "claim": "Exactly one system_time call returns UTC time within the bounded clock window",
+      "evidence": "Empty arguments, matching call/result IDs, successful terminal event; RFC3339 UTC result within harness start/end plus or minus 5 seconds. Missing/unsupported clock evidence stays unverified.",
+      "finding": "employee_tool_result"
+    },
+    {
+      "id": "answer",
+      "category": "service_outcome",
+      "check": "employee_tool_answer",
+      "required": true,
+      "claim": "Employee answer follows and agrees with tool result",
+      "evidence": "Employee text after the result exactly repeats its timestamp; a guessed timestamp without the tool trace cannot pass.",
+      "finding": "employee_tool_result"
+    },
+    {
+      "id": "shutdown",
+      "category": "service_outcome",
+      "check": "employee_tool_shutdown",
+      "required": true,
+      "claim": "Target is confirmed stopped after completion",
+      "evidence": "Authoritative target status and desired state stopped; supplied observation timestamp after completion.",
+      "finding": "employee_tool_result"
+    }
+  ],
+  "findings": {
+    "employee_tool_result": {
+      "classification": "uncertain",
+      "title": "Employee clock-tool workflow lacks the required execution evidence",
+      "expected": "One system_time call, plausible UTC result, exact corresponding answer and confirmed shutdown.",
+      "impact": "A correct-looking answer cannot be trusted as evidence of actual tool execution.",
+      "unknowns": [
+        "Other result encodings or deployment environments are not established by this one observed run."
+      ],
+      "retest": "Only after fresh authorization acknowledging the other available tools: use the dedicated unbound fixture with verified one-call limit and reviewed catalog. Require the complete correlated trace, exact clock answer and confirmed shutdown. No retry, approval or database fallback."
+    }
+  },
+  "unverified_always": [
+    {
+      "id": "tool_isolation",
+      "claim": "Other tools unavailable or impossible to execute",
+      "follow_up": "Not established and not claimed: the default built-in and live_data tools remain available. The cap limits calls; trace verification detects an unexpected call after execution. A successful clock trace does not prove access isolation."
+    },
+    {
+      "id": "server_build",
+      "claim": "Exact answering server build",
+      "follow_up": "Use provider version evidence if available; never infer it."
+    }
+  ]
+}

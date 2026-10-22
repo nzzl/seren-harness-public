@@ -1,0 +1,177 @@
+{
+  "id": "synthetic-aging-boundaries",
+  "proposal": {
+    "customer_job": "A finance reviewer asks the Clock Test employee for an accounts-receivable aging answer: per-invoice outstanding balance, overdue flag and days overdue, plus known subtotals, to decide which customers to chase and at which dunning stage (30/60/90+ days).",
+    "consequence": "Hypothetical: a wrong day count across month or year boundaries moves an invoice into the wrong aging bucket (premature escalation or a missed 90-day collection step); a cent error in non-round subtraction or summation misstates what is chased; flagging a paid-in-full past-due invoice as overdue chases a customer who owes nothing. Exposure unknown.",
+    "hypothesis": "Hypothetical regression: the employee may misapply the fixed reconciliation rules for aging boundaries.",
+    "evidence": "Synthetic test rationale only; no prior private execution or finding is included.",
+    "new_information": "Synthetic test rationale only; no prior private execution or finding is included.",
+    "alternative": "Select a different synthetic rule family if it would provide more useful evidence.",
+    "decision_if_pass": "Record a pass for this synthetic input only; do not infer a service-wide rate.",
+    "decision_if_fail": "Preserve exact mismatched fields and investigate reproducibility and attribution before classifying a finding.",
+    "basis": "new_hypothesis",
+    "repeat_reason": ""
+  },
+  "rows": [
+    {
+      "invoice_id": "SYN-A4",
+      "revision": "",
+      "due_date": "2026-07-15",
+      "amount": "15000.00",
+      "paid": "4567.89",
+      "currency": "USD",
+      "status": "issued"
+    },
+    {
+      "invoice_id": "SYN-A1",
+      "revision": "",
+      "due_date": "2026-10-07",
+      "amount": "1250.00",
+      "paid": "250.00",
+      "currency": "USD",
+      "status": "issued"
+    },
+    {
+      "invoice_id": "SYN-A6",
+      "revision": "",
+      "due_date": "2024-02-29",
+      "amount": "999.99",
+      "paid": "0.01",
+      "currency": "USD",
+      "status": "issued"
+    },
+    {
+      "invoice_id": "SYN-A9",
+      "revision": "",
+      "due_date": "2026-06-30",
+      "amount": "500.00",
+      "paid": "",
+      "currency": "USD",
+      "status": "issued"
+    },
+    {
+      "invoice_id": "SYN-A2",
+      "revision": "",
+      "due_date": "2026-09-14",
+      "amount": "8432.19",
+      "paid": "1999.99",
+      "currency": "USD",
+      "status": "issued"
+    },
+    {
+      "invoice_id": "SYN-A7",
+      "revision": "",
+      "due_date": "2026-11-30",
+      "amount": "300.00",
+      "paid": "0.00",
+      "currency": "USD",
+      "status": "issued"
+    },
+    {
+      "invoice_id": "SYN-B1",
+      "revision": "",
+      "due_date": "2025-12-15",
+      "amount": "4200.00",
+      "paid": "1200.50",
+      "currency": "USD",
+      "status": "issued"
+    },
+    {
+      "invoice_id": "SYN-A3",
+      "revision": "",
+      "due_date": "2026-08-31",
+      "amount": "2780.55",
+      "paid": "0.00",
+      "currency": "USD",
+      "status": "issued"
+    },
+    {
+      "invoice_id": "SYN-A5",
+      "revision": "",
+      "due_date": "2025-12-31",
+      "amount": "640.40",
+      "paid": "640.40",
+      "currency": "USD",
+      "status": "issued"
+    },
+    {
+      "invoice_id": "SYN-A8",
+      "revision": "",
+      "due_date": "2026-10-14",
+      "amount": "75.25",
+      "paid": "0.00",
+      "currency": "USD",
+      "status": "issued"
+    }
+  ],
+  "expected": {
+    "as_of": "2026-10-14",
+    "status": "needs_review",
+    "resolved_invoices": [
+      {
+        "invoice_id": "SYN-A1",
+        "outstanding_usd": "1000.00",
+        "overdue": true,
+        "days_overdue": 7
+      },
+      {
+        "invoice_id": "SYN-A2",
+        "outstanding_usd": "6432.20",
+        "overdue": true,
+        "days_overdue": 30
+      },
+      {
+        "invoice_id": "SYN-A3",
+        "outstanding_usd": "2780.55",
+        "overdue": true,
+        "days_overdue": 44
+      },
+      {
+        "invoice_id": "SYN-A4",
+        "outstanding_usd": "10432.11",
+        "overdue": true,
+        "days_overdue": 91
+      },
+      {
+        "invoice_id": "SYN-A5",
+        "outstanding_usd": "0.00",
+        "overdue": false,
+        "days_overdue": 0
+      },
+      {
+        "invoice_id": "SYN-A6",
+        "outstanding_usd": "999.98",
+        "overdue": true,
+        "days_overdue": 958
+      },
+      {
+        "invoice_id": "SYN-A7",
+        "outstanding_usd": "300.00",
+        "overdue": false,
+        "days_overdue": 0
+      },
+      {
+        "invoice_id": "SYN-A8",
+        "outstanding_usd": "75.25",
+        "overdue": false,
+        "days_overdue": 0
+      },
+      {
+        "invoice_id": "SYN-B1",
+        "outstanding_usd": "2999.50",
+        "overdue": true,
+        "days_overdue": 303
+      }
+    ],
+    "issues": [
+      {
+        "invoice_id": "SYN-A9",
+        "reason": "missing_paid"
+      }
+    ],
+    "known_outstanding_usd": "25019.59",
+    "known_overdue_usd": "24644.34",
+    "complete_outstanding_usd": null,
+    "complete_overdue_usd": null
+  }
+}

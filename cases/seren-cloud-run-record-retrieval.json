@@ -1,0 +1,200 @@
+{
+  "id": "seren.cloud-run.record-retrieval",
+  "version": 1,
+  "interface": "seren_cli",
+  "campaign": "seren.run-record-retrieval",
+  "command": "seren agent cloud run get --deployment-id 7a000021-0000-4000-8000-000000000022 7a00002c-0000-4000-8000-00000000002d -o json",
+  "execution_args": [
+    "agent",
+    "cloud",
+    "run",
+    "get",
+    "--deployment-id",
+    "7a000021-0000-4000-8000-000000000022",
+    "7a00002c-0000-4000-8000-00000000002d"
+  ],
+  "claim": "An owner can retrieve the stored record of an earlier employee run under the deployment that ran it.",
+  "scope": {
+    "statement": "Retrieval of completed run 7a00002c-0000-4000-8000-00000000002d under isolated deployment 7a000021-0000-4000-8000-000000000022. A pass verifies the documented record shape, the requested identity and consistency with one dated earlier observation. It does not establish indefinite retention, immutability of historical fields or the meaning of the recorded values.",
+    "entry": "seren agent cloud run get --deployment-id <deployment-id> <run-id> -o json",
+    "accepted_provenance": [
+      "independently_observed"
+    ],
+    "out_of_scope": [
+      "Starting, stopping, invoking or modifying the deployment or run",
+      "Run events, audit entries, artifacts or tool results",
+      "Whether the run's outcome was correct"
+    ]
+  },
+  "basis": [
+    {
+      "kind": "documented_interface",
+      "reference": "serenorg/seren v0.10.0 (2317949ecf6f8a2c319583e3a280bf7a705ce981): cli/src/commands/agent.rs cloud_run_get calls seren_cloud_deployment_run once; sdk/openapi/openapi-seren-cloud.json GET /deployments/{id}/runs/{run_id} documents 200 DataResponse_CloudDeploymentRunEvent and 404 Not found."
+    },
+    {
+      "kind": "documented_contract",
+      "reference": "Same pinned OpenAPI: CloudDeploymentRunEvent required fields and JSON types as listed in api.required_fields. invocation_payload and metadata are required but untyped, so only their presence is checked."
+    },
+    {
+      "kind": "dated_observation",
+      "reference": "Handover example. Synthetic identifiers and generalized regression expectations; no live result or authority is transferred."
+    }
+  ],
+  "expectation_date": "2026-10-13T00:00:00Z",
+  "expectation_notes": [
+    "Required fields and identity come from the pinned contract; a violation is a supported failure.",
+    "Baseline values come from one earlier observation. The contract does not make them immutable, so a difference is an uncertain finding, not a defect. updated_at is excluded; timestamps are compared as instants.",
+    "A 404 for this run is documented as possible; it is an uncertain finding about retention, not a defect.",
+    "Answer-class table (decided before execution): record pass; not_found fail (uncertain finding); missing_object unverified here, failed by the contract criterion; deployment_missing unverified (fixture problem); auth_rejected and forbidden unverified (access problem); service_error unverified (undocumented service failure, not retried); unclassified unverified."
+  ],
+  "api": {
+    "data_path": [
+      "data"
+    ],
+    "answer_outcomes": {
+      "record": "pass",
+      "missing_object": "unverified",
+      "deployment_missing": "unverified",
+      "auth_rejected": "unverified",
+      "forbidden": "unverified",
+      "service_error": "unverified",
+      "not_found": "fail",
+      "unclassified": "unverified"
+    },
+    "required_fields": {
+      "id": "string",
+      "deployment_id": "string",
+      "organization_id": "string",
+      "user_id": "string",
+      "execution_id": "string",
+      "compute_backend": "string",
+      "source": "string",
+      "status": "string",
+      "execution_time_ms": "integer",
+      "billed_duration_ms": "integer",
+      "requested_cpu_millicores": "integer",
+      "requested_memory_mib": "integer",
+      "compute_cost_atomic": "integer",
+      "compute_cost_usd": "string",
+      "inference_input_tokens": "integer",
+      "inference_output_tokens": "integer",
+      "inference_cost_atomic": "integer",
+      "inference_cost_usd": "string",
+      "started_at": "string",
+      "invocation_payload": "present",
+      "metadata": "present",
+      "created_at": "string",
+      "updated_at": "string"
+    },
+    "equals": {
+      "id": "7a00002c-0000-4000-8000-00000000002d",
+      "deployment_id": "7a000021-0000-4000-8000-000000000022"
+    },
+    "baseline": {
+      "source": "Handover example. Synthetic identifiers and generalized regression expectations; no live result or authority is transferred.",
+      "date": "2026-10-13T04:13:54.550397Z",
+      "fields": {
+        "execution_id": "7a000025-0000-4000-8000-000000000026",
+        "source": "api",
+        "status": "completed",
+        "stop_reason": "completed",
+        "compute_backend": "aws_container",
+        "created_at": "2026-10-13T04:13:46.780128Z",
+        "started_at": "2026-10-13T04:13:46.88209Z",
+        "completed_at": "2026-10-13T04:13:52.742876Z"
+      },
+      "instants": [
+        "created_at",
+        "started_at",
+        "completed_at"
+      ]
+    }
+  },
+  "criteria": [
+    {
+      "id": "run_returned",
+      "category": "service_outcome",
+      "check": "api_answer_class",
+      "required": true,
+      "claim": "The service returns the requested run record",
+      "evidence": "Classified answer per the declared table: a record passes; a documented not-found fails as an uncertain retention finding; access, fixture, service and unclassified errors stay unverified.",
+      "finding": "run_not_retrievable"
+    },
+    {
+      "id": "record_contract",
+      "category": "service_outcome",
+      "check": "api_required_fields",
+      "required": true,
+      "claim": "The record carries every documented required field with its documented type",
+      "evidence": "A successful answer has the data object and each required field is present, non-null and typed as documented.",
+      "finding": "run_record_contract"
+    },
+    {
+      "id": "run_identity",
+      "category": "service_outcome",
+      "check": "api_equals",
+      "required": true,
+      "claim": "The record is the requested run under the requested deployment",
+      "evidence": "data.id and data.deployment_id equal the requested identifiers.",
+      "finding": "run_record_contract"
+    },
+    {
+      "id": "baseline_consistency",
+      "category": "service_outcome",
+      "check": "api_baseline",
+      "required": true,
+      "claim": "Recorded outcome fields agree with the dated earlier observation",
+      "evidence": "Synthetic handover scenario. No historical observation, private report or customer outcome is included. Establish new recipient evidence before relying on this case.",
+      "finding": "run_record_changed"
+    }
+  ],
+  "findings": {
+    "run_not_retrievable": {
+      "classification": "uncertain",
+      "title": "A recorded employee run was not retrievable under its deployment",
+      "expected": "The run record for 7a00002c-0000-4000-8000-00000000002d under 7a000021-0000-4000-8000-000000000022.",
+      "impact": "An owner cannot audit an earlier employee run.",
+      "unknowns": [
+        "Retention of run records is not documented; a 404 may be intended."
+      ],
+      "retest": "When authorized, run the seren.run-record-retrieval campaign or collect seren.cloud-run.record-retrieval --target targets/seren.json --no-retry."
+    },
+    "run_record_contract": {
+      "classification": "defect",
+      "title": "Run record lacks documented fields or describes a different run",
+      "expected": "A CloudDeploymentRunEvent with every required field and the requested id and deployment_id.",
+      "impact": "Clients cannot rely on the documented run record.",
+      "unknowns": [
+        "Whether the service contract changed after the pinned CLI specification."
+      ],
+      "retest": "When authorized, collect seren.cloud-run.record-retrieval --target targets/seren.json --no-retry."
+    },
+    "run_record_changed": {
+      "classification": "uncertain",
+      "title": "Recorded run fields differ from an earlier observation",
+      "expected": "Outcome fields equal to the 2026-10-13T04:13:54Z observation.",
+      "impact": "Audit records of past runs may change after completion.",
+      "unknowns": [
+        "The contract does not state that historical run fields are immutable."
+      ],
+      "retest": "When authorized, collect seren.cloud-run.record-retrieval --target targets/seren.json --no-retry."
+    }
+  },
+  "unverified_always": [
+    {
+      "id": "retention",
+      "claim": "Run records are retained indefinitely",
+      "follow_up": "One retrieval shows availability at one time only."
+    },
+    {
+      "id": "immutability",
+      "claim": "Historical run fields never change",
+      "follow_up": "Not documented; one comparison with one dated observation."
+    },
+    {
+      "id": "server_build",
+      "claim": "The exact server build that answered",
+      "follow_up": "This CLI response contract does not establish a server build."
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "checks": [
+    {
+      "name": "Node locked dependencies and behavior",
+      "argv": [
+        "sh",
+        "-c",
+        "npm ci --no-audit --no-fund && npm test"
+      ],
+      "timeout_seconds": 120
+    }
+  ]
+}

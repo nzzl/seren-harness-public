@@ -1,0 +1,28 @@
+{
+  "as_of": "2026-10-14",
+  "status": "needs_review",
+  "resolved_invoices": [
+    {
+      "invoice_id": "REV-1",
+      "outstanding_usd": "300.00",
+      "overdue": true,
+      "days_overdue": 13
+    },
+    {
+      "invoice_id": "REV-3",
+      "outstanding_usd": "300.00",
+      "overdue": false,
+      "days_overdue": 0
+    }
+  ],
+  "issues": [
+    {
+      "invoice_id": "REV-2",
+      "reason": "conflicting_latest_revision"
+    }
+  ],
+  "known_outstanding_usd": "600.00",
+  "known_overdue_usd": "300.00",
+  "complete_outstanding_usd": null,
+  "complete_overdue_usd": null
+}

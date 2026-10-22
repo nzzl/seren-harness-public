@@ -1,0 +1,86 @@
+{
+  "_status": "INACTIVE SYNTHETIC TEMPLATE. No authorization or prior execution is transferred. Configure recipient resources and obtain explicit authority before live use.",
+  "kind": "prerequisite_read_package",
+  "id": "seren.lifecycle.prerequisite-read.2",
+  "version": 1,
+  "supersedes": {
+    "package_id": "Synthetic predecessor; no historical outcome included.",
+    "outcome": "Synthetic predecessor; no historical outcome included.",
+    "authorization": "Synthetic predecessor; no historical outcome included."
+  },
+  "classifier": "seren_harness/cli_errors.py: a token-refresh HTTP failure is unknown (token_refresh_http_error, stage token_refresh, no HTTP status); communication failures are network_failure, payload failures malformed_response; conflicting signatures are unknown.",
+  "purpose": "Establish whether the dedicated fixture can be read when the CLI is given its recorded session location explicitly. Selecting the location does not repair or verify authentication.",
+  "target": {
+    "deployment_id": "7a00003a-0000-4000-8000-00000000003b",
+    "name": "Seren Harness Test",
+    "config": "~/seren-harness-live/config.json (private; existing Seren CLI OAuth session by reference)"
+  },
+  "baseline": {
+    "recorded_by_run": "synthetic-run-example",
+    "active_revision_id": "7a00002b-0000-4000-8000-00000000002c",
+    "agent_identity_id": "7a000004-0000-4000-8000-000000000005",
+    "last_observed": "Inactive synthetic handover example. Recipient must establish a fresh baseline and authorization."
+  },
+  "correction": {
+    "current_file": "docs/lifecycle-setup/SKILL.current.md",
+    "current_sha256": "39394b777cb1eb5d76602bfaae679151e92cb2b6877bf9e7e45247aa18c61865",
+    "corrected_file": "docs/lifecycle-setup/SKILL.corrected.md",
+    "corrected_sha256": "1e74a60ba4a601f99d132d087e475415e1fc177de78157e960e16ff37725384e",
+    "corrected_trimmed_sha256": "13fde8036f3cbff168a4c769fe7d19ea294171c7296be6cf4cf8077ee37eae2a",
+    "use": "only to check whether the read shows the recorded original instruction (a boolean); nothing is previewed or sent"
+  },
+  "private_config_change": {
+    "file": "~/seren-harness-live/config.json",
+    "add_to_seren": {
+      "config_home": "Inactive synthetic handover example. Recipient must establish a fresh baseline and authorization.",
+      "profile": "default"
+    },
+    "nothing_else_changes": true,
+    "effect": "The harness passes XDG_CONFIG_HOME=<config_home> and SEREN_PROFILE=default to the CLI, overriding the shell's values, and removes SEREN_API_KEY from the CLI's environment. The config digest and the journal binding (cli_session) record the selection. The edit itself makes no call and touches no credential file."
+  },
+  "command": "python -m seren_harness prerequisite-read --config ~/seren-harness-live/config.json --package docs/lifecycle-setup/prerequisite-read-2.proposed.json",
+  "sequence": [
+    "agent managed-get 7a00003a-0000-4000-8000-00000000003b -o json"
+  ],
+  "limits": {
+    "service_invocations": 1,
+    "mutations": 0,
+    "timeout_seconds": 60,
+    "retries": 0,
+    "http_upper": 12,
+    "oauth_refresh_upper": 1,
+    "wall_seconds_upper": 62,
+    "window_minutes": 10,
+    "invocations": 1,
+    "basis": "Pinned v0.10.0: managed_agent_get builds the client (cli/src/command_context.rs client -> commands/auth.rs get_bearer_token, which refreshes the OAuth token only when the stored token is near expiry: at most one token request, redirects disabled, and re-saves the session file in the selected config root), then sends one GET. The SDK client (sdk/src/lib.rs from_config) uses reqwest's default redirect policy (up to 10 redirects) and has no retry logic: at most 12 HTTP requests, normally 1 or 2. The 60 s harness timeout kills and reaps the CLI process. One CLI invocation is not guaranteed to be one HTTP request."
+  },
+  "execution_environment": {
+    "host": "Inactive synthetic handover example. Recipient must establish a fresh baseline and authorization.",
+    "shell": "Claude's shell tool (as for prerequisite read 1), unless the owner states otherwise when authorizing",
+    "working_directory": "/opt/seren-handover",
+    "python": "the repository's .venv interpreter",
+    "executable": "the config's seren.executable, pinned by seren.executable_sha256 ddf617c4\u2026 (CLI 0.10.0); checked locally before the call; no substitute binary",
+    "credentials": "the Seren CLI's stored OAuth session for profile default under the configured config_home; selected by location only, never read, copied or inspected by the harness. The CLI may refresh it by itself near expiry and re-save it there. No API key, login or credential change.",
+    "known": [
+      "Inactive synthetic handover example. Recipient must establish a fresh baseline and authorization.",
+      "On every invocation the pinned CLI creates <config_home>/seren and the profile directory if missing and sets them to 0700."
+    ],
+    "unknown": [
+      "whether the stored session is valid",
+      "whether macOS privacy controls on the selected location affect the CLI child process"
+    ]
+  },
+  "evidence": {
+    "journal": "<config state_dir>/prerequisite-read/seren.lifecycle.prerequisite-read.2/journal.json (separate from every earlier journal; binding version 2 includes cli_session)",
+    "kept_on_success": "deployment matches target, identity and revision match the baseline (booleans), active_revision_id (UUID only), detail status (allowlisted enum), approval applied (boolean), instruction is the original or the corrected text (booleans), conditions by allowlisted type and state",
+    "kept_on_failure": "a fixed classification: category, rule identifier, stage, HTTP status only when parsed from the CLI's own 'unexpected response <code>' format, and source-backed booleans before_main_request / http_response_received (null when not established)",
+    "never_kept": "the response, config, secret_keys, stderr, messages, URLs, headers, tokens or any hash of them"
+  },
+  "stop_conditions": [
+    "the private config lacks config_home or profile, or local pins, CLI checksum or version differ: refused before any call",
+    "a recorded journal whose inputs (including cli_session) differ: refused before any call, journal untouched",
+    "after the one read (any outcome, including timeout or interruption): stop; it is never resent"
+  ],
+  "excluded": "No cloud deployment status, preview, update, provisioning, Passwords action, start, stop, login, credential repair, permission change, removal of the empty default directories, Discord request, probe or model session. A successful read ends the task; any further step needs its own decision and authorization.",
+  "acceptance": "Either result read_matches_fixture / read_differs_from_fixture with the safe projection, or result not_read with a fixed failure category (possibly unknown) and its stated uncertainty."
+}

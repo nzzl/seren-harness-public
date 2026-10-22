@@ -1,0 +1,142 @@
+{
+  "source": "Generalized regression fixture with synthetic resource identities; not live evidence.",
+  "spec": "cases/seren-employee-branch-read.json#employee_tool",
+  "record": {
+    "archived": false,
+    "created_at": "2026-09-24T04:55:50.388106Z",
+    "created_by": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+    "id": "7a000027-0000-4000-8000-000000000028",
+    "is_default": false,
+    "logical_size_bytes": 0,
+    "name": "development",
+    "parent_branch_id": "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
+    "physical_size_bytes": 0,
+    "project_id": "7a000037-0000-4000-8000-000000000038",
+    "protected": false,
+    "timeline_id": "cccccccc-cccc-4ccc-8ccc-cccccccccccc",
+    "updated_at": "2026-09-24T04:55:50.388106Z"
+  },
+  "denied": {
+    "is_error": true,
+    "code": "tool_permission_denied",
+    "recovery": {
+      "error_class": "permission_denied",
+      "reason_code": "Unauthorized",
+      "correlation_id": "00000000-0000-4000-8000-000000000000",
+      "upstream_status": 401
+    }
+  },
+  "cases": [
+    {
+      "name": "correlated-record-and-answer",
+      "result": "record",
+      "expected": {
+        "outcome": "passed",
+        "classification": "passed",
+        "inability_report": "not_applicable"
+      }
+    },
+    {
+      "name": "different-record-returned",
+      "result": "record",
+      "record_changes": {
+        "id": "88888888-8888-4888-8888-888888888888"
+      },
+      "expected": {
+        "outcome": "failed",
+        "classification": "seren_functional_failure",
+        "inability_report": "not_applicable"
+      }
+    },
+    {
+      "name": "record-name-missing",
+      "result": "record",
+      "record_changes": {
+        "name": ""
+      },
+      "expected": {
+        "outcome": "incomplete",
+        "classification": "incomplete",
+        "inability_report": "not_applicable"
+      }
+    },
+    {
+      "name": "answer-differs",
+      "result": "record",
+      "answer": "development",
+      "expected": {
+        "outcome": "failed",
+        "classification": "model_answer_failure",
+        "inability_report": "not_applicable"
+      }
+    },
+    {
+      "name": "truncated-result",
+      "result": "truncated",
+      "expected": {
+        "outcome": "incomplete",
+        "classification": "incomplete",
+        "inability_report": "not_applicable"
+      }
+    },
+    {
+      "name": "denied-grant-unverified",
+      "result": "denied",
+      "answer": "Unable to retrieve the branch record.",
+      "expected": {
+        "outcome": "failed",
+        "classification": "unresolved_contract_or_attribution",
+        "inability_report": "needs_review"
+      }
+    },
+    {
+      "name": "denied-grant-verified",
+      "result": "denied",
+      "grant_verified": true,
+      "answer": "Unable to retrieve the branch record.",
+      "expected": {
+        "outcome": "failed",
+        "classification": "seren_functional_failure",
+        "inability_report": "needs_review"
+      }
+    },
+    {
+      "name": "denied-then-bare-success-reply",
+      "result": "denied",
+      "expected": {
+        "outcome": "failed",
+        "classification": "model_answer_failure",
+        "inability_report": "presented_unretrieved_value"
+      }
+    },
+    {
+      "name": "reply-without-call",
+      "result": "none",
+      "expected": {
+        "outcome": "failed",
+        "classification": "model_answer_failure",
+        "inability_report": "not_applicable"
+      }
+    },
+    {
+      "name": "run-identity-mismatch",
+      "result": "record",
+      "run_identity": "mismatch",
+      "expected": {
+        "outcome": "incomplete",
+        "classification": "incomplete",
+        "inability_report": "not_applicable"
+      }
+    },
+    {
+      "name": "shutdown-unconfirmed",
+      "result": "record",
+      "shutdown": "unconfirmed",
+      "expected": {
+        "outcome": "incomplete",
+        "classification": "incomplete",
+        "inability_report": "not_applicable"
+      }
+    }
+  ]
+}

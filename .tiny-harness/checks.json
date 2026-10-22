@@ -1,0 +1,57 @@
+{
+  "checks": [
+    {
+      "name": "basic Python lint",
+      "argv": [
+        "ruff",
+        "check",
+        "--no-cache",
+        "--config",
+        "ruff.toml",
+        ".tiny-harness",
+        "tests",
+        "examples",
+        "seren_harness",
+        "simulation"
+      ],
+      "timeout_seconds": 30
+    },
+    {
+      "name": "runner behavior and disposable adoption",
+      "argv": [
+        "python3",
+        "tests/run.py"
+      ],
+      "timeout_seconds": 600
+    }
+  ],
+  "prose": {
+    "paths": [
+      ".tiny-harness/TASK.md"
+    ]
+  },
+  "focused": {
+    "paths": [
+      "seren_harness/tier0_cases.py",
+      "tests/test_tier0.py",
+      "docs/tier0/*.md",
+      "docs/tier0/fixtures/*.json"
+    ],
+    "keep": [
+      "basic Python lint"
+    ],
+    "checks": [
+      {
+        "name": "Tier 0, discovery and model-worker tests (focused case-only route)",
+        "argv": [
+          "python3",
+          "tests/run.py",
+          "test_tier0",
+          "test_discovery",
+          "test_model_worker"
+        ],
+        "timeout_seconds": 600
+      }
+    ]
+  }
+}

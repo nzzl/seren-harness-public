@@ -1,0 +1,27 @@
+{
+  "_template": "Isolated lifecycle live config for fixture Seren Harness Test. Incomplete by design: every null must be filled from the setup step named in docs/LIFECYCLE-SETUP.md, and the harness loader refuses this file until then. No secret values; the reader token is referenced by environment variable name only. Copy to ~/seren-harness-live/config.json when complete.",
+  "environment": "live",
+  "seren": {
+    "executable": "/opt/seren-handover",
+    "executable_sha256": "ddf617c405ce0a90c676a0342295782dcab5f392ef3695aa69ed86caa776b2fa"
+  },
+  "employee": {
+    "key": "seren-harness-test",
+    "deployment_id": "7a00003a-0000-4000-8000-00000000003b",
+    "names": [
+      "Seren Harness Test"
+    ]
+  },
+  "discord": {
+    "sender": "human",
+    "observer": "discord_rest",
+    "channel_id": null,
+    "employee_user_id": null,
+    "human_sender_user_id": null,
+    "reader_token_env": "SEREN_HARNESS_DISCORD_READER_TOKEN"
+  },
+  "disclosure": {
+    "include_identifiers": false
+  },
+  "state_dir": "state"
+}

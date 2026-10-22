@@ -1,0 +1,31 @@
+{
+  "provenance": "operator_supplied",
+  "revision": "unknown",
+  "environment": "Live pilot via my Discord session; attachments not permitted",
+  "observed": "2026-10-10, displayed clock 09:15; timezone not shown",
+  "notes": "Copied ephemeral responses. Invocation typed as shown below.",
+  "complete_reading_captured": true,
+  "items": [
+    {
+      "id": "response-1",
+      "kind": "discord_response",
+      "role": "initial",
+      "invocation": "/bd research entity:Maple Cooperative",
+      "path": "response-1.txt"
+    },
+    {
+      "id": "response-2",
+      "kind": "button_response",
+      "role": "complete_view",
+      "invocation": "button: Read full assessment",
+      "path": "response-2.txt"
+    },
+    {
+      "id": "response-3",
+      "kind": "button_response",
+      "role": "complete_view",
+      "invocation": "button: Read full assessment",
+      "path": "response-3.txt"
+    }
+  ]
+}

@@ -1,0 +1,84 @@
+{
+  "_status": "INACTIVE SYNTHETIC TEMPLATE. No authorization or prior execution is transferred. Configure recipient resources and obtain explicit authority before live use.",
+  "kind": "preview_diagnostic_package",
+  "id": "seren.lifecycle.preview-diagnostic.2",
+  "version": 1,
+  "supersedes": {
+    "package_id": "Synthetic predecessor; no historical outcome included.",
+    "outcome": "Synthetic predecessor; no historical outcome included.",
+    "authorization": "Synthetic predecessor; no historical outcome included."
+  },
+  "purpose": "Inspect a hypothetical preview/read-back discrepancy using a recipient-approved isolated fixture. This template is inactive.",
+  "target": {
+    "deployment_id": "7a00003a-0000-4000-8000-00000000003b",
+    "name": "Seren Harness Test",
+    "config": "~/seren-harness-live/config.json (private; existing Seren CLI OAuth session by reference)"
+  },
+  "baseline": {
+    "recorded_by_run": "synthetic-run-example",
+    "active_revision_id": "7a00002b-0000-4000-8000-00000000002c",
+    "agent_identity_id": "7a000004-0000-4000-8000-000000000005",
+    "last_observed": "Inactive synthetic handover example. Recipient must establish a fresh baseline and authorization.",
+    "latest_successful_read": "RECIPIENT_REQUIRED"
+  },
+  "correction": {
+    "current_file": "docs/lifecycle-setup/SKILL.current.md",
+    "current_sha256": "39394b777cb1eb5d76602bfaae679151e92cb2b6877bf9e7e45247aa18c61865",
+    "corrected_file": "docs/lifecycle-setup/SKILL.corrected.md",
+    "corrected_sha256": "1e74a60ba4a601f99d132d087e475415e1fc177de78157e960e16ff37725384e",
+    "corrected_trimmed_sha256": "13fde8036f3cbff168a4c769fe7d19ea294171c7296be6cf4cf8077ee37eae2a",
+    "use": "previewed only, using the frozen example input, as one --prompt=<contents> argument; never sent as an update"
+  },
+  "cli_session": {
+    "selection": "explicit and required: the private config's seren.config_home (the recorded Seren CLI config root; exact value only in private records) and seren.profile = default, to be selected and verified by the recipient. No config change is part of this package.",
+    "propagation": "the harness passes XDG_CONFIG_HOME and SEREN_PROFILE to every CLI child, overriding inherited values, and removes SEREN_API_KEY",
+    "binding": "Inactive synthetic handover example. Recipient must establish a fresh baseline and authorization."
+  },
+  "command": "python -m seren_harness preview-diagnostic --config ~/seren-harness-live/config.json --package docs/lifecycle-setup/preview-diagnostic-2.proposed.json",
+  "sequence": [
+    "agent managed-get 7a00003a-\u2026 -o json",
+    "agent cloud deployment status 7a00003a-\u2026 -o json",
+    "agent managed-preview 7a00003a-\u2026 --prompt=<exact contents of SKILL.corrected.md> -o json",
+    "agent managed-get 7a00003a-\u2026 -o json",
+    "agent cloud deployment status 7a00003a-\u2026 -o json"
+  ],
+  "limits": {
+    "service_invocations": 5,
+    "managed_preview": 1,
+    "harness_mutations": 0,
+    "timeout_seconds": 60,
+    "retries": 0,
+    "http_upper_per_invocation": 12,
+    "http_upper": 60,
+    "http_expected": "5 or 6 (one request per step, plus one token refresh only if the stored token is within 60 s of expiry)",
+    "oauth_refresh_upper": 5,
+    "oauth_refresh_expected": "0 or 1",
+    "preview_body_transmissions_upper": 11,
+    "local_version_check": "one local `seren --version` before any service call, same 60 s timeout; not a service invocation",
+    "wall_seconds_upper": 372,
+    "window_minutes": 15,
+    "invocations": 1,
+    "enforced_by_the_route": "each step at most once and at most 5 service invocations ever for this identity (journaled before sending; a re-invocation only resumes); the 60 s timeout per CLI process (killed and reaped on expiry); no harness retry; the fixed command sequence; binding and pin checks before any call; the prerequisite gate before the preview",
+    "operator_requirements_not_enforced_by_code": "one command invocation (a second one only resumes and never repeats a step); the 15-minute window; confirming by name only, before the run, that SEREN_API_BASE, SEREN_OAUTH_HOST and SEREN_CLIENT_ID are unset in the executing shell (the pinned CLI reads them; the harness does not clear them)",
+    "basis": "Pinned v0.10.0 (cli/src/commands/agent.rs): managed_agent_get, cloud_status and managed_agent_preview each call ctx.client() (command_context.rs) and then send exactly one SDK request (seren_agent_get_managed_deployment GET /deployments/{id}/managed; seren_cloud_get_deployment GET /deployments/{id}; seren_agent_preview_managed_deployment_update POST /deployments/{id}/managed/preview). The preview body is built locally from --prompt only; with no --config, --env-file or --agent-config no file is read. Error formatting (anyhow_from_seren_error, format_payment_required_response, cloud_status map_err) reads the existing response and sends nothing. ctx.client() -> auth.rs get_bearer_token -> maybe_refresh_oauth_token: at most one token POST, only when expires_at - 60 s <= now and a refresh token is stored, on a client with redirects disabled; the refreshed session is re-saved under the selected root. The SDK client (sdk/src/lib.rs from_config) uses reqwest 0.13.4's default redirect policy, limited(10), and a 60 s request timeout. reqwest 0.13.4 also wraps every request in its default retry policy (retry.rs: ProtocolNacks, at most 2 extra), but its classifier only matches HTTP/2 or HTTP/3 errors; the pinned Cargo.lock builds reqwest without h2 or h3 (features form, json, rustls, stream, multipart), so that retry never fires. hyper-util 0.1.19 re-dispatches a request only if it was never started on a reused pooled connection, which is not a transmission. Per invocation therefore: at most 1 refresh + 1 request + 10 redirects = 12 HTTP requests; five invocations: at most 60. Redirects of the preview POST (tower-http 0.6.8 follow_redirect): 301/302/303 continue as GET without the body; 307/308 re-send the same POST body, so in the worst case the preview body could be delivered up to 11 times within its one invocation. No redirect has been observed; this is a source-derived ceiling. Wall: 62 s for the version check plus 5 x 62 s (60 s timeout plus about 2 s local overhead) = 372 s."
+  },
+  "side_effects": {
+    "preview": "Its server-side effects are uncertain and not assumed absent. Pinned source treats it as a direct POST, not a managed mutation (no request id, no submit_managed_mutation re-send). The post-preview reads record what is observed; a change is reported, not attributed or repaired.",
+    "cli_local": "On every invocation the pinned CLI creates <config_home>/seren and the profile directory if missing and sets them to 0700, and it may refresh and re-save the stored session near expiry. The harness never opens, copies or inspects the session."
+  },
+  "excluded": "No managed-update, provisioning, Passwords setup or apply, start, stop, Discord request, probe, model session, instruction-update, login, credential repair, permission change or default-directory cleanup. The command has no route to any of them.",
+  "evidence": {
+    "journal": "<config state_dir>/preview-diagnostic/seren.lifecycle.preview-diagnostic.2/journal.json (separate from preview diagnostic 1, both instruction-update journals and both prerequisite-read journals)",
+    "kept": "binding digests (config, package, instruction files, CLI executable and version) and cli_session; per step: purpose, command name, times, status class and exit code; a fixed failure classification per failed step (cli_errors: category, rule, stage, HTTP status only from the CLI's own format); structural observations of config, secret_keys, guarded and policy fields, bundle, changed_fields and pre/post state",
+    "never_kept": "raw responses, values, unlisted key names, labels, condition messages, stderr, secret values, tokens, headers, or any hash of response content"
+  },
+  "stop_conditions": [
+    "local pins, CLI checksum or version differ, or the private config lacks explicit config_home and profile: refused before any call",
+    "a recorded journal whose inputs (including cli_session) differ, or one with an older binding: refused before any call, journal untouched",
+    "a prerequisite read fails, or the reads do not show the recorded deployment, identity, revision 7a00002b, original instruction and stopped/stopped: stop before the preview",
+    "after the preview is attempted (answered, failed, timed out or malformed): only the two post-preview reads, then stop",
+    "an interruption before the preview: no preview on re-invocation; after the preview: only the post-preview reads not yet started; a started step counts as used",
+    "post-preview state differs from the prerequisite state: reported as an observation only; no repair, rollback, start or stop"
+  ],
+  "acceptance": "Either result=complete with structural observations of config and secret_keys in the pre-preview read, preview current, preview proposed and post-preview read, plus the post-preview state; or an explicit stopped_before_preview / incomplete result that lists each unavailable observation and its fixed classification."
+}

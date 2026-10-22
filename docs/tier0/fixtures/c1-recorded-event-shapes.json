@@ -1,0 +1,179 @@
+{
+  "purpose": "Inactive synthetic handover example. Recipient must establish a fresh baseline and authorization.",
+  "provenance": "Generalized event-shape regression examples with synthetic identities; not live evidence.",
+  "synthetic": "Every other value (id, item_id, name, arguments, content, text, tool, reason, code, recovery, input_bytes, output_bytes, latency_ms) is filled with a placeholder by the case; sequence_number is the recorded position.",
+  "establishes": "Stored run records of real tool-using runs contain a tool_call event with status `completed` as the first event, before the tool_result, the answer text, the tool_audit and done (status ok, event_type run.done).",
+  "does_not_establish": [
+    "that a `run.event` SSE frame's data is this flattened envelope (the stream spec declares `text/event-stream: {}` with no data schema; the frame id is documented as the event sequence number)",
+    "that a live emission of the tool_call event carries status `completed` (a stored record holds the final status; a live frame may carry an interim one)",
+    "whether the service closes the stream after the run ends"
+  ],
+  "shapes": {
+    "completed-tool": [
+      {
+        "type": "tool_call",
+        "kind": "tool_call_started",
+        "event_type": "response.output_item.added",
+        "status": "completed",
+        "fields": [
+          "arguments",
+          "event_type",
+          "id",
+          "item_id",
+          "kind",
+          "name",
+          "sequence_number",
+          "status",
+          "type"
+        ]
+      },
+      {
+        "type": "tool_result",
+        "kind": "tool_call_completed",
+        "event_type": "response.output_item.done",
+        "is_error": false,
+        "retryable": false,
+        "fields": [
+          "content",
+          "event_type",
+          "id",
+          "is_error",
+          "item_id",
+          "kind",
+          "retryable",
+          "sequence_number",
+          "type"
+        ]
+      },
+      {
+        "type": "text",
+        "kind": "text",
+        "event_type": "response.output_text.done",
+        "fields": [
+          "event_type",
+          "kind",
+          "sequence_number",
+          "text",
+          "type"
+        ]
+      },
+      {
+        "type": "tool_audit",
+        "kind": "tool_audit",
+        "event_type": "tool.audit.logged",
+        "status": "success",
+        "fields": [
+          "event_type",
+          "id",
+          "input_bytes",
+          "item_id",
+          "kind",
+          "latency_ms",
+          "output_bytes",
+          "reason",
+          "sequence_number",
+          "status",
+          "tool",
+          "type"
+        ]
+      },
+      {
+        "type": "done",
+        "kind": "done",
+        "event_type": "run.done",
+        "status": "ok",
+        "fields": [
+          "event_type",
+          "kind",
+          "sequence_number",
+          "status",
+          "type"
+        ]
+      }
+    ],
+    "error-tool": [
+      {
+        "type": "tool_call",
+        "kind": "tool_call_started",
+        "event_type": "response.output_item.added",
+        "status": "error",
+        "fields": [
+          "arguments",
+          "event_type",
+          "id",
+          "item_id",
+          "kind",
+          "name",
+          "sequence_number",
+          "status",
+          "type"
+        ]
+      },
+      {
+        "type": "tool_result",
+        "kind": "tool_call_completed",
+        "event_type": "response.output_item.done",
+        "is_error": true,
+        "retryable": false,
+        "fields": [
+          "code",
+          "content",
+          "event_type",
+          "id",
+          "is_error",
+          "item_id",
+          "kind",
+          "recovery",
+          "retryable",
+          "sequence_number",
+          "type"
+        ]
+      },
+      {
+        "type": "text",
+        "kind": "text",
+        "event_type": "response.output_text.done",
+        "fields": [
+          "event_type",
+          "kind",
+          "sequence_number",
+          "text",
+          "type"
+        ]
+      },
+      {
+        "type": "tool_audit",
+        "kind": "tool_audit",
+        "event_type": "tool.audit.logged",
+        "status": "failure",
+        "fields": [
+          "event_type",
+          "id",
+          "input_bytes",
+          "item_id",
+          "kind",
+          "latency_ms",
+          "output_bytes",
+          "reason",
+          "sequence_number",
+          "status",
+          "tool",
+          "type"
+        ]
+      },
+      {
+        "type": "done",
+        "kind": "done",
+        "event_type": "run.done",
+        "status": "ok",
+        "fields": [
+          "event_type",
+          "kind",
+          "sequence_number",
+          "status",
+          "type"
+        ]
+      }
+    ]
+  }
+}

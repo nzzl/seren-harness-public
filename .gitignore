@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+.venv/
+.ruff_cache/
+.pytest_cache/
+.env
+.env.*
+.seren-harness-state/
+.handover-runtime/
+operator.local.json
+operator.*.local.json

@@ -1,0 +1,94 @@
+{
+  "id": "seren.cloud-run.generated-id",
+  "version": 1,
+  "interface": "seren_cli",
+  "campaign": "seren.run-record-retrieval",
+  "command": "seren agent cloud run get --deployment-id 7a000021-0000-4000-8000-000000000022 7a000003-0000-4000-8000-000000000004 -o json",
+  "execution_args": [
+    "agent",
+    "cloud",
+    "run",
+    "get",
+    "--deployment-id",
+    "7a000021-0000-4000-8000-000000000022",
+    "7a000003-0000-4000-8000-000000000004"
+  ],
+  "claim": "Requesting a run ID that the owner never received returns the documented not-found answer.",
+  "scope": {
+    "statement": "Lookup of generated negative-test UUID 7a000003-0000-4000-8000-000000000004 under isolated deployment 7a000021-0000-4000-8000-000000000022. The UUID was generated locally (version 4) on 2026-10-13T07:43:18Z and is not verified as never issued by Seren. A pass verifies only the documented not-found answer.",
+    "entry": "seren agent cloud run get --deployment-id <deployment-id> <run-id> -o json",
+    "accepted_provenance": [
+      "independently_observed"
+    ],
+    "out_of_scope": [
+      "Starting, stopping, invoking or modifying the deployment",
+      "Arbitrary or malformed identifiers"
+    ]
+  },
+  "basis": [
+    {
+      "kind": "documented_interface",
+      "reference": "serenorg/seren v0.10.0 (2317949ecf6f8a2c319583e3a280bf7a705ce981): GET /deployments/{id}/runs/{run_id} (seren_cloud_deployment_run) documents 404 Not found."
+    },
+    {
+      "kind": "generated_input",
+      "reference": "Handover example. Synthetic identifiers and generalized regression expectations; no live result or authority is transferred."
+    }
+  ],
+  "expectation_date": "2026-10-13T00:00:00Z",
+  "expectation_notes": [
+    "A returned record is an uncertain finding: the UUID is not verified as never issued.",
+    "A 404 that names the deployment as missing is a fixture problem, never a pass.",
+    "Answer-class table (decided before execution): not_found pass; record fail (uncertain finding); missing_object unverified; deployment_missing unverified (fixture problem); auth_rejected and forbidden unverified (access problem); service_error unverified; unclassified unverified."
+  ],
+  "api": {
+    "data_path": [
+      "data"
+    ],
+    "answer_outcomes": {
+      "record": "fail",
+      "missing_object": "unverified",
+      "deployment_missing": "unverified",
+      "auth_rejected": "unverified",
+      "forbidden": "unverified",
+      "service_error": "unverified",
+      "not_found": "pass",
+      "unclassified": "unverified"
+    }
+  },
+  "criteria": [
+    {
+      "id": "generated_id_not_found",
+      "category": "service_outcome",
+      "check": "api_answer_class",
+      "required": true,
+      "claim": "A generated negative-test run ID returns the documented not-found answer",
+      "evidence": "Classified answer per the declared table: documented not-found passes; a returned record fails as an uncertain finding; other classes stay unverified.",
+      "finding": "generated_id_returned"
+    }
+  ],
+  "findings": {
+    "generated_id_returned": {
+      "classification": "uncertain",
+      "title": "A record was returned for a generated negative-test run ID",
+      "expected": "The documented 404 Not found for 7a000003-0000-4000-8000-000000000004 under 7a000021-0000-4000-8000-000000000022.",
+      "impact": "Lookups might return records for identifiers the owner never received.",
+      "unknowns": [
+        "The generated UUID is not verified as never issued."
+      ],
+      "retest": "When authorized, collect seren.cloud-run.generated-id --target targets/seren.json --no-retry."
+    }
+  },
+  "unverified_always": [
+    {
+      "id": "never_issued",
+      "claim": "The generated UUID was never issued by Seren",
+      "follow_up": "No supported lookup establishes that."
+    },
+    {
+      "id": "server_build",
+      "claim": "The exact server build that answered",
+      "follow_up": "This CLI response contract does not establish a server build."
+    }
+  ]
+}

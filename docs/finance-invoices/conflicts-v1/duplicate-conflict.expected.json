@@ -1,0 +1,22 @@
+{
+  "as_of": "2026-10-14",
+  "status": "needs_review",
+  "resolved_invoices": [
+    {
+      "invoice_id": "DUP-2",
+      "outstanding_usd": "350.00",
+      "overdue": true,
+      "days_overdue": 4
+    }
+  ],
+  "issues": [
+    {
+      "invoice_id": "DUP-1",
+      "reason": "conflicting_records"
+    }
+  ],
+  "known_outstanding_usd": "350.00",
+  "known_overdue_usd": "350.00",
+  "complete_outstanding_usd": null,
+  "complete_overdue_usd": null
+}

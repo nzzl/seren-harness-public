@@ -1,0 +1,269 @@
+{
+  "kind": "db_fixture_manifest",
+  "id": "seren.db-read.invoices-fixture",
+  "version": 1,
+  "frozen_at": "2026-10-13T12:53:41Z",
+  "status": "PROPOSED. Frozen before any service observation; no table exists yet.",
+  "expectation_basis": "Rows are synthetic and chosen here. Every expected result below was written by hand from these rows and the stated PostgreSQL semantics, then cross-checked by tests/test_db_fixture_package.py against an independent Python evaluation of the rows. No expected value was obtained by running SQL.",
+  "semantics_sources": [
+    "PostgreSQL 14 manual, ORDER BY: ASC places NULLs last by default; NULLS LAST is stated explicitly anyway (https://www.postgresql.org/docs/14/queries-order.html)",
+    "PostgreSQL 14 manual, text equality is exact and case-sensitive; trailing spaces are significant for text (https://www.postgresql.org/docs/14/datatype-character.html)",
+    "PostgreSQL 14 manual, json_agg/json_build_object; date values are rendered in ISO 8601 in JSON (https://www.postgresql.org/docs/14/functions-json.html)"
+  ],
+  "table": {
+    "schema": "harness_fixture",
+    "name": "invoices",
+    "columns": [
+      [
+        "invoice_key",
+        "text",
+        "NO"
+      ],
+      [
+        "customer",
+        "text",
+        "NO"
+      ],
+      [
+        "status",
+        "text",
+        "NO"
+      ],
+      [
+        "amount_cents",
+        "integer",
+        "NO"
+      ],
+      [
+        "due_date",
+        "date",
+        "YES"
+      ],
+      [
+        "note",
+        "text",
+        "YES"
+      ]
+    ],
+    "relations": [
+      "invoices",
+      "invoices_pkey"
+    ]
+  },
+  "rows": [
+    {
+      "invoice_key": "INV-01",
+      "customer": "acme",
+      "status": "open",
+      "amount_cents": 12000,
+      "due_date": "2026-11-05",
+      "note": null
+    },
+    {
+      "invoice_key": "INV-02",
+      "customer": "acme",
+      "status": "paid",
+      "amount_cents": 8000,
+      "due_date": "2026-10-01",
+      "note": "paid early"
+    },
+    {
+      "invoice_key": "INV-03",
+      "customer": "acme",
+      "status": "open",
+      "amount_cents": 4500,
+      "due_date": "2026-10-20",
+      "note": ""
+    },
+    {
+      "invoice_key": "INV-04",
+      "customer": "acme",
+      "status": "open",
+      "amount_cents": 4500,
+      "due_date": null,
+      "note": null
+    },
+    {
+      "invoice_key": "INV-05",
+      "customer": "ACME",
+      "status": "open",
+      "amount_cents": 9900,
+      "due_date": "2026-10-15",
+      "note": null
+    },
+    {
+      "invoice_key": "INV-06",
+      "customer": "globex",
+      "status": "open",
+      "amount_cents": 30000,
+      "due_date": "2026-10-18",
+      "note": null
+    },
+    {
+      "invoice_key": "INV-07",
+      "customer": "acme",
+      "status": "void",
+      "amount_cents": 1000,
+      "due_date": "2026-10-10",
+      "note": null
+    },
+    {
+      "invoice_key": "INV-08",
+      "customer": "acme",
+      "status": "open",
+      "amount_cents": 7000,
+      "due_date": "2026-10-20",
+      "note": null
+    },
+    {
+      "invoice_key": "INV-09",
+      "customer": "globex",
+      "status": "paid",
+      "amount_cents": 5000,
+      "due_date": null,
+      "note": "no due date"
+    },
+    {
+      "invoice_key": "INV-10",
+      "customer": "acme",
+      "status": "open",
+      "amount_cents": 2500,
+      "due_date": "2026-12-01",
+      "note": "last"
+    },
+    {
+      "invoice_key": "INV-11",
+      "customer": "acme ",
+      "status": "open",
+      "amount_cents": 600,
+      "due_date": "2026-10-12",
+      "note": null
+    }
+  ],
+  "row_purposes": {
+    "INV-05": "case variant of the customer; must not match 'acme'",
+    "INV-11": "trailing-space variant of the customer; must not match 'acme'",
+    "INV-02, INV-07": "same customer, non-open status; excluded by the status filter",
+    "INV-03, INV-08": "equal due_date; order is defined only by the invoice_key tie-break",
+    "INV-04": "open acme invoice with no due date; NULLS LAST keeps it off the first page",
+    "INV-03, INV-04, INV-09": "empty string versus NULL note, and NULL due_date, preserved distinctly"
+  },
+  "statements": {
+    "fixture_write": "BEGIN; CREATE SCHEMA harness_fixture; CREATE TABLE harness_fixture.invoices (invoice_key text PRIMARY KEY, customer text NOT NULL, status text NOT NULL CHECK (status IN ('open', 'paid', 'void')), amount_cents integer NOT NULL, due_date date, note text); INSERT INTO harness_fixture.invoices (invoice_key, customer, status, amount_cents, due_date, note) VALUES ('INV-01', 'acme', 'open', 12000, DATE '2026-11-05', NULL), ('INV-02', 'acme', 'paid', 8000, DATE '2026-10-01', 'paid early'), ('INV-03', 'acme', 'open', 4500, DATE '2026-10-20', ''), ('INV-04', 'acme', 'open', 4500, NULL, NULL), ('INV-05', 'ACME', 'open', 9900, DATE '2026-10-15', NULL), ('INV-06', 'globex', 'open', 30000, DATE '2026-10-18', NULL), ('INV-07', 'acme', 'void', 1000, DATE '2026-10-10', NULL), ('INV-08', 'acme', 'open', 7000, DATE '2026-10-20', NULL), ('INV-09', 'globex', 'paid', 5000, NULL, 'no due date'), ('INV-10', 'acme', 'open', 2500, DATE '2026-12-01', 'last'), ('INV-11', 'acme ', 'open', 600, DATE '2026-10-12', NULL); COMMIT;",
+    "fixture_readback": "SELECT pg_catalog.json_build_object('database', pg_catalog.current_database(), 'read_only', pg_catalog.current_setting('transaction_read_only'), 'columns', (SELECT pg_catalog.json_agg(pg_catalog.json_build_array(column_name, data_type, is_nullable) ORDER BY ordinal_position) FROM information_schema.columns WHERE table_schema = 'harness_fixture' AND table_name = 'invoices'), 'relations', (SELECT pg_catalog.json_agg(c.relname ORDER BY c.relname) FROM pg_catalog.pg_class c JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace WHERE n.nspname = 'harness_fixture'), 'rows', (SELECT pg_catalog.json_agg(pg_catalog.json_build_object('invoice_key', invoice_key, 'customer', customer, 'status', status, 'amount_cents', amount_cents, 'due_date', due_date, 'note', note) ORDER BY invoice_key) FROM harness_fixture.invoices));",
+    "case_open_invoices": "SELECT pg_catalog.json_build_object('read_only', pg_catalog.current_setting('transaction_read_only'), 'keys', (SELECT pg_catalog.json_agg(invoice_key ORDER BY invoice_key) FROM harness_fixture.invoices WHERE customer = 'acme' AND status = 'open'), 'total_cents', (SELECT pg_catalog.sum(amount_cents) FROM harness_fixture.invoices WHERE customer = 'acme' AND status = 'open'));",
+    "case_first_page_by_due_date": "SELECT pg_catalog.json_build_object('read_only', pg_catalog.current_setting('transaction_read_only'), 'page', (SELECT pg_catalog.json_agg(pg_catalog.json_build_object('invoice_key', t.invoice_key, 'due_date', t.due_date) ORDER BY t.pos) FROM (SELECT invoice_key, due_date, pg_catalog.row_number() OVER (ORDER BY due_date ASC NULLS LAST, invoice_key ASC) AS pos FROM harness_fixture.invoices WHERE customer = 'acme' AND status = 'open' ORDER BY due_date ASC NULLS LAST, invoice_key ASC LIMIT 3) AS t));",
+    "case_missing_values": "SELECT pg_catalog.json_build_object('read_only', pg_catalog.current_setting('transaction_read_only'), 'rows', (SELECT pg_catalog.json_agg(pg_catalog.json_build_object('invoice_key', invoice_key, 'due_date', due_date, 'note', note, 'note_is_null', note IS NULL) ORDER BY invoice_key) FROM harness_fixture.invoices WHERE invoice_key IN ('INV-03', 'INV-04', 'INV-09')));"
+  },
+  "expected": {
+    "fixture_readback": {
+      "read_only": "on",
+      "columns": [
+        [
+          "invoice_key",
+          "text",
+          "NO"
+        ],
+        [
+          "customer",
+          "text",
+          "NO"
+        ],
+        [
+          "status",
+          "text",
+          "NO"
+        ],
+        [
+          "amount_cents",
+          "integer",
+          "NO"
+        ],
+        [
+          "due_date",
+          "date",
+          "YES"
+        ],
+        [
+          "note",
+          "text",
+          "YES"
+        ]
+      ],
+      "relations": [
+        "invoices",
+        "invoices_pkey"
+      ],
+      "rows": "exactly the manifest rows, in invoice_key order"
+    },
+    "case_open_invoices": {
+      "read_only": "on",
+      "keys": [
+        "INV-01",
+        "INV-03",
+        "INV-04",
+        "INV-08",
+        "INV-10"
+      ],
+      "total_cents": 30500
+    },
+    "case_first_page_by_due_date": {
+      "read_only": "on",
+      "page": [
+        {
+          "invoice_key": "INV-03",
+          "due_date": "2026-10-20"
+        },
+        {
+          "invoice_key": "INV-08",
+          "due_date": "2026-10-20"
+        },
+        {
+          "invoice_key": "INV-01",
+          "due_date": "2026-11-05"
+        }
+      ]
+    },
+    "case_missing_values": {
+      "read_only": "on",
+      "rows": [
+        {
+          "invoice_key": "INV-03",
+          "due_date": "2026-10-20",
+          "note": "",
+          "note_is_null": false
+        },
+        {
+          "invoice_key": "INV-04",
+          "due_date": null,
+          "note": null,
+          "note_is_null": true
+        },
+        {
+          "invoice_key": "INV-09",
+          "due_date": null,
+          "note": "no due date",
+          "note_is_null": false
+        }
+      ]
+    }
+  },
+  "comparison": "Parse the single JSON value psql prints and compare structurally with exact types: JSON strings, integers, booleans and null must match; no numeric/string coercion, whitespace trimming or case folding. 'database' in the read-back is recorded and must equal the bound database name. Any other key, missing key or extra key fails.",
+  "cases": {
+    "case_open_invoices": {
+      "customer_task": "List a customer's open invoices and their total.",
+      "failure_hypothesis": "Wrong rows: a near-match customer (case or trailing space) or a non-open status included, or a row dropped, would misstate what the customer owes.",
+      "seren_specific_risk": "Low for the SQL engine itself; the end-to-end value is that rows written through Seren's connection path are returned unchanged in a separate later connection."
+    },
+    "case_first_page_by_due_date": {
+      "customer_task": "Show the first page (3) of a customer's open invoices, soonest due first.",
+      "failure_hypothesis": "An undefined or wrong order (NULL due date first, tie broken differently, LIMIT applied before ordering) shows the customer the wrong first page.",
+      "seren_specific_risk": "Low; ordering is fully defined, so any deviation is objective."
+    },
+    "case_missing_values": {
+      "customer_task": "Read back invoices whose optional fields were left blank or empty.",
+      "failure_hypothesis": "Empty string and NULL conflated, or a missing date filled in, would misreport what was saved.",
+      "seren_specific_risk": "Moderate relative to the others: storage and the result path must keep '' and NULL distinct; plain psql -A output would not, so results are JSON."
+    }
+  }
+}

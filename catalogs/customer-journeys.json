@@ -1,0 +1,323 @@
+{
+  "kind": "journey_catalog",
+  "id": "seren.customer-journeys",
+  "version": 1,
+  "as_of": "2026-10-17",
+  "purpose": "Explicit customer journeys the discovery loop compares before selecting work. Membership grants no live authority; eligibility is computed from saved authority, prerequisites, executor availability and the shared live budget.",
+  "entries": [
+    {
+      "id": "employee-retrieval.branch-metadata",
+      "priority": "employee_retrieval",
+      "title": "Employee retrieves one known branch record and answers from it",
+      "customer_task": "An owner asks an isolated employee to fetch one known record of their own through Seren's tool path and repeat its identity before relying on that environment.",
+      "grounding": {
+        "kind": "hypothetical_use",
+        "source": "Recipient-selected scenario; all shipped bindings are synthetic and require fresh verification."
+      },
+      "uncertainty": "No recipient deployment has been tested by this handover. Verify current service compatibility and expected behavior before relying on a result.",
+      "expected_result": {
+        "statement": "Correlated record id 7a000027-0000-4000-8000-000000000028 in project 7a000037-0000-4000-8000-000000000038 with a nonempty name; answer exactly the id. After a failure, a reply the reviewer reads as reporting inability.",
+        "established_by": "Handover example. Synthetic identifiers and generalized regression expectations; no live result or authority is transferred."
+      },
+      "decision_if_pass": "First evidence that employee-mediated retrieval works; answer-quality work can move from pasted data to retrieved data.",
+      "decision_if_fail": "With the documented grant verified in place, a denial or wrong record is a functional failure observed through Seren (component cause not established); a wrong answer or a bare success reply without a result is a model-answer failure.",
+      "executor": "employee_branch_read",
+      "bindings": {
+        "deployment_id": "7a000021-0000-4000-8000-000000000022",
+        "tool": "seren_publisher_request",
+        "publisher": "seren-db",
+        "path": "/projects/7a000037-0000-4000-8000-000000000038/branches/7a000027-0000-4000-8000-000000000028",
+        "operation_id": "seren_db_get_branch",
+        "required_ref": {
+          "kind": "publisher",
+          "publisher_slug": "seren-db",
+          "operation_id": "seren_db_get_branch",
+          "execution_surface": "prompt",
+          "require_approval": false
+        }
+      },
+      "evidence_required": [
+        "run identity",
+        "exact tool call and correlated complete result",
+        "answer text",
+        "stopped read-backs",
+        "grant and instruction restore read-back"
+      ],
+      "authority": {
+        "kind": "journey_grant",
+        "status": "Inactive example; no recipient approval or live grant exists."
+      },
+      "cleanup": [
+        "stop_runtime",
+        "restore_configuration"
+      ],
+      "not_redundant_because": "A new recipient configuration needs an independently authorized baseline and evidence for the selected customer workflow.",
+      "prerequisites": [
+        {
+          "id": "P1-documented-access-path",
+          "status": "met",
+          "need": "documented grant mechanism: prompt-surface typed publisher ref seren-db/seren_db_get_branch plus operation_id in the request",
+          "source": "pinned openapi-seren-cloud.json AgentToolRef.execution_surface"
+        },
+        {
+          "id": "T1-grant-transport",
+          "status": "met",
+          "need": "a ledger-journaled fixed-host route that previews and applies the ref (the pinned CLI cannot)",
+          "source": "seren_harness/grant_transport.py"
+        },
+        {
+          "id": "T2-exact-grant-validation",
+          "status": "met",
+          "need": "a journey-only check that accepts exactly the previewed ref and instruction; the invoice lane keeps its unbound check",
+          "source": "seren_harness/retrieval_journey.py GrantedBranchRun.check_baseline"
+        },
+        {
+          "id": "T3-restore-and-rebinding",
+          "status": "met",
+          "need": "rollback to the captured original with exact read-back, and a verified receipt rebinding for the invoice lane",
+          "source": "seren_harness/retrieval_journey.py restore_configuration, current_session, original_baseline"
+        }
+      ],
+      "package": {
+        "path": "docs/journeys/employee-retrieval/package-v4.json",
+        "sha256": "576cb5ec243b16f75f70615402bbfdabbd6902e885e4030b2cc09517eefbedf7"
+      },
+      "status": "candidate",
+      "prior_evidence": [
+        {
+          "date": "synthetic",
+          "result": "Fictional scenario definition only; no observed customer outcome.",
+          "source": "docs/ADVANCED.md#examples-and-provenance"
+        }
+      ]
+    },
+    {
+      "id": "saved-research.full-reading-completeness",
+      "priority": "saved_research",
+      "title": "Saved research reading is complete and readable",
+      "customer_task": "A Example Research Employee user runs /bd research for a saved entity and reads the full assessment to decide on a prospect.",
+      "grounding": {
+        "kind": "hypothetical_use",
+        "source": "Recipient-selected scenario; all shipped bindings are synthetic and require fresh verification."
+      },
+      "uncertainty": "No recipient deployment has been tested by this handover. Verify current service compatibility and expected behavior before relying on a result.",
+      "expected_result": {
+        "statement": "All six objective criteria pass on accepted provenance and an attributed operator assessment passes readability.",
+        "established_by": "Handover example. Synthetic identifiers and generalized regression expectations; no live result or authority is transferred."
+      },
+      "decision_if_pass": "Close the readability retest for the saved-research workflow.",
+      "decision_if_fail": "Keep F-c2943e9f91c6 open with the new excerpt; no deployment follows automatically.",
+      "executor": "saved_research_review",
+      "bindings": {
+        "case": "cases/scott-saved-research-reading.json",
+        "finding": "F-c2943e9f91c6",
+        "command": "/bd research entity:Cedar Cooperative and Read full assessment"
+      },
+      "evidence_required": [
+        "complete operator copy including follow-ups",
+        "sanitized response hash",
+        "attributed assessment"
+      ],
+      "authority": {
+        "kind": "offline",
+        "status": "Inactive example; no recipient approval or live grant exists."
+      },
+      "cleanup": [],
+      "not_redundant_because": "A new recipient configuration needs an independently authorized baseline and evidence for the selected customer workflow.",
+      "prerequisites": [
+        {
+          "id": "S1-new-capture",
+          "status": "unmet",
+          "need": "an owner-made operator copy after e6e048b is deployed; Discord user-account automation is prohibited and deployment is not authorized",
+          "source": ".tiny-harness/TASK.md 'customer-workflow execution route scoped'"
+        }
+      ],
+      "status": "candidate",
+      "prior_evidence": [
+        {
+          "date": "synthetic",
+          "result": "Fictional scenario definition only; no observed customer outcome.",
+          "source": "docs/ADVANCED.md#examples-and-provenance"
+        }
+      ]
+    },
+    {
+      "id": "lifecycle.stop-convergence",
+      "priority": "lifecycle",
+      "title": "An accepted stop converges to a confirmed stopped state",
+      "customer_task": "An owner stops an employee and needs to know it really stopped and is not still billable.",
+      "grounding": {
+        "kind": "hypothetical_use",
+        "source": "Recipient-selected scenario; all shipped bindings are synthetic and require fresh verification."
+      },
+      "uncertainty": "No recipient deployment has been tested by this handover. Verify current service compatibility and expected behavior before relying on a result.",
+      "expected_result": {
+        "statement": "Lifecycle stopped / desired stopped and managed stopped after an accepted stop.",
+        "established_by": "pinned CLI README lifecycle commands and the existing shutdown criterion"
+      },
+      "decision_if_pass": "Treat stop convergence as routine evidence and keep collecting it passively.",
+      "decision_if_fail": "Open cleanup stays visible; the lane blocks until reconciliation.",
+      "executor": "lifecycle_journey",
+      "bindings": {
+        "deployment_id": "7a000021-0000-4000-8000-000000000022"
+      },
+      "evidence_required": [
+        "accepted stop reply",
+        "lifecycle and managed read-backs with timestamps"
+      ],
+      "authority": {
+        "kind": "journey_grant",
+        "status": "Inactive example; no recipient approval or live grant exists."
+      },
+      "cleanup": [
+        "stop_runtime"
+      ],
+      "not_redundant_because": "A new recipient configuration needs an independently authorized baseline and evidence for the selected customer workflow.",
+      "prerequisites": [
+        {
+          "id": "L1-recovery-question",
+          "status": "unmet",
+          "need": "new owner authority to exercise the failed / desired-stopping recovery path; not covered by the Clock Test grant",
+          "source": "docs/supplied-fixture/README.md"
+        }
+      ],
+      "status": "candidate",
+      "prior_evidence": [
+        {
+          "date": "synthetic",
+          "result": "Fictional scenario definition only; no observed customer outcome.",
+          "source": "docs/ADVANCED.md#examples-and-provenance"
+        }
+      ]
+    },
+    {
+      "id": "supplied-data.invoice-reconciliation",
+      "priority": "supporting",
+      "title": "Answer from supplied invoice data under frozen rules",
+      "customer_task": "A finance reviewer pastes ledger rows and asks which invoices need collection.",
+      "grounding": {
+        "kind": "hypothetical_use",
+        "source": "Recipient-selected scenario; all shipped bindings are synthetic and require fresh verification."
+      },
+      "uncertainty": "No recipient deployment has been tested by this handover. Verify current service compatibility and expected behavior before relying on a result.",
+      "expected_result": {
+        "statement": "The answer equals the independent oracle for the frozen case.",
+        "established_by": "seren_harness.invoice_conflicts / finance_invoices oracles"
+      },
+      "decision_if_pass": "Scoped observation only; no production reliability claim.",
+      "decision_if_fail": "Scoped answer-quality finding after oracle and evidence review.",
+      "executor": "clock_supplied_answer",
+      "bindings": {
+        "deployment_id": "7a000021-0000-4000-8000-000000000022",
+        "catalog": "seren_harness.invoice_catalog"
+      },
+      "evidence_required": [
+        "run identity",
+        "no tool activity",
+        "answer",
+        "confirmed shutdown"
+      ],
+      "authority": {
+        "kind": "standing_clock_test",
+        "scope": "supplied-answer-finance-v1",
+        "status": "Inactive example; no recipient approval or live grant exists."
+      },
+      "cleanup": [
+        "stop_runtime"
+      ],
+      "not_redundant_because": "A new recipient configuration needs an independently authorized baseline and evidence for the selected customer workflow.",
+      "prerequisites": [],
+      "closed_questions": [
+        "brace-origin attribution (closed route)",
+        "issue #5 large-amount subtraction: no further arithmetic repeats"
+      ],
+      "status": "candidate",
+      "prior_evidence": [
+        {
+          "date": "synthetic",
+          "result": "Fictional scenario definition only; no observed customer outcome.",
+          "source": "docs/ADVANCED.md#examples-and-provenance"
+        }
+      ]
+    },
+    {
+      "id": "database.direct-read",
+      "priority": "employee_retrieval",
+      "title": "Direct database reads on a dedicated fixture (not employee-mediated)",
+      "customer_task": "An owner reads rows from their own isolated database through the Seren CLI.",
+      "grounding": {
+        "kind": "hypothetical_use",
+        "source": "Recipient-selected scenario; all shipped bindings are synthetic and require fresh verification."
+      },
+      "uncertainty": "No recipient deployment has been tested by this handover. Verify current service compatibility and expected behavior before relying on a result.",
+      "expected_result": {
+        "statement": "Exact matches for three frozen reads.",
+        "established_by": "docs/db-fixture/fixture-manifest.json"
+      },
+      "decision_if_pass": "Already passed; no decision pending.",
+      "decision_if_fail": "Not applicable to a completed campaign.",
+      "executor": "dbread_campaign",
+      "bindings": {
+        "campaign": "seren.db-read-campaign"
+      },
+      "evidence_required": [
+        "campaign report"
+      ],
+      "authority": {
+        "kind": "journey_grant",
+        "status": "Inactive example; no recipient approval or live grant exists."
+      },
+      "cleanup": [],
+      "not_redundant_because": "A new recipient configuration needs an independently authorized baseline and evidence for the selected customer workflow.",
+      "prerequisites": [],
+      "status": "completed",
+      "prior_evidence": [
+        {
+          "date": "synthetic",
+          "result": "Fictional scenario definition only; no observed customer outcome.",
+          "source": "docs/ADVANCED.md#examples-and-provenance"
+        }
+      ]
+    },
+    {
+      "id": "employee-tool.publisher-catalog",
+      "priority": "employee_retrieval",
+      "title": "Employee looks up publisher catalog metadata",
+      "customer_task": "An employee looks up which operations a publisher offers.",
+      "grounding": {
+        "kind": "hypothetical_use",
+        "source": "Recipient-selected scenario; all shipped bindings are synthetic and require fresh verification."
+      },
+      "uncertainty": "No recipient deployment has been tested by this handover. Verify current service compatibility and expected behavior before relying on a result.",
+      "expected_result": {
+        "statement": "Catalog metadata for seren-db answered from the correlated result.",
+        "established_by": "docs/publisher-lookup/README.md"
+      },
+      "decision_if_pass": "Already passed; not proof of data retrieval.",
+      "decision_if_fail": "Not applicable to a completed test.",
+      "executor": "publisher_lookup",
+      "bindings": {
+        "publisher": "seren-db",
+        "tool": "seren_publishers_get"
+      },
+      "evidence_required": [
+        "saved run report"
+      ],
+      "authority": {
+        "kind": "journey_grant",
+        "status": "Inactive example; no recipient approval or live grant exists."
+      },
+      "cleanup": [],
+      "not_redundant_because": "A new recipient configuration needs an independently authorized baseline and evidence for the selected customer workflow.",
+      "prerequisites": [],
+      "status": "completed",
+      "prior_evidence": [
+        {
+          "date": "synthetic",
+          "result": "Fictional scenario definition only; no observed customer outcome.",
+          "source": "docs/ADVANCED.md#examples-and-provenance"
+        }
+      ]
+    }
+  ]
+}

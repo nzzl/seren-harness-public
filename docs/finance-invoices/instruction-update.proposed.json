@@ -1,0 +1,37 @@
+{
+  "_status": "PROPOSED, not authorized and not executed. Setup half of the clock-fixture invoice test (CLOCK-RUN.md). Usable by the existing `instruction-update` route only with a separate private config naming this deployment, created inside the future authorization.",
+  "kind": "instruction_update_package",
+  "id": "seren.finance.clock-instruction",
+  "version": 1,
+  "discord": "not_used",
+  "target": {
+    "deployment_id": "7a000021-0000-4000-8000-000000000022",
+    "name": "Seren Harness Clock Test",
+    "config": "a new private config (e.g. ~/seren-harness-live/clock-config.json, 0600): environment live, the existing pinned executable and checksum, explicit config_home and profile default, employee.deployment_id = this deployment, its own state_dir; Discord sender/observer unavailable. The existing Discord config is not edited."
+  },
+  "baseline": {
+    "recorded_by": "Inactive synthetic handover example. Recipient must establish a fresh baseline and authorization.",
+    "active_revision_id": "7a00000b-0000-4000-8000-00000000000c",
+    "agent_identity_id": null,
+    "last_observed": "Synthetic handover scenario. No historical observation, private report or customer outcome is included. Establish new recipient evidence before relying on this case."
+  },
+  "correction": {
+    "current_file": "docs/finance-invoices/SKILL.clock-current.md",
+    "current_sha256": "1f3022e6c1f66ed73f4dcfff0ee46b494c3736c4c7c86cdd4e989c9a94d88f15",
+    "current_source": "Synthetic handover scenario. No historical observation, private report or customer outcome is included. Establish new recipient evidence before relying on this case.",
+    "corrected_file": "docs/finance-invoices/SKILL.finance.md",
+    "corrected_sha256": "496b8b372471682d1b48a9fd790b0e5c95cf9ce24448336681f041e89a61cdff",
+    "corrected_trimmed_sha256": "07e64d5ae68ca9068bd7ad9650180775c4955101ea574a4e9ceae06b79b6ad00",
+    "use": "one --prompt=<contents> preview, then one identical managed update only if the unchanged gate passes"
+  },
+  "gate": "unchanged instruction_update gate: prerequisite reads show this deployment, identity null, revision 7a00000b, the current instruction, stopped/stopped; preview has exactly one changed field, no guarded-field or policy-digest difference, the corrected instruction and no pending approval; revision unchanged immediately before the update; read-back shows the corrected instruction on a new revision, stopped. Any other difference stops before the update and is reported; it is not waived.",
+  "limits": {
+    "service_invocations": 7,
+    "update": 1,
+    "readbacks": 2,
+    "timeout_seconds": 60,
+    "retries": 0,
+    "enforced_by": "seren_harness/instruction_update.py (MAX_INVOCATIONS 7, MAX_READBACKS 2, journaled update never resent, SerenCli timeout)",
+    "api_requests_upper": "39: six single-request reads/preview plus managed-update up to 3 + floor(60 / 2) = 33 (send, action lookup, one same-ID resend, 2 s polls until the 60 s timeout kills it); one OAuth refresh per invocation; up to 10 redirects per request"
+  }
+}

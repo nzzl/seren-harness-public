@@ -1,0 +1,100 @@
+{
+  "id": "seren.managed-employee.status-unknown-deployment",
+  "version": 1,
+  "interface": "seren_cli",
+  "command": "seren agent cloud deployment status 7a000033-0000-4000-8000-000000000034 -o json",
+  "execution_args": [
+    "agent",
+    "cloud",
+    "deployment",
+    "status",
+    "7a000033-0000-4000-8000-000000000034"
+  ],
+  "claim": "Asking for the status of a deployment ID the owner never received returns the documented not-found answer, not another deployment's state or a success.",
+  "scope": {
+    "statement": "Status lookup for generated negative-test deployment UUID 7a000033-0000-4000-8000-000000000034, as an owner would after a mistyped or stale ID. The UUID was generated locally (version 4) on 2026-10-13T11:59:09Z and is not verified as never issued by Seren. A pass verifies only the documented not-found answer for this one identifier.",
+    "entry": "seren agent cloud deployment status <deployment-id> -o json",
+    "accepted_provenance": [
+      "independently_observed"
+    ],
+    "out_of_scope": [
+      "Starting, stopping or modifying any deployment",
+      "Deleted deployments, other owners' deployments and general access-control testing",
+      "Malformed identifiers and the CLI's local argument validation",
+      "Wording or helpfulness of the error message"
+    ]
+  },
+  "basis": [
+    {
+      "kind": "documented_interface",
+      "reference": "Handover example. Synthetic identifiers and generalized regression expectations; no live result or authority is transferred."
+    },
+    {
+      "kind": "generated_input",
+      "reference": "Handover example. Synthetic identifiers and generalized regression expectations; no live result or authority is transferred."
+    }
+  ],
+  "expectation_date": "2026-10-13T00:00:00Z",
+  "expectation_notes": [
+    "Documented requirement: the 404 Not found response. The CLI prints the status, not the body, so 'deployment not found' text and a bare 404 are both the documented answer.",
+    "Hypothesis, not documented: a returned deployment object is unexpected because the UUID is not visible to the caller. It is an uncertain finding, since the UUID is not verified as never issued.",
+    "A success without a data object is neither documented answer and stays unverified.",
+    "Answer-class table (decided before execution): not_found pass; deployment_missing pass; record fail (uncertain finding); missing_object unverified; auth_rejected and forbidden unverified (access problem; a 403 may also be a visibility answer and is not interpreted); service_error unverified; unclassified unverified.",
+    "No live read was made while defining this case."
+  ],
+  "api": {
+    "data_path": [
+      "data"
+    ],
+    "answer_outcomes": {
+      "record": "fail",
+      "missing_object": "unverified",
+      "deployment_missing": "pass",
+      "auth_rejected": "unverified",
+      "forbidden": "unverified",
+      "service_error": "unverified",
+      "not_found": "pass",
+      "unclassified": "unverified"
+    }
+  },
+  "criteria": [
+    {
+      "id": "unknown_deployment_not_found",
+      "category": "service_outcome",
+      "check": "api_answer_class",
+      "required": true,
+      "claim": "A generated negative-test deployment ID returns the documented not-found answer",
+      "evidence": "Classified answer per the declared table: documented not-found passes; a returned deployment fails as an uncertain finding; other classes stay unverified.",
+      "finding": "unknown_deployment_returned"
+    }
+  ],
+  "findings": {
+    "unknown_deployment_returned": {
+      "classification": "uncertain",
+      "title": "A deployment was returned for a generated negative-test deployment ID",
+      "expected": "The documented 404 Not found for deployment 7a000033-0000-4000-8000-000000000034.",
+      "impact": "An owner using a wrong or stale deployment ID might be shown some deployment's state instead of a clear not-found.",
+      "unknowns": [
+        "The generated UUID is not verified as never issued."
+      ],
+      "retest": "When authorized, collect seren.managed-employee.status-unknown-deployment --target targets/seren.json --no-retry."
+    }
+  },
+  "unverified_always": [
+    {
+      "id": "never_issued",
+      "claim": "The UUID was never issued by Seren",
+      "follow_up": "Only local records were checked; the service does not expose this."
+    },
+    {
+      "id": "not_found_reason",
+      "claim": "Why the service answered not found",
+      "follow_up": "The CLI does not print the body; absence and invisibility are not distinguished."
+    },
+    {
+      "id": "server_build",
+      "claim": "The exact server build that answered",
+      "follow_up": "This CLI response contract does not establish a server build."
+    }
+  ]
+}

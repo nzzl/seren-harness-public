@@ -1,0 +1,13 @@
+{
+  "checks": [
+    {
+      "name": "Python snapshot source and behavior",
+      "argv": [
+        "python3",
+        "tools/check_python.py",
+        "your_package"
+      ],
+      "timeout_seconds": 120
+    }
+  ]
+}

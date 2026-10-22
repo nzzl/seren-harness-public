@@ -1,0 +1,221 @@
+{
+  "kind": "journey_package",
+  "journey": "employee-retrieval.branch-metadata",
+  "version": 3,
+  "prepared_at": "synthetic",
+  "assessment": "Handover example. Synthetic identifiers and generalized regression expectations; no live result or authority is transferred.",
+  "question": "With the documented prompt-surface publisher grant in place, does the Seren employee retrieve the intended branch record through seren_publisher_request and answer from the correlated result, or report inability without presenting a value it never retrieved?",
+  "customer_rationale": "Handover example. Synthetic identifiers and generalized regression expectations; no live result or authority is transferred.",
+  "selection": {
+    "selected": "R1",
+    "routes": [
+      {
+        "id": "R1",
+        "route": "branch metadata via seren_publisher_request with a prompt-surface typed publisher ref (seren-db / seren_db_get_branch)",
+        "status": "selected"
+      },
+      {
+        "id": "R2",
+        "route": "row read via native seren_db_query on an external_databases attachment",
+        "status": "not selected: no supported exact-query gate; would attach the application database (docs/EMPLOYEE-TOOL-TEST.md)"
+      },
+      {
+        "id": "R3",
+        "route": "Seren Storage object via an employee bucket grant",
+        "status": "not selected: no existing bucket or object; provisioning not authorized"
+      },
+      {
+        "id": "excluded",
+        "route": "publisher catalog lookup, constant query, pasted invoice data, the completed db-read campaign",
+        "status": "not retrieval of a customer record"
+      }
+    ]
+  },
+  "access_path": {
+    "established_offline": [
+      "Pinned openapi-seren-cloud.json AgentToolRef (publisher): 'Every other operation needs a ref authored for the surface that runs it.'",
+      "Pinned seren_publisher_request schema: operation_id is 'used to match typed publisher grants'.",
+      "Pinned openapi-seren-db.json: GET /projects/{id}/branches/{bid} is operationId seren_db_get_branch."
+    ],
+    "required_ref": {
+      "kind": "publisher",
+      "publisher_slug": "seren-db",
+      "operation_id": "seren_db_get_branch",
+      "execution_surface": "prompt",
+      "require_approval": false
+    },
+    "grant_scope": "The ref grants an operation, not a path. No pinned contract restricts it to project 7a000037... / branch 7a000027...; while installed, the employee could in principle read the metadata of other branches its runtime identity can reach. The single path is requested behaviour, checked in the trace afterwards.",
+    "not_established": [
+      "Whether the recipient employee identity has access to the requested management route; no historical access result is included.",
+      "whether the server normalizes the ref (for example adding defaults); the preview check then stops before any mutation",
+      "current branch existence and access (checked by the live preflight)"
+    ]
+  },
+  "controls": {
+    "preventive": [
+      "fixed-host transport: https://api.serendb.com/publishers/seren-agent only, one deployment, three operations (preview, update, action read), frozen body, no redirects, proxies or base-URL override",
+      "preview must show exactly two changed fields, bundle and tool_refs, with tool_refs equal to required_ref and the frozen instruction; otherwise stop before mutation",
+      "exact read-back of the whole configuration before start; reviewed tool catalog unchanged",
+      "read_only approval policy, one tool call, two iterations, 60 s timeout (unchanged fixture controls)",
+      "work calls cannot spend the 10 calls reserved for stop and restore"
+    ],
+    "requested_behaviour": [
+      "the instruction and message ask for exactly one seren_publisher_request with the frozen arguments and an exact-id reply"
+    ],
+    "post_run_checks": [
+      "exact tool name and arguments, a correlated complete result with matching id/project and nonempty name, and the answer after it (seren_harness.journeys.classify and the existing branch review)"
+    ]
+  },
+  "transport": {
+    "module": "seren_harness/grant_transport.py",
+    "contract": "pinned v0.10.0: POST /deployments/{id}/managed/preview and PATCH /deployments/{id}/managed (Idempotency-Key) with AgentSpecUpdate; GET /deployments/{id}/managed/actions/{request_id}; Authorization: Bearer <key> as in cli/src/command_context.rs",
+    "credential": "Recipient-provisioned API key in macOS Keychain service seren-harness-api-key; never copied from the former operator. CLI OAuth profile must also belong to the recipient.",
+    "body": {
+      "tool_refs": [
+        {
+          "kind": "publisher",
+          "publisher_slug": "seren-db",
+          "operation_id": "seren_db_get_branch",
+          "execution_surface": "prompt",
+          "require_approval": false
+        }
+      ],
+      "workload_patch": {
+        "prompt": "seren_harness.branch_read.prompt over inputs.arguments"
+      }
+    }
+  },
+  "inputs": {
+    "deployment_id": "7a000021-0000-4000-8000-000000000022",
+    "employee": "Seren Harness Clock Test",
+    "tool": "seren_publisher_request",
+    "arguments": {
+      "operation": "get",
+      "operation_id": "seren_db_get_branch",
+      "path": "/projects/7a000037-0000-4000-8000-000000000038/branches/7a000027-0000-4000-8000-000000000028",
+      "publisher": "seren-db"
+    },
+    "message_source": "seren_harness.branch_read.message over these arguments",
+    "instruction_source": "seren_harness.branch_read.prompt over these arguments"
+  },
+  "frozen": {
+    "instruction_sha256": "8992253782c66670365c204441d7efc6a1a6a93589bf1d7a9763b351d7895c45",
+    "message_sha256": "acc335630c219682d4b717470f5436ad849704bbe4d5461b998e7e8ded9fcb71",
+    "setup_body_sha256": "f7f696872939627ac2cefe6abdbaf1280bd09a7f6d944d27693477e426d02450"
+  },
+  "expected": {
+    "result": {
+      "id": "7a000027-0000-4000-8000-000000000028",
+      "project_id": "7a000037-0000-4000-8000-000000000038",
+      "name": "nonempty text; its value is not predicted"
+    },
+    "answer": "7a000027-0000-4000-8000-000000000028",
+    "established_by": "Handover example. Synthetic identifiers and generalized regression expectations; no live result or authority is transferred.",
+    "inability_rule": "After a failed or missing result the bare instructed success reply is a model-answer failure. Any other reply is read by the reviewer; quoting the requested id while saying retrieval failed is not by itself fabrication."
+  },
+  "target": {
+    "kind": "Recipient-owned isolated test branch; configure before use",
+    "baseline_required": {
+      "employee": "A recipient-owned stopped Clock Test baseline with no tool_refs, no external_databases and the supplied-data instruction installed.",
+      "catalog": "managed-deployment-tools equal to the reviewed exposure (employee_run.reviewed_policy) and the pinned seren_publisher_request schema, re-checked after setup"
+    },
+    "live_preflight_checks": [
+      "pinned CLI 'branches --project-id 7a000037-0000-4000-8000-000000000038 get 7a000027-0000-4000-8000-000000000028 -o json': id/project match and name nonempty",
+      "managed-get: the reviewed baseline above; captured as the exact original configuration",
+      "shared ledger: no unfinished attempt, open cleanup, action or lock; one 31-call reservation available; at least 420 s before configured UTC+07:00 midnight"
+    ]
+  },
+  "operations": {
+    "sequence": [
+      "preflight: branch read (CLI), managed-get (CLI)",
+      "setup: preview (transport); restore obligation and intent recorded; update (transport, one Idempotency-Key); at most one action read if the response is lost or pending",
+      "execution (existing ClockRun): managed-get exact-grant check, catalog, status, managed-start, readiness reads, one invocation, run reads",
+      "shutdown (existing ClockRun): managed-stop, status reads, managed-get",
+      "restore: managed-get, managed-rollback to the captured original revision with --expected-active-revision-id, managed-get exact read-back"
+    ],
+    "prohibited": [
+      "any second invocation, re-sent update, retry or replay after an uncertain outcome",
+      "rollback or any configuration change while shutdown is unconfirmed",
+      "credentials, connection strings, SQL, table rows or database attachments",
+      "any ref, grant, preset, policy, model or limit change other than required_ref and the instruction",
+      "creating, branching or deleting projects, branches or employees",
+      "Discord, GitHub, Example Research Employee or Seren maintainer contact; batching with other journeys"
+    ]
+  },
+  "bounds": {
+    "attempts": 1,
+    "calls_per_attempt": 31,
+    "call_allocation": {
+      "preflight": 2,
+      "setup": 3,
+      "execution": 16,
+      "shutdown_reserve": 7,
+      "restore_reserve": 3
+    },
+    "enforcement": "every CLI and transport call is journaled in the shared ledger before sending; the 31-call cap is the existing per-attempt counter; work calls are refused once 21 are used, keeping 10 for stop and restore",
+    "daily_budget": "inside the existing 200 attempts / 3,100 calls per configured UTC+07:00 day; no separate allowance",
+    "timing": {
+      "window_seconds": 420,
+      "rule": "One deadline from the reservation's expiry: the last 60 s are kept for restore and the 180 s before that for shutdown. Setup must finish within 60 s of the start and leave at least 30 s of work time. Managed-start's existing 300 s runtime budget is capped by the shutdown deadline. With setup at its 60 s maximum: work until about 175 s, shutdown until about 355 s, restore until 415 s."
+    }
+  },
+  "evidence": [
+    "ledger journal of every call before sending",
+    "preflight branch read, original managed-get (captured configuration)",
+    "Synthetic handover scenario. No historical observation, private report or customer outcome is included. Establish new recipient evidence before relying on this case.",
+    "post-setup managed-get and catalog",
+    "run identity, tool call, correlated result and answer (existing executor)",
+    "Synthetic handover scenario. No historical observation, private report or customer outcome is included. Establish new recipient evidence before relying on this case.",
+    "rebinding.json when the restored revision id differs"
+  ],
+  "criteria": {
+    "classifier": "seren_harness.journeys.classify (provenance live)",
+    "pass": "matching run identity; exactly one exact call; correlated complete success with matching id/project and nonempty name; answer exactly the id; shutdown and restore confirmed",
+    "seren_functional_failure": "with the grant verified in place, the documented request is denied or errors, or returns a different record; component-level cause not established",
+    "model_answer_failure": "wrong tool/arguments/extra call, an answer differing from the correlated id, or the bare success reply without a successful result",
+    "unresolved_contract_or_attribution": "denial while the grant was not verified in place",
+    "incomplete": "run identity mismatch or missing, uncorrelated/truncated/unsupported result, missing record fields, preflight or setup stop, or unconfirmed shutdown/restore",
+    "reviewer_reading": "any other reply after a failure is read by the reviewer and recorded with an excerpt",
+    "reporting": "a confirmed bug needs a live, cleanup- and restore-confirmed functional or model-answer classification that the structured evidence supports; anything else is never a confirmed bug"
+  },
+  "stopping_rules": [
+    "preflight mismatch, budget shortfall, stop switch or lock: stop before any mutation",
+    "preview changes more than bundle and tool_refs, or normalizes the ref: stop before mutation",
+    "update rejected (documented 4xx): nothing applied; restore read-back confirms it",
+    "update outcome lost: one action read under the same key; if still unknown, never re-send; restore decides from the read-back",
+    "post-setup read-back or catalog differs: no start; shut nothing down; restore",
+    "after the single invocation, regardless of verdict: stop, then restore",
+    "shutdown unconfirmed: no rollback; both obligations stay open and the lane stays blocked"
+  ],
+  "cleanup": [
+    {
+      "id": "stop_runtime",
+      "closed_by": "lifecycle stopped / desired stopped and a stopped managed-get"
+    },
+    {
+      "id": "restore_configuration",
+      "closed_by": "a managed-get equal to the captured original configuration: either unchanged (update not applied) or after a rollback whose response names the new revision and whose read-back matches exactly"
+    }
+  ],
+  "restoration": {
+    "method": "pinned CLI managed-rollback to the captured original revision with the setup revision as --expected-active-revision-id",
+    "revision_ids": "Rollback creates a revision (ManagedAgentDeploymentRevisionSummary.restored_from_revision_id), so the restored revision id differs from the original.",
+    "receipt_rebinding": "After an exact restored read-back the gate writes rebinding.json with the original and restored revision ids and the original configuration hash, and records its sha256 in the attempt. The invoice lane then uses live_discovery -> retrieval_journey.current_session: the setup receipt chain is still verified against the original revision; each rebinding hop is re-verified by hash and exact-configuration record; only the revision id moves forward. No authority file is edited. Any mismatch blocks the invoice lane.",
+    "uncertain": "A failed or uncertain rollback, a read-back differing from both the original and the reviewed change, or a killed process keeps restore_configuration open. The attempt stays blocked in the shared ledger, so no live work runs until it is reconciled."
+  },
+  "interruption": "Signals during setup or execution go to the existing bounded cleanup and restore. A killed process leaves the attempt 'attempting' in the ledger with its open obligations and intent records: never replayed, and the live lane is blocked until trusted reconciliation.",
+  "live_uncertainties": [
+    "whether the ref authorizes the employee on this route at all",
+    "whether the preview or read-back shows server-derived differences beyond bundle and tool_refs (this stops the attempt safely)",
+    "whether the Keychain prompts for access when the gate reads the key",
+    "whether rollback restores every derived field exactly (otherwise restore stays open and the lane stays blocked)",
+    "Charges are possible; recipient must explicitly authorize spending before any live run."
+  ],
+  "owner_decisions": [
+    "O1 grant change on Clock Test and its removal",
+    "O2 temporary displacement of the invoice instruction and revision rebinding afterwards",
+    "O3 metadata-only read of this application branch",
+    "O4 API-key transport from the named Keychain item"
+  ],
+  "authorization": "docs/journeys/employee-retrieval/authorization.proposed.json"
+}

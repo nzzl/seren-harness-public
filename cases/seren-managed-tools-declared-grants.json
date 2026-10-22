@@ -1,0 +1,177 @@
+{
+  "id": "seren.managed-tools.declared-grants",
+  "version": 2,
+  "interface": "seren_cli",
+  "target_status": "unresolved",
+  "target_note": "Synthetic handover scenario. No historical observation, private report or customer outcome is included. Establish new recipient evidence before relying on this case.",
+  "command": "seren agent managed-deployment-tools 7a000009-0000-4000-8000-00000000000a -o json",
+  "claim": "The publisher grants a managed Seren employee holds include the owner's recorded grants and no outreach or monitor operation.",
+  "scope": {
+    "statement": "Grant verification for the deployment the baseline was recorded for (7a000009-0000-4000-8000-00000000000a). Target unresolved: not run until a live deployment is established to match a dated baseline. A pass would not certify the employee, that tools work when called, or other settings.",
+    "entry": "seren agent managed-deployment-tools <deployment-id> -o json",
+    "accepted_provenance": [
+      "independently_observed"
+    ],
+    "out_of_scope": [
+      "Catalog retrieval as such (see seren.managed-tools.catalog-retrieval)",
+      "Whether granted tools succeed when invoked",
+      "Operations the documented terms cannot classify (listed, not judged)"
+    ]
+  },
+  "basis": [
+    {
+      "kind": "historical_baseline",
+      "reference": "Handover example. Synthetic identifiers and generalized regression expectations; no live result or authority is transferred."
+    },
+    {
+      "kind": "baseline_deployment",
+      "reference": "Synthetic baseline deployment 7a000009-0000-4000-8000-00000000000a; configure and verify a recipient-owned baseline before live use."
+    },
+    {
+      "kind": "documented_restriction",
+      "reference": "example-research-app README.md and docs/DECISIONS.md 'Explicit research contracts': these grants do not authorize outreach or Exa monitors; never grant monitors or outreach APIs"
+    }
+  ],
+  "expectation_date": "2026-10-04T00:00:00Z",
+  "expectation_notes": [
+    "The three grants are a dated historical baseline for 7a000009-0000-4000-8000-00000000000a only. They are not applied to any other deployment.",
+    "Additional operations do not fail for being outside the baseline. Only operations matching the documented prohibitions (outreach, monitors) fail; others are listed as unclassified.",
+    "The string format of allowed_publisher_operations is not documented. A baseline grant matches an entry containing both its publisher slug and operation id (case-insensitive)."
+  ],
+  "api": {
+    "data_path": [
+      "data"
+    ],
+    "equals": {
+      "deployment_id": "7a000009-0000-4000-8000-00000000000a"
+    },
+    "failure_patterns": [
+      "\\b404\\b",
+      "deployment not found",
+      "\\b400\\b",
+      "not managed by seren-agent"
+    ],
+    "list_field": "allowed_publisher_operations",
+    "declared": [
+      {
+        "id": "seren-db.seren_db_query",
+        "tokens": [
+          "seren-db",
+          "seren_db_query"
+        ]
+      },
+      {
+        "id": "exa.post_search",
+        "tokens": [
+          "exa",
+          "post_search"
+        ]
+      },
+      {
+        "id": "exa.post_contents",
+        "tokens": [
+          "exa",
+          "post_contents"
+        ]
+      }
+    ],
+    "prohibited": [
+      {
+        "id": "outreach",
+        "tokens": [
+          "outreach"
+        ]
+      },
+      {
+        "id": "monitors",
+        "tokens": [
+          "monitor"
+        ]
+      }
+    ]
+  },
+  "criteria": [
+    {
+      "id": "catalog_returned",
+      "category": "service_outcome",
+      "check": "api_answered",
+      "required": true,
+      "claim": "The service returns the deployment's tool catalog",
+      "evidence": "Exit 0 with the documented response object; a declared refusal of the target (400 or 404) fails; authentication, permission or unclassified errors stay unverified",
+      "finding": "catalog_unavailable"
+    },
+    {
+      "id": "target_deployment",
+      "category": "service_outcome",
+      "check": "api_equals",
+      "required": true,
+      "claim": "The catalog describes the baseline's deployment",
+      "evidence": "data.deployment_id equals 7a000009-0000-4000-8000-00000000000a",
+      "finding": "catalog_unavailable"
+    },
+    {
+      "id": "baseline_grants_present",
+      "category": "service_outcome",
+      "check": "api_declared_present",
+      "required": true,
+      "claim": "Every grant in the dated baseline is allowed",
+      "evidence": "Each baseline grant matches an allowed_publisher_operations entry",
+      "finding": "grant_drift"
+    },
+    {
+      "id": "no_prohibited_grants",
+      "category": "service_outcome",
+      "check": "api_none_prohibited",
+      "required": true,
+      "claim": "No outreach or monitor operation is allowed",
+      "evidence": "No allowed_publisher_operations entry matches a documented prohibition; unclassifiable entries are listed, not judged",
+      "finding": "prohibited_grant"
+    }
+  ],
+  "findings": {
+    "catalog_unavailable": {
+      "classification": "uncertain",
+      "title": "Managed deployment tool catalog could not be read for the baseline deployment",
+      "expected": "The documented catalog for deployment 7a000009-0000-4000-8000-00000000000a.",
+      "impact": "The owner cannot confirm what their employee may use before relying on it.",
+      "unknowns": [
+        "Whether the deployment was deliberately removed or replaced"
+      ]
+    },
+    "grant_drift": {
+      "classification": "uncertain",
+      "title": "Managed deployment lacks a grant from the owner's dated baseline",
+      "expected": "seren-db seren_db_query, exa post_search and exa post_contents are allowed.",
+      "impact": "The employee may lack research or database access it was configured for.",
+      "unknowns": [
+        "Whether a later revision removed the grant deliberately",
+        "The undocumented format of allowed_publisher_operations entries"
+      ]
+    },
+    "prohibited_grant": {
+      "classification": "uncertain",
+      "title": "Managed deployment allows an outreach or monitor operation",
+      "expected": "No outreach or monitor operation is allowed.",
+      "impact": "The employee may hold access the owner's recorded restriction excludes.",
+      "unknowns": [
+        "Whether the owner changed the restriction after the dated records"
+      ]
+    }
+  },
+  "unverified_always": [
+    {
+      "id": "live_target",
+      "claim": "A live deployment matches this baseline",
+      "follow_up": "Unresolved: establish a target and a dated baseline for it before any run."
+    },
+    {
+      "id": "tools_work",
+      "claim": "Granted tools succeed when the employee calls them",
+      "follow_up": "Needs a separate, authorized workflow that runs the employee."
+    }
+  ],
+  "limitations": [
+    "Historical baseline (2026-10-02 and 2026-10-04) for one deployment, not a current reading of any configuration.",
+    "Prohibitions are matched by the documented terms only (outreach, monitor); other operations are reported as unclassified."
+  ]
+}

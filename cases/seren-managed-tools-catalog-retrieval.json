@@ -1,0 +1,134 @@
+{
+  "id": "seren.managed-tools.catalog-retrieval",
+  "version": 2,
+  "version_note": "Inactive synthetic handover example. Recipient must establish a fresh baseline and authorization.",
+  "interface": "seren_cli",
+  "command": "seren agent managed-deployment-tools 7a00002f-0000-4000-8000-000000000030 -o json",
+  "claim": "An owner can ask Seren which tools a managed employee declares and get the documented catalog for that deployment.",
+  "scope": {
+    "statement": "Scoped to retrieving the declared tool catalog of managed deployment 7a00002f-0000-4000-8000-000000000030 (Example Research Employee's original research backend) through the supported Seren CLI. It does not judge which grants are correct, whether tools work when called, other deployments or other settings.",
+    "entry": "seren agent managed-deployment-tools <deployment-id> -o json",
+    "accepted_provenance": [
+      "independently_observed"
+    ],
+    "out_of_scope": [
+      "Whether the listed grants are the right ones (see seren.managed-tools.declared-grants)",
+      "Whether granted tools succeed when invoked"
+    ]
+  },
+  "basis": [
+    {
+      "kind": "documented_interface",
+      "reference": "serenorg/seren v0.10.0 cli/src/commands/agent.rs managed_agent_deployment_tools; sdk/openapi/openapi-seren-agent.json GET /deployments/{id}/tools (seren_agent_list_deployment_tools): 200 DataResponse_ManagedAgentToolCatalogResponse with deployment_id and tools[]; required entry fields name, description, source, approval_type, approval_rule_count, effective_policy, side_effecting, checkpoint_required; 400 not managed by seren-agent; 404 not found"
+    },
+    {
+      "kind": "target_record",
+      "reference": "Handover example. Synthetic identifiers and generalized regression expectations; no live result or authority is transferred."
+    }
+  ],
+  "expectation_date": "2026-10-10T00:00:00Z",
+  "expectation_notes": [
+    "Only the documented response contract and the requested identity are expected; no grant content is.",
+    "A stopped deployment answering this read is not documented either way; a refusal is evaluated by the declared failure patterns below."
+  ],
+  "api": {
+    "data_path": [
+      "data"
+    ],
+    "equals": {
+      "deployment_id": "7a00002f-0000-4000-8000-000000000030"
+    },
+    "failure_patterns": [
+      "\\b404\\b",
+      "deployment not found",
+      "\\b400\\b",
+      "not managed by seren-agent"
+    ],
+    "entries": {
+      "field": "tools",
+      "fields": {
+        "name": "string",
+        "description": "string",
+        "source": "string",
+        "approval_type": "string",
+        "approval_rule_count": "integer",
+        "effective_policy": "object",
+        "side_effecting": "boolean",
+        "checkpoint_required": "boolean"
+      }
+    }
+  },
+  "criteria": [
+    {
+      "id": "catalog_returned",
+      "category": "service_outcome",
+      "check": "api_answered",
+      "required": true,
+      "claim": "The service returns the deployment's tool catalog",
+      "evidence": "Exit 0 with the documented response object; a declared refusal of the target (400 or 404) fails; authentication, permission or unclassified errors stay unverified",
+      "finding": "catalog_unavailable"
+    },
+    {
+      "id": "target_deployment",
+      "category": "service_outcome",
+      "check": "api_equals",
+      "required": true,
+      "claim": "The catalog describes the requested deployment",
+      "evidence": "data.deployment_id equals the requested deployment",
+      "finding": "catalog_unavailable"
+    },
+    {
+      "id": "tool_metadata",
+      "category": "service_outcome",
+      "check": "api_entries_have",
+      "required": true,
+      "claim": "Each listed tool states its source, approval and side-effect metadata",
+      "evidence": "Every tools[] entry carries the fields the v0.10.0 specification requires, with their types",
+      "finding": "catalog_contract"
+    }
+  ],
+  "findings": {
+    "catalog_unavailable": {
+      "classification": "uncertain",
+      "title": "Managed deployment tool catalog could not be retrieved for the requested deployment",
+      "expected": "The documented catalog for deployment 7a00002f-0000-4000-8000-000000000030.",
+      "impact": "The owner cannot see what their employee declares before relying on it.",
+      "unknowns": [
+        "Whether the deployment was deliberately removed or changed type"
+      ],
+      "retest": "Run `python -m seren_harness collect seren.managed-tools.catalog-retrieval --target targets/seren.json` when authorized."
+    },
+    "catalog_contract": {
+      "classification": "defect",
+      "title": "Managed deployment tool catalog entries lack documented fields",
+      "expected": "Every entry carries the fields the v0.10.0 specification marks as required.",
+      "impact": "Owners and tools cannot rely on the documented approval and side-effect metadata.",
+      "unknowns": [
+        "Whether the server contract changed after CLI v0.10.0"
+      ],
+      "retest": "Run `python -m seren_harness collect seren.managed-tools.catalog-retrieval --target targets/seren.json` when authorized."
+    }
+  },
+  "unverified_always": [
+    {
+      "id": "grant_correctness",
+      "claim": "The listed grants are the ones the owner intends",
+      "follow_up": "Needs a target with an established baseline (seren.managed-tools.declared-grants, unresolved)."
+    },
+    {
+      "id": "tool_execution",
+      "claim": "Listed tools succeed when the employee calls them",
+      "follow_up": "Needs a separate, authorized workflow that runs the employee."
+    },
+    {
+      "id": "deployment_state",
+      "claim": "The deployment's runtime or lifecycle state",
+      "follow_up": "This read returns the declared catalog only; it reports no runtime state."
+    },
+    {
+      "id": "server_build",
+      "claim": "Which server build answered",
+      "follow_up": "No response exposes a server build identifier."
+    }
+  ]
+}

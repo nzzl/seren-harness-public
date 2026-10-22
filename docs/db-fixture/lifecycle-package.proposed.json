@@ -1,0 +1,428 @@
+{
+  "kind": "db_fixture_lifecycle_package",
+  "id": "seren.db-read.dedicated-project",
+  "version": 4,
+  "status": "PROPOSED, not authorized. Implemented and verified offline against stand-ins only: the fixture adapter (fixture setup|cleanup|status: A1-A6, R1 evidence only, C1-C2) and the database-read campaign (dbread setup|prepare|run|cleanup|status|verify-handoff|sessions) with at most two sequential Claude sessions. Live use needs the one consolidated owner authorization described under authorization; nothing here authorizes it.",
+  "source": {
+    "repository": "serenorg/seren",
+    "tag": "v0.10.0",
+    "commit": "2317949ecf6f8a2c319583e3a280bf7a705ce981",
+    "files": [
+      "cli/src/main.rs",
+      "cli/src/commands/projects.rs",
+      "cli/src/commands/branches.rs",
+      "cli/src/commands/databases.rs",
+      "cli/src/commands/psql.rs",
+      "cli/src/commands/auth.rs",
+      "cli/src/command_context.rs",
+      "cli/src/output.rs",
+      "sdk/src/config.rs",
+      "sdk/openapi/openapi-seren-db.json"
+    ]
+  },
+  "manifest": "docs/db-fixture/fixture-manifest.json",
+  "target": {
+    "path": "targets/seren.json",
+    "entry": "seren.db-read.dedicated-project"
+  },
+  "credential": "existing Seren CLI OAuth session, profile default, under the target root; referenced only, never read or copied. The child environment is rebuilt from scratch: no SEREN_API_KEY, SEREN_API_BASE or PG* variables are inherited. NO_COLOR=1.",
+  "project": {
+    "name": "seren-harness-dbread-51ee20c6",
+    "region": "us-east-1",
+    "explicit_flags": {
+      "block_public_connections": false,
+      "block_vpc_connections": false,
+      "hipaa": false,
+      "protected_branches_only": false,
+      "enable_logical_replication": false
+    },
+    "server_defaults_accepted": [
+      "compute_unit_min",
+      "compute_unit_max",
+      "organization (the pinned CLI parses --org-id but does not send it)"
+    ],
+    "no_cloning": "No branch create, restore, reset or parent branch is used; only the default branch created with the new project."
+  },
+  "bindings": {
+    "project.id": "id of the top-level project object printed by A1 after the fixed banner (projects.rs create prints print_json(&project.data), not a data wrapper), recorded durably with provenance 'A1 create response' before any dependent action. This is the only source of deletion authority; a project listing never binds an ID.",
+    "project.organization_id": "organization_id from the same object; recorded, not chosen.",
+    "branch.id": "the only entry of A2's data list; is_default true, project_id = project.id, parent_branch_id null, and equal to default_branch_id when A1 returned one.",
+    "database.name": "the only entry of A3's data list; branch_id = branch.id, name matching ^[a-z_][a-z0-9_]{0,62}$ and not starting with seren_.",
+    "rule": "Arguments are built only from this package, the manifest's named statements and bindings recorded in durable state by earlier actions. No ID, name, SQL or CLI argument is accepted from the command line, a session or another target."
+  },
+  "actions": [
+    {
+      "id": "A1",
+      "role": "setup",
+      "name": "create_project",
+      "mutation": true,
+      "mode": "create",
+      "argv": [
+        "projects",
+        "create",
+        "--name",
+        "seren-harness-dbread-51ee20c6",
+        "--region",
+        "us-east-1",
+        "--block-public-connections",
+        "false",
+        "--block-vpc-connections",
+        "false",
+        "--hipaa",
+        "false",
+        "--protected-branches-only",
+        "false",
+        "--enable-logical-replication",
+        "false",
+        "-o",
+        "json"
+      ],
+      "requests": {
+        "api": 1
+      },
+      "max_invocations": 1,
+      "before": "A cleanup obligation (open, no ID yet) and the in-flight reservation are saved before the request.",
+      "success": "exit 0; stdout (ANSI stripped) is exactly '\u2713 Project created successfully!', an empty line, then one JSON object with uuid id/organization_id, the requested name and region, and the five explicit flags as requested",
+      "rejected": "exit 1 and 'Failed to create project:' with an HTTP 4xx status: the service refused; the obligation closes",
+      "otherwise": "uncertain (timeout, interruption, 5xx, transport error, banner/JSON/identity mismatch): never re-created; R1 records evidence only and the obligation stays unresolved"
+    },
+    {
+      "id": "R1",
+      "role": "recovery",
+      "name": "list_same_name_projects",
+      "mutation": false,
+      "mode": "api_json",
+      "argv": [
+        "projects",
+        "list",
+        "-o",
+        "json"
+      ],
+      "requests": {
+        "api": 1
+      },
+      "max_invocations": 2,
+      "ordinary_invocations": 1,
+      "rule": "Evidence only; not proof of absence or ownership. A matching name and creation time cannot show which attempt created a project (a recent pre-existing or concurrent project looks the same), so R1 never binds, writes, registers or deletes, whether it lists zero, one or several candidates. Each same-name entry is recorded (id, created_at, deleted, near_attempt_time) with ownership 'unproven', plus whether the list was complete. The obligation stays unresolved without an ID and the blocker names the candidates; resolution happens outside the harness by confirming in Seren which project, if any, this attempt created. The second invocation is cleanup-only, at least 60 s after the first."
+    },
+    {
+      "id": "A2",
+      "role": "setup",
+      "name": "bind_branch",
+      "mutation": false,
+      "mode": "api_json",
+      "argv": [
+        "branches",
+        "--project-id",
+        {
+          "$bind": "project.id"
+        },
+        "list",
+        "-o",
+        "json"
+      ],
+      "requests": {
+        "api": 1
+      },
+      "max_invocations": 1
+    },
+    {
+      "id": "A3",
+      "role": "setup",
+      "name": "bind_database",
+      "mutation": false,
+      "mode": "api_json",
+      "argv": [
+        "databases",
+        "--project-id",
+        {
+          "$bind": "project.id"
+        },
+        "--branch-id",
+        {
+          "$bind": "branch.id"
+        },
+        "list",
+        "-o",
+        "json"
+      ],
+      "requests": {
+        "api": 1
+      },
+      "max_invocations": 1
+    },
+    {
+      "id": "A4",
+      "role": "setup",
+      "name": "fixture_write",
+      "mutation": true,
+      "mode": "psql_write",
+      "argv": [
+        "psql",
+        "--project-id",
+        {
+          "$bind": "project.id"
+        },
+        "--branch-id",
+        {
+          "$bind": "branch.id"
+        },
+        "--database",
+        {
+          "$bind": "database.name"
+        },
+        "--ssl",
+        "require",
+        "--",
+        "-X",
+        "-w",
+        "-A",
+        "-t",
+        "--set=ON_ERROR_STOP=1",
+        "-c",
+        {
+          "$statement": "fixture_write"
+        }
+      ],
+      "pgoptions": "-c default_transaction_read_only=off -c statement_timeout=10000",
+      "requests": {
+        "api": 1,
+        "db_connections": 1
+      },
+      "max_invocations": 3,
+      "reattempt": "Only after a pre-send failure: exit 1, stderr has the CLI's own 'Error: Failed to fetch connection URI:' and not 'psql exited with non-zero status'. psql.rs returns before spawning psql in that case, so no SQL was sent. At most 2 re-attempts, 30 s apart. Any failure after psql may have started (including psql connection errors) is not retried.",
+      "success": "exit 0 with stdout empty or 'COMMIT'",
+      "otherwise": "failed or uncertain: no rewrite; A5 decides, then cleanup"
+    },
+    {
+      "id": "A5",
+      "role": "setup",
+      "name": "fixture_readback",
+      "mutation": false,
+      "mode": "psql_read",
+      "argv": [
+        "psql",
+        "--project-id",
+        {
+          "$bind": "project.id"
+        },
+        "--branch-id",
+        {
+          "$bind": "branch.id"
+        },
+        "--database",
+        {
+          "$bind": "database.name"
+        },
+        "--ssl",
+        "require",
+        "--",
+        "-X",
+        "-w",
+        "-A",
+        "-t",
+        "--set=ON_ERROR_STOP=1",
+        "-c",
+        {
+          "$statement": "fixture_readback"
+        }
+      ],
+      "pgoptions": "-c default_transaction_read_only=on -c statement_timeout=10000",
+      "requests": {
+        "api": 1,
+        "db_connections": 1
+      },
+      "max_invocations": 1,
+      "success": "type-exact equality with the expectation materialized from the manifest rows, columns, relations, read_only 'on' and the bound database name"
+    },
+    {
+      "id": "A6",
+      "role": "setup",
+      "name": "register_fixture",
+      "mutation": false,
+      "mode": "local",
+      "requests": {},
+      "max_invocations": 1,
+      "effect": "Local only: write registration.json (bindings, package/manifest/authorization sha256, read-back evidence sha256). The cleanup obligation stays open until C2 confirms deletion."
+    },
+    {
+      "id": "C1",
+      "role": "cleanup",
+      "name": "delete_project",
+      "mutation": true,
+      "mode": "delete",
+      "argv": [
+        "projects",
+        "delete",
+        {
+          "$bind": "project.id"
+        },
+        "-y"
+      ],
+      "precondition": "project.source is 'A1 create response'. A binding with any other provenance (including the earlier adapter's 'recovery listing') is kept as recorded but never deleted: the obligation becomes unresolved with that ID.",
+      "requests": {
+        "api": 2,
+        "detail": "GET /projects/{id} then DELETE /projects/{id} within one invocation"
+      },
+      "max_invocations": 2,
+      "success": "exit 0 and exactly '\u2713 Project '<package name>' deleted successfully!'",
+      "otherwise": "C2 decides; a second C1 only after C2 shows the project present with deleted_at null"
+    },
+    {
+      "id": "C2",
+      "role": "cleanup",
+      "name": "verify_deleted",
+      "mutation": false,
+      "mode": "get",
+      "argv": [
+        "projects",
+        "get",
+        {
+          "$bind": "project.id"
+        },
+        "-o",
+        "json"
+      ],
+      "requests": {
+        "api": 1
+      },
+      "max_invocations": 2,
+      "success": "exit 1 with HTTP 404, or a top-level project object with the bound id and deleted_at set"
+    }
+  ],
+  "campaign": {
+    "id": "seren.db-read-campaign",
+    "cases": [
+      "case_open_invoices",
+      "case_first_page_by_due_date",
+      "case_missing_values"
+    ],
+    "case_ids": {
+      "case_open_invoices": "seren.db-read.open-invoices",
+      "case_first_page_by_due_date": "seren.db-read.first-page-by-due-date",
+      "case_missing_values": "seren.db-read.missing-values"
+    },
+    "requests_per_case": {
+      "api": 1,
+      "db_connections": 1
+    },
+    "max_service_requests": 6,
+    "max_cli_invocations": 3,
+    "retries": 0,
+    "psql_invocation_timeout_seconds": 30,
+    "statement_timeout_ms": 10000,
+    "output_cap_bytes": 65536,
+    "preparation": "dbread prepare instantiates exactly the authorized cases from the manifest's frozen statements and expected results, bound to the registered fixture's project, branch and database, writes them to the private campaign workspace and records each file's sha256 before any read. No session chooses, edits or adds a case.",
+    "execution": "dbread run: each case once through collect and the pinned read-only psql path (sql_probe family pinned to the manifest sha256), exact JSON comparison; stops testing on uncertainty, an invariant failure, rejected access, an expired window or an exhausted read budget.",
+    "sessions": {
+      "max": 2,
+      "model": "haiku",
+      "max_turns": 12,
+      "max_budget_usd_each": "1.00",
+      "session_timeout_seconds": 900,
+      "window_seconds": 3600,
+      "reserve_seconds": 600,
+      "session_1": [
+        "dbread setup",
+        "dbread prepare",
+        "dbread run --max-cases 1",
+        "dbread status"
+      ],
+      "session_2": [
+        "dbread verify-handoff",
+        "dbread run",
+        "dbread cleanup",
+        "dbread status"
+      ],
+      "coordinator": "After the last session, if the fixture's cleanup obligation is still open with create-response provenance and the lock is free, the coordinator runs dbread cleanup itself; otherwise the obligation stays recorded as open or unresolved.",
+      "budget_note": "max_budget_usd_each is Claude's client-side estimate; not a billing cap."
+    }
+  },
+  "accounting": {
+    "fixture_adapter": {
+      "reserved_requests_per_invocation": {
+        "A1": 1,
+        "R1": 1,
+        "A2": 1,
+        "A3": 1,
+        "A4": 2,
+        "A5": 2,
+        "C1": 2,
+        "C2": 1
+      },
+      "max_service_requests": 19,
+      "cleanup_reserve": 7,
+      "ordinary_limit": 12,
+      "max_cli_invocations": 13,
+      "max_mutating_invocations": 6,
+      "max_db_sessions": 2,
+      "note": "Each invocation reserves its worst case before it runs. A4 re-attempts follow only a pre-send failure, so at most one A4 invocation can open a DB session; the reservation still counts 2 per invocation. Ordinary (setup) reservations may not use the cleanup reserve (C1 x2, C2 x2, R1 second)."
+    },
+    "campaign_reads": {
+      "service_requests": 6,
+      "db_sessions": 3,
+      "cli_invocations": 3,
+      "note": "2 reserved per case (connection-URI GET + DB session); collect counts one CLI command per case as issued"
+    },
+    "package_total": {
+      "service_requests": 25,
+      "db_sessions": 5,
+      "cli_invocations": 16
+    },
+    "oauth_refresh": "auth.rs refreshes the OAuth token at most once per CLI invocation and only near expiry; ceiling 16 for the package. Not counted from observed file changes.",
+    "implicit_retries": "None in the pinned CLI/SDK: one reqwest call per operation, 60 s SDK timeout, no retry loop."
+  },
+  "limits": {
+    "api_invocation_timeout_seconds": 75,
+    "psql_invocation_timeout_seconds": 30,
+    "psql_connect_timeout_seconds": 10,
+    "statement_timeout_ms": 10000,
+    "reattempt_delay_seconds": 30,
+    "recovery_list_spacing_seconds": 60,
+    "output_cap_bytes": 65536,
+    "setup_deadline_minutes": 30,
+    "process_cleanup": "own session/process group; SIGKILL to the group on timeout, output-cap breach or interruption, and after every exit",
+    "stderr": "never saved; reduced to a fixed category and HTTP status number"
+  },
+  "authorization": {
+    "kind": "db_read_campaign_authorization",
+    "required": [
+      "package",
+      "package_sha256",
+      "manifest_sha256",
+      "target_sha256",
+      "approved_by",
+      "approved_at",
+      "not_before",
+      "expires_at",
+      "cleanup_expires_at",
+      "max_service_requests",
+      "budgets",
+      "cases",
+      "max_sessions"
+    ],
+    "rules": "One file authorizes setup, preparation, reads, sessions and cleanup. budgets.fixture equals accounting.fixture_adapter.max_service_requests (19) and budgets.reads equals campaign.max_service_requests (6); max_service_requests is their sum (25). cases is a non-empty, ordered subset of campaign.cases. max_sessions equals campaign.sessions.max. Each scope enforces its own share against its own durable reservations, so the total cannot be exceeded. The first use is recorded; a different file is refused. Reads run only inside the main window; cleanup also inside cleanup_expires_at.",
+    "legacy": "fixture setup|cleanup also accepts the earlier fixture-only kind db_fixture_authorization (max_service_requests 19); it cannot run reads."
+  },
+  "possible_charges": "Creating a SerenDB project and running its compute may incur Seren charges (storage, compute until autosuspend or deletion). The pinned CLI restricts regions 'for cost control'. Prices are not established; no monetary cap is enforceable by the harness.",
+  "outputs": {
+    "fixture_state": "~/seren-harness-reviews/fixtures/seren.db-read.dedicated-project/state.json",
+    "registration": "~/seren-harness-reviews/fixtures/seren.db-read.dedicated-project/registration.json",
+    "fixture_evidence": "~/seren-harness-reviews/fixtures/seren.db-read.dedicated-project/evidence/",
+    "campaign_state": "~/seren-harness-reviews/campaigns/seren.db-read-campaign/state.json (handoff.json, handoff.md, summary.md beside it)",
+    "case_workspace": "~/seren-harness-reviews/campaigns/seren.db-read-campaign/workspace/ (instantiated cases and target)",
+    "case_evidence": "~/seren-harness-reviews/seren.db-read.<case>/<timestamp>/",
+    "findings": "~/seren-harness-reviews/findings/ (private drafts)",
+    "sessions": "~/seren-harness-reviews/campaigns/seren.db-read-campaign/sessions.json, session-N.jsonl, final-report.md"
+  },
+  "stop_conditions": [
+    "authorization missing, outside its window, different from the first one used, or not naming this package's, the manifest's and the target's sha256",
+    "pinned executable or psql checksum mismatch, or a CLI version outside 0.10.0",
+    "A1 rejected (obligation closed) or uncertain (R1 evidence only: obligation unresolved without an ID; no write, registration or deletion)",
+    "a bound project whose provenance is not the A1 create response: unresolved and never deleted",
+    "A2/A3 binding rule unmet, A4 failed/uncertain without an exact A5 read-back, or any A5 mismatch: setup fails and cleanup runs",
+    "an ordinary reservation would enter the cleanup reserve, or an action's invocation limit is reached",
+    "the setup deadline or main window passes: only cleanup continues, inside its window",
+    "C2 still shows the project after the second C1, or deletion stays uncertain: unresolved cleanup obligation with the bound ID"
+  ]
+}

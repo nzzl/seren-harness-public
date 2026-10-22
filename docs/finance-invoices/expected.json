@@ -1,0 +1,24 @@
+{
+  "as_of": "2026-10-14",
+  "overdue": [
+    {
+      "invoice_id": "INV-001",
+      "outstanding_usd": "1200.00",
+      "days_overdue": 13
+    },
+    {
+      "invoice_id": "INV-002",
+      "outstanding_usd": "500.00",
+      "days_overdue": 4
+    },
+    {
+      "invoice_id": "INV-007",
+      "outstanding_usd": "100.00",
+      "days_overdue": 1
+    }
+  ],
+  "overdue_count": 3,
+  "overdue_outstanding_usd": "1800.00",
+  "total_outstanding_usd": "4300.25",
+  "not_yet_overdue_outstanding_usd": "2500.25"
+}

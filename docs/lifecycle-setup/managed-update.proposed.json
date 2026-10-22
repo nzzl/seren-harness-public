@@ -1,0 +1,13 @@
+{
+  "_proposal": "PROPOSED, not applied. AgentSpecUpdate body for POST /publishers/seren-agent/deployments/7a00003a-0000-4000-8000-00000000003b/managed/preview, then PATCH .../managed with a fresh UUID Idempotency-Key only if the preview is accepted and unchanged. Seren CLI v0.10.0 cannot carry tool_refs (MANAGED_AGENT_CONFIG_FIELDS), so this goes through the documented managed API. Drop this _proposal key before sending. Fill expected_active_revision_id from a read-back; tool_refs replaces the whole list, so it must also include any refs the read-back shows.",
+  "expected_active_revision_id": null,
+  "tool_refs": [
+    {
+      "kind": "connector",
+      "connector_ref": "discord-gateway",
+      "capability": "messaging",
+      "scopes": [],
+      "require_approval": false
+    }
+  ]
+}

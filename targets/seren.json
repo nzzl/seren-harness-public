@@ -1,0 +1,153 @@
+{
+  "employee": "Seren managed employees",
+  "root": "/opt/seren-handover/recipient-workspace",
+  "notes": "Inactive recipient configuration template. Replace paths, identifiers and verified executable hashes before use. No credentials or approvals included.",
+  "collectors": {
+    "seren.managed-tools.catalog-retrieval": {
+      "type": "seren_cli",
+      "executable": "{root}/.cache/seren-cli-current/bin/seren",
+      "executable_sha256": "ddf617c405ce0a90c676a0342295782dcab5f392ef3695aa69ed86caa776b2fa",
+      "config_home": "{root}/.data/seren-cli/config",
+      "profile": "default",
+      "args": [
+        "agent",
+        "managed-deployment-tools",
+        "7a00002f-0000-4000-8000-000000000030"
+      ],
+      "timeout_seconds": 30
+    },
+    "seren.managed-tools.declared-grants": {
+      "type": "seren_cli",
+      "executable": "{root}/.cache/seren-cli-current/bin/seren",
+      "executable_sha256": "ddf617c405ce0a90c676a0342295782dcab5f392ef3695aa69ed86caa776b2fa",
+      "config_home": "{root}/.data/seren-cli/config",
+      "profile": "default",
+      "args": [
+        "agent",
+        "managed-deployment-tools",
+        "7a000009-0000-4000-8000-00000000000a"
+      ],
+      "timeout_seconds": 30
+    },
+    "seren.managed-employee.status-retrieval": {
+      "type": "seren_cli",
+      "executable": "{root}/.cache/seren-cli-current/bin/seren",
+      "executable_sha256": "ddf617c405ce0a90c676a0342295782dcab5f392ef3695aa69ed86caa776b2fa",
+      "config_home": "{root}/.data/seren-cli/config",
+      "profile": "default",
+      "args": [
+        "agent",
+        "cloud",
+        "deployment",
+        "status",
+        "7a00003a-0000-4000-8000-00000000003b"
+      ],
+      "timeout_seconds": 30
+    },
+    "seren.managed-employee.status-unknown-deployment": {
+      "type": "seren_cli",
+      "executable": "{root}/.cache/seren-cli-current/bin/seren",
+      "executable_sha256": "ddf617c405ce0a90c676a0342295782dcab5f392ef3695aa69ed86caa776b2fa",
+      "config_home": "{root}/.data/seren-cli/config",
+      "profile": "default",
+      "args": [
+        "agent",
+        "cloud",
+        "deployment",
+        "status",
+        "7a000033-0000-4000-8000-000000000034"
+      ],
+      "timeout_seconds": 30
+    },
+    "seren.cloud-run.record-retrieval": {
+      "type": "seren_cli",
+      "executable": "{root}/.cache/seren-cli-current/bin/seren",
+      "executable_sha256": "ddf617c405ce0a90c676a0342295782dcab5f392ef3695aa69ed86caa776b2fa",
+      "config_home": "{root}/.data/seren-cli/config",
+      "profile": "default",
+      "args": [
+        "agent",
+        "cloud",
+        "run",
+        "get",
+        "--deployment-id",
+        "7a000021-0000-4000-8000-000000000022",
+        "7a00002c-0000-4000-8000-00000000002d"
+      ],
+      "timeout_seconds": 30
+    },
+    "seren.cloud-run.other-deployment": {
+      "type": "seren_cli",
+      "executable": "{root}/.cache/seren-cli-current/bin/seren",
+      "executable_sha256": "ddf617c405ce0a90c676a0342295782dcab5f392ef3695aa69ed86caa776b2fa",
+      "config_home": "{root}/.data/seren-cli/config",
+      "profile": "default",
+      "args": [
+        "agent",
+        "cloud",
+        "run",
+        "get",
+        "--deployment-id",
+        "7a00003a-0000-4000-8000-00000000003b",
+        "7a00002c-0000-4000-8000-00000000002d"
+      ],
+      "timeout_seconds": 30
+    },
+    "seren.cloud-run.generated-id": {
+      "type": "seren_cli",
+      "executable": "{root}/.cache/seren-cli-current/bin/seren",
+      "executable_sha256": "ddf617c405ce0a90c676a0342295782dcab5f392ef3695aa69ed86caa776b2fa",
+      "config_home": "{root}/.data/seren-cli/config",
+      "profile": "default",
+      "args": [
+        "agent",
+        "cloud",
+        "run",
+        "get",
+        "--deployment-id",
+        "7a000021-0000-4000-8000-000000000022",
+        "7a000003-0000-4000-8000-000000000004"
+      ],
+      "timeout_seconds": 30
+    },
+    "seren.database.constant-query": {
+      "type": "seren_cli",
+      "executable": "{root}/.cache/seren-cli-current/bin/seren",
+      "executable_sha256": "ddf617c405ce0a90c676a0342295782dcab5f392ef3695aa69ed86caa776b2fa",
+      "config_home": "{root}/.data/seren-cli/config",
+      "profile": "default",
+      "args": [
+        "psql",
+        "--project-id",
+        "7a000037-0000-4000-8000-000000000038",
+        "--branch-id",
+        "7a000027-0000-4000-8000-000000000028",
+        "--database",
+        "serendb",
+        "--ssl",
+        "require",
+        "--",
+        "-X",
+        "-w",
+        "-A",
+        "-t",
+        "--set=ON_ERROR_STOP=1",
+        "-c",
+        "SELECT pg_catalog.json_build_object('database', pg_catalog.current_database(), 'answer', 6 * 7, 'read_only', pg_catalog.current_setting('transaction_read_only'));"
+      ],
+      "timeout_seconds": 30,
+      "psql_executable": "/opt/homebrew/Cellar/postgresql@14/14.19/bin/psql",
+      "psql_sha256": "07577023ac7c6f0bb0f9217dcd51ec38f0965c1fee3d1d95cf2dd87cf10a4080"
+    }
+  },
+  "fixtures": {
+    "seren.db-read.dedicated-project": {
+      "executable": "{root}/.cache/seren-cli-current/bin/seren",
+      "executable_sha256": "ddf617c405ce0a90c676a0342295782dcab5f392ef3695aa69ed86caa776b2fa",
+      "config_home": "{root}/.data/seren-cli/config",
+      "profile": "default",
+      "psql_executable": "/opt/homebrew/Cellar/postgresql@14/14.19/bin/psql",
+      "psql_sha256": "07577023ac7c6f0bb0f9217dcd51ec38f0965c1fee3d1d95cf2dd87cf10a4080"
+    }
+  }
+}

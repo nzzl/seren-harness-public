@@ -1,0 +1,82 @@
+{
+  "employee": {
+    "name": "Seren Harness Clock Test",
+    "role": "Isolated clock-tool verification employee",
+    "objective": "Demonstrate one employee-mediated system_time call and report its result.",
+    "instructions": "You are Seren Harness Clock Test, an isolated non-production employee. Remain idle until explicitly invoked. On the fixed harness request, call system_time exactly once with empty arguments and return exactly its UTC timestamp. Do not guess time, initiate work, schedule tasks, use other tools, browse, access databases, execute code, delegate, or connect to messaging services. You have no Discord connector or credentials. No first task is supplied at creation."
+  },
+  "model_selection": {
+    "source": "seren_models"
+  },
+  "deployment": {
+    "name": "Seren Harness Clock Test",
+    "agent_slug": "Inactive synthetic handover example. Recipient must establish a fresh baseline and authorization.",
+    "mode": "always_on",
+    "template": "research_monitor",
+    "approval_policy": "read_only",
+    "model_policy": "fast",
+    "tool_presets": [],
+    "tool_refs": [],
+    "allowed_remote_agent_origins": [],
+    "credentials": [],
+    "memory_policy": {
+      "semantic_memory": {
+        "enabled": false
+      },
+      "graph_memory": {
+        "enabled": false
+      },
+      "knowledge": {
+        "enabled": false
+      }
+    },
+    "capability_policy": {
+      "browser": {
+        "enabled": false
+      },
+      "code_execution": {
+        "enabled": false
+      },
+      "skills": {
+        "enabled": false,
+        "execute_scripts": false
+      },
+      "eval_harness": {
+        "enabled": false
+      },
+      "workflows": {
+        "enabled": false
+      }
+    },
+    "workload": {
+      "compute_backend": "aws_container",
+      "execution": {
+        "type": "llm",
+        "bundle": {
+          "instructions": [
+            {
+              "kind": "skill",
+              "path": "SKILL.md",
+              "content": "---\nname: seren-harness-clock-test\ndescription: One explicitly invoked clock-tool test.\n---\n\n# Seren Harness Clock Test\n\nYou are Seren Harness Clock Test, an isolated non-production employee. Remain idle until explicitly invoked. On the fixed harness request, call system_time exactly once with empty arguments and return exactly its UTC timestamp. Do not guess time, initiate work, schedule tasks, use other tools, browse, access databases, execute code, delegate, or connect to messaging services. You have no Discord connector or credentials. No first task is supplied at creation.\n"
+            }
+          ],
+          "assets": []
+        },
+        "fallback_models": []
+      },
+      "external_databases": [],
+      "limits": {
+        "max_iterations": 2,
+        "max_timeout_seconds": 60,
+        "max_tool_calls_per_run": 1,
+        "max_tool_output_chars": 1000,
+        "context_budget_tokens": 8000
+      },
+      "config": {}
+    },
+    "private_output_policy": "control_plane"
+  },
+  "requested_capabilities": [],
+  "selected_toolkit_ids": [],
+  "selected_connection_ids": []
+}

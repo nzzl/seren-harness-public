@@ -1,0 +1,100 @@
+{
+  "id": "seren.cloud-run.other-deployment",
+  "version": 1,
+  "interface": "seren_cli",
+  "campaign": "seren.run-record-retrieval",
+  "command": "seren agent cloud run get --deployment-id 7a00003a-0000-4000-8000-00000000003b 7a00002c-0000-4000-8000-00000000002d -o json",
+  "execution_args": [
+    "agent",
+    "cloud",
+    "run",
+    "get",
+    "--deployment-id",
+    "7a00003a-0000-4000-8000-00000000003b",
+    "7a00002c-0000-4000-8000-00000000002d"
+  ],
+  "claim": "Requesting a run under a deployment that did not run it returns the documented not-found answer, not the run.",
+  "scope": {
+    "statement": "Lookup of run 7a00002c-0000-4000-8000-00000000002d (which ran on 7a000021-0000-4000-8000-000000000022) under the other owned isolated deployment 7a00003a-0000-4000-8000-00000000003b. A pass verifies only that the service gave the documented not-found answer. It does not prove cross-deployment isolation, authorization semantics or why the run was not found.",
+    "entry": "seren agent cloud run get --deployment-id <deployment-id> <run-id> -o json",
+    "accepted_provenance": [
+      "independently_observed"
+    ],
+    "out_of_scope": [
+      "Starting, stopping, invoking or modifying either deployment",
+      "General access-control or isolation testing",
+      "Lookups under deployments the owner does not control"
+    ]
+  },
+  "basis": [
+    {
+      "kind": "documented_interface",
+      "reference": "serenorg/seren v0.10.0 (2317949ecf6f8a2c319583e3a280bf7a705ce981): GET /deployments/{id}/runs/{run_id} (seren_cloud_deployment_run) documents 200 and 404 Not found; the path scopes the run to a deployment."
+    },
+    {
+      "kind": "target_record",
+      "reference": "Handover example. Synthetic identifiers and generalized regression expectations; no live result or authority is transferred."
+    }
+  ],
+  "expectation_date": "2026-10-13T00:00:00Z",
+  "expectation_notes": [
+    "The contract documents 404 for this path but does not state that a run is scoped to the deployment in the path. A returned record is therefore an uncertain finding, not a defect.",
+    "A 404 that names the deployment as missing is a fixture problem, never a pass.",
+    "Answer-class table (decided before execution): not_found pass; record fail (uncertain finding); missing_object unverified; deployment_missing unverified (fixture problem); auth_rejected and forbidden unverified (access problem; a 403 may also be a scoping answer and is not interpreted); service_error unverified; unclassified unverified."
+  ],
+  "api": {
+    "data_path": [
+      "data"
+    ],
+    "answer_outcomes": {
+      "record": "fail",
+      "missing_object": "unverified",
+      "deployment_missing": "unverified",
+      "auth_rejected": "unverified",
+      "forbidden": "unverified",
+      "service_error": "unverified",
+      "not_found": "pass",
+      "unclassified": "unverified"
+    }
+  },
+  "criteria": [
+    {
+      "id": "not_returned_elsewhere",
+      "category": "service_outcome",
+      "check": "api_answer_class",
+      "required": true,
+      "claim": "The run is not returned under a deployment that did not run it",
+      "evidence": "Classified answer per the declared table: documented not-found passes; a returned record fails as an uncertain finding; other classes stay unverified.",
+      "finding": "run_visible_elsewhere"
+    }
+  ],
+  "findings": {
+    "run_visible_elsewhere": {
+      "classification": "uncertain",
+      "title": "A run record was returned under a deployment that did not run it",
+      "expected": "The documented 404 Not found for run 7a00002c-0000-4000-8000-00000000002d under 7a00003a-0000-4000-8000-00000000003b.",
+      "impact": "Run records might be reachable through an unrelated deployment path.",
+      "unknowns": [
+        "The contract does not state deployment scoping explicitly; both deployments belong to the same owner."
+      ],
+      "retest": "When authorized, collect seren.cloud-run.other-deployment --target targets/seren.json --no-retry."
+    }
+  },
+  "unverified_always": [
+    {
+      "id": "isolation",
+      "claim": "Run records are isolated between deployments",
+      "follow_up": "A single not-found answer for one owned pair does not establish isolation or authorization behaviour."
+    },
+    {
+      "id": "not_found_reason",
+      "claim": "Why the service answered not found",
+      "follow_up": "The answer does not distinguish an absent run from a scoped lookup."
+    },
+    {
+      "id": "server_build",
+      "claim": "The exact server build that answered",
+      "follow_up": "This CLI response contract does not establish a server build."
+    }
+  ]
+}

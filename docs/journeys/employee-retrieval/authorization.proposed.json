@@ -1,0 +1,33 @@
+{
+  "kind": "journey_authorization",
+  "status": "proposed",
+  "active": false,
+  "journey": "employee-retrieval.branch-metadata",
+  "package": "docs/journeys/employee-retrieval/package.json",
+  "package_version": 3,
+  "package_sha256": "6818e21a32c83d80a0616dc9c8493ca555a4b6cef3fd7b6b3010a752659f5b62",
+  "implementation_revision": "Recipient must validate and bind the exact new local revision; no former operator commit is included.",
+  "covers": [
+    "one attempt on Seren Harness Clock Test 7a000021-0000-4000-8000-000000000022 through the live gate's journey path (live_discovery.journey_gate -> retrieval_journey)",
+    "O4: reading the recipient API key from Keychain service 'seren-harness-api-key' inside the trusted gate process and using it only for the fixed-host preview, update and at most one action read (grant_transport)",
+    "O1: adding exactly the prompt-surface ref seren-db / seren_db_get_branch together with the branch-read instruction, then removing both by rollback",
+    "O2: temporarily displacing the supplied-data instruction, restoring the captured original configuration by managed-rollback, and the invoice lane accepting the restored revision only through the verified rebinding record",
+    "O3: one metadata-only read of application branch 7a000027-0000-4000-8000-000000000028 in project 7a000037-0000-4000-8000-000000000038: the preflight read with the owner's existing OAuth, and the employee's single seren_publisher_request",
+    "the package's preflight, setup, execution, shutdown and restore calls, stopping rules and cleanup, within 31 calls and the 420 s window"
+  ],
+  "budgets": "Counted inside the existing standing ledger: 1 of 200 attempts and at most 31 of 3,100 calls for that configured UTC+07:00 day. No separate allowance.",
+  "charges": "No paid Claude overage. No live spending authority is included; recipient must approve explicit limits before execution.",
+  "does_not_cover": [
+    "any repeat, retry, re-sent update or second invocation",
+    "contact with Seren maintainers",
+    "creating employees, projects, branches, buckets or fixtures",
+    "any other ref, grant, attachment, preset, policy, model or limit change",
+    "SQL, table rows, credentials or connection strings",
+    "Any disclosure to any external channel without separate explicit approval.",
+    "the brace-origin route or further issue #5 arithmetic repeats"
+  ],
+  "activation": "The owner adds to the private live authority: \"journeys\": {\"employee-retrieval.branch-metadata\": {\"active\": true, \"approved\": true, \"package_sha256\": \"<package_sha256 above>\"}}. Nothing else changes. Claude then queues it once with worker live-request --journey and a valid --comparison.",
+  "approved": false,
+  "approved_by": null,
+  "approved_at": null
+}

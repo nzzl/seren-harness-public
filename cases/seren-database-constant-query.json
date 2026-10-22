@@ -1,0 +1,121 @@
+{
+  "id": "seren.database.constant-query",
+  "version": 1,
+  "interface": "seren_cli",
+  "command": "seren psql (explicit project, branch and database; fixed table-free query)",
+  "claim": "An owner can execute a fixed read-only SQL calculation through Seren and receive the expected structured result.",
+  "scope": {
+    "statement": "One table-free SQL calculation through the official Seren psql command. This is direct Seren-backed database execution, not employee-mediated tool or grant verification.",
+    "entry": "seren psql",
+    "accepted_provenance": [
+      "independently_observed"
+    ],
+    "out_of_scope": [
+      "Application tables and saved research",
+      "Employee runtime, tool grants and Discord",
+      "DDL, DML, paid publishers and resource changes"
+    ]
+  },
+  "basis": [
+    {
+      "kind": "documented_interface",
+      "reference": "serenorg/seren v0.10.0 37654244: cli/src/main.rs Commands::Psql and cli/src/commands/psql.rs: seren_db_connection_uri then psql; no employee start or publisher call."
+    },
+    {
+      "kind": "target_record",
+      "reference": "Handover example. Synthetic identifiers and generalized regression expectations; no live result or authority is transferred."
+    },
+    {
+      "kind": "independent_oracle",
+      "reference": "6 multiplied by 7 is 42; expected current_database is the explicitly selected serendb; transaction_read_only must be on. PostgreSQL json_build_object/current_database/current_setting contracts, https://www.postgresql.org/docs/14/functions-json.html and https://www.postgresql.org/docs/14/app-psql.html. No table contents or response-derived expectations."
+    }
+  ],
+  "expectation_date": "2026-10-11T00:00:00Z",
+  "execution_args": [
+    "psql",
+    "--project-id",
+    "7a000037-0000-4000-8000-000000000038",
+    "--branch-id",
+    "7a000027-0000-4000-8000-000000000028",
+    "--database",
+    "serendb",
+    "--ssl",
+    "require",
+    "--",
+    "-X",
+    "-w",
+    "-A",
+    "-t",
+    "--set=ON_ERROR_STOP=1",
+    "-c",
+    "SELECT pg_catalog.json_build_object('database', pg_catalog.current_database(), 'answer', 6 * 7, 'read_only', pg_catalog.current_setting('transaction_read_only'));"
+  ],
+  "api": {
+    "data_path": [],
+    "failure_patterns": [],
+    "expected_result": {
+      "database": "serendb",
+      "answer": 42,
+      "read_only": "on"
+    }
+  },
+  "criteria": [
+    {
+      "id": "query_returned",
+      "category": "service_outcome",
+      "check": "api_answered",
+      "required": true,
+      "claim": "The query exits successfully with a structured result",
+      "evidence": "Exit zero and one JSON object; access/query errors remain inconclusive.",
+      "finding": "query_result"
+    },
+    {
+      "id": "known_result",
+      "category": "service_outcome",
+      "check": "api_result_equals",
+      "required": true,
+      "claim": "The result is exactly database serendb, integer answer 42 and read_only on",
+      "evidence": "Exact JSON object equality including value types, no missing or additional result fields.",
+      "finding": "query_result"
+    }
+  ],
+  "findings": {
+    "query_result": {
+      "classification": "uncertain",
+      "title": "Fixed read-only database query did not return its specified result",
+      "expected": "One JSON object: database serendb, answer 42, read_only on.",
+      "impact": "The owner cannot verify correct execution of a simple SQL calculation through the selected Seren database path.",
+      "unknowns": [
+        "Whether access, configuration or service behavior explains the discrepancy"
+      ],
+      "retest": "When authorized, collect seren.database.constant-query --target targets/seren.json once."
+    }
+  },
+  "unverified_always": [
+    {
+      "id": "employee_tool",
+      "claim": "Employee-mediated tool execution and grants",
+      "follow_up": "Requires a separate employee workflow; no employee is invoked."
+    },
+    {
+      "id": "database_identity",
+      "claim": "Independent server-side proof of project and branch identity",
+      "follow_up": "The CLI request selects both IDs; current_database only verifies the database name."
+    },
+    {
+      "id": "data_preservation",
+      "claim": "Independent before/after proof of database contents",
+      "follow_up": "This exact query reads no tables; no database audit is performed."
+    },
+    {
+      "id": "cost",
+      "claim": "Monetary cost of the database connection",
+      "follow_up": "No paid publisher is called; ordinary database wake-up, metering or logs may occur."
+    },
+    {
+      "id": "server_build",
+      "claim": "Exact answering server build",
+      "follow_up": "The result does not expose it."
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "expected_active_revision_id": "7a00002b-0000-4000-8000-00000000002c",
+  "tool_presets": [],
+  "workload_limits": {
+    "max_tool_calls_per_run": 1,
+    "max_iterations": 2
+  }
+}
