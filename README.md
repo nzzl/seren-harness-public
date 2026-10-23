@@ -5,17 +5,24 @@
 [![Validation: offline](docs/assets/badges/validation.svg)](VALIDATION.md)
 [![Status: early release](docs/assets/badges/status.svg)](#what-it-does-and-does-not-establish)
 
-Automated functional testing of the [Seren](https://docs.serendb.com) AI-employee platform
-from a user's point of view. Seren Harness is an independent project; it is not made,
-reviewed or endorsed by Seren.
+**Seren Harness is designed to let an automated agent find and report user-facing issues
+in the [Seren](https://docs.serendb.com) AI-employee platform by running functional user
+journeys.** Within the scope, permissions and limits you configure, the testing agent assigns
+work to AI employees, follows up on their actual results, checks the evidence independently
+and reports problems locally. You do not need to direct every stage by hand.
 
-**The purpose is to find real user-facing problems and verify successful work—not just count
-bugs.** Reproducible failures, missing capabilities, usability problems, evidence gaps and
-verified coverage are useful results. A harness or access failure is not automatically a
-Seren defect.
+The goal is useful, reproducible findings and verified successful work—not just a bug count.
+Findings can include defects, broken workflows, missing capabilities, usability problems and
+evidence gaps. A harness or access failure is not automatically a Seren defect. Where the
+workflow supports issue drafting, reports can become GitHub-ready local drafts; nothing is
+submitted automatically.
 
+**Early release:** the automated workflow has been tested offline with synthetic stand-ins.
+A complete live journey against the real Seren service has not yet been validated.
+
+Seren Harness is an independent project; it is not made, reviewed or endorsed by Seren.
 An individual API call that succeeds, or a fluent answer, does not show that a user got real
-work done. The harness therefore acts like a customer:
+work done. The testing agent acts like a customer:
 
 1. **Assign** an AI employee a real piece of work through the Seren CLI/API.
 2. **Collect evidence** of how it did the work (its run trace and tool calls).
