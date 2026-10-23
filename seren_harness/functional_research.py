@@ -913,6 +913,18 @@ def _revision(value, claims, orgs, previous, detail):
             "basis_distinguished": basis, "changes_explained": explained}
 
 
+def journey_status(stage, verdict, unfinished):
+    """The journey's status after a stage verdict other than "blocked" (the campaign records that
+    itself). A brief that is not passed ends the journey: the second assignment is not spent. A
+    revision ends it too, never as "accepted": the verifier checks factual claims only."""
+    if stage == "brief" and verdict != "passed":
+        return {"failed": "failed", "format_only": "failed"}.get(verdict, "unfinished" if unfinished else "unverified")
+    if stage == "revision":
+        return {"passed": "facts_checked", "uncertain": "partially_verified"}.get(
+            verdict, "unfinished" if unfinished else "failed")
+    return "awaiting_decision"
+
+
 def permitted(record):
     """A revision follows only a verified brief; nothing follows anything else (two assignments)."""
     if record["status"] != "awaiting_decision" or record.get("revised"):

@@ -1928,21 +1928,20 @@ class Campaign:
             _write_private(self.folder / "tasks" / (item["id"] + "-result.json"),
                            json.dumps(self.sanitizer.value(data), indent=2))
             self.ledger.save()
-        if item["phase"] == "observed" and kind == "journey_work" \
-                and self.journey(item["journey"])["template"] == research.TEMPLATE:
-            record = self.journey(item["journey"])
-            item["readback"] = (self.read_sources(record, item) if item["result"].get("status") == "completed"
-                                else {"ok": False, "at": iso(), "sources": {}, "status": "run not completed"})
-            item["phase"] = "read_back"
-            self.ledger.save()
         if item["phase"] == "observed" and kind == "journey_work":
+            # The harness's independent read-back: the research reread of cited sources, or the
+            # owned rows of the journey table. Exactly one, chosen by the template.
             record = self.journey(item["journey"])
-            rows = None
-            if "owner" in record["spec"]:
-                result = self.adapter.psql(journeys.read_sql(record["spec"]), run_id)
-                rows = journeys.owned_rows(record["spec"], result.data) if result.ok else None
-            item["readback"] = {"ok": rows is not None, "rows": rows, "at": iso(),
-                                "status": "owned" if rows is not None else "unavailable or not owned"}
+            if record["template"] == research.TEMPLATE:
+                item["readback"] = (self.read_sources(record, item) if item["result"].get("status") == "completed"
+                                    else {"ok": False, "at": iso(), "sources": {}, "status": "run not completed"})
+            else:
+                rows = None
+                if "owner" in record["spec"]:
+                    result = self.adapter.psql(journeys.read_sql(record["spec"]), run_id)
+                    rows = journeys.owned_rows(record["spec"], result.data) if result.ok else None
+                item["readback"] = {"ok": rows is not None, "rows": rows, "at": iso(),
+                                    "status": "owned" if rows is not None else "unavailable or not owned"}
             item["phase"] = "read_back"
             self.ledger.save()
         if item["phase"] == "read_back":
@@ -2354,15 +2353,7 @@ class Campaign:
                  "note": "observation ended; the run was not cancelled and may still be running and "
                          "incurring cost"})
         if record["template"] == research.TEMPLATE and verdict != "blocked":
-            if stage == "brief" and verdict != "passed":   # Stop: the second assignment is not spent.
-                record["status"] = {"failed": "failed", "format_only": "failed"}.get(
-                    verdict, "unfinished" if evaluation.get("unfinished") else "unverified")
-            elif stage == "revision":
-                # Never "accepted": the limited verifier checks factual claims, not the whole work.
-                record["status"] = {"passed": "facts_checked", "uncertain": "partially_verified"}.get(
-                    verdict, "unfinished" if evaluation.get("unfinished") else "failed")
-            else:
-                record["status"] = "awaiting_decision"
+            record["status"] = research.journey_status(stage, verdict, evaluation.get("unfinished"))
             if record["status"] == "facts_checked":
                 self.add_observation("journey_facts_checked", "%s %s: the employee retrieved the official "
                                      "sources itself and revised its own brief; its explicit factual claims and "

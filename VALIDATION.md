@@ -101,6 +101,26 @@ example still ends `facts_checked` with both stages passed and the revision boun
 brief's SHA-256. The change is gated by the checked commit's lint and full offline suite on
 macOS with Python 3.14.7. No live request was made.
 
+## Maintenance refactor — 2026-10-23
+
+Three behavior-preserving changes to the functional campaign: readiness and the campaign share
+per-entry employee pin, lifecycle and tool-policy predicates (each keeps its own catalog
+selection, rows and messages); issue drafting, approval and GitHub submission moved to
+`seren_harness/functional_issues.py` (shared primitives in `functional_common.py`, all
+previous `functional` names still importable); the research journey's status mapping is a
+pure function and the read-back step an explicit research/database branch.
+
+Offline evidence, all synthetic: the functional test modules' artifacts (exit codes, command
+output, readiness rows, campaign state, store rows, stand-in call sequences, reports, drafts)
+were compared before and after with identifiers and timestamps normalized, and were equal;
+campaigns started by the previous code resumed identically; drafts re-rendered from saved
+campaigns were byte-identical, including their hashes, and existing approvals behaved the
+same with a fake transport. New tests pin catalog-entry order and duplicate handling, the
+research status mapping and the GitHub transport patch point. The offline example still ends
+`facts_checked` in two assignments with the revision bound to the brief's SHA-256. Each commit
+passed the checked runner's lint and full offline suite on macOS with Python 3.14.7. No live
+request was made, and nothing here changes what is listed below as not validated.
+
 ## Not validated
 
 - A successful complete live journey, including a verified brief and revision.

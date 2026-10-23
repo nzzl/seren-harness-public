@@ -1,4 +1,4 @@
-# Behavior-preserving maintenance refactor — 2026-10-23 (in progress)
+# Behavior-preserving maintenance refactor — 2026-10-23 (complete; awaiting review)
 
 Base 7bb0431. Three ordered commits, no observable behavior change, offline only:
 - [x] A: shared per-entry employee-precondition predicates (pins, lifecycle, tool policy) used
@@ -15,7 +15,14 @@ Base 7bb0431. Three ordered commits, no observable behavior change, offline only
   re-rendered from base-made stores/ledgers byte-identical (Markdown and metadata, hashes,
   paths); base-made approvals give identical outcomes (filed once, expired/changed/draft-mode
   refused, uncertain create not retried); functional suites and resume equal to base.
-- [ ] C: research verdict-to-status mapping as a pure function; explicit read-back branch.
+- [x] C: `functional_research.journey_status` holds the research verdict-to-status mapping
+  (blocked, observations, saves and findings stay in `record_journey`, in order); the observed
+  read-back is one explicit research/database branch; read_sources and the SLEEP, MONOTONIC,
+  SOURCE_TRANSPORT and SOURCE_RESOLVER seams unchanged. Comparison: new function equals the
+  base mapping on 168 stage/verdict/unfinished inputs; functional suites, resume and the
+  offline example (facts_checked, two assignments, revision bound to the brief) equal to base.
+Commits: A 35254d4, B 141b164, C this commit; each through the checked runner. No live call,
+GitHub request, push or publication. Next: independent review.
 Acceptance: before/after comparison of the functional suites' synthetic artifacts (exit codes,
 CLI output, readiness rows, state, store rows, stand-in calls, drafts) equal after
 normalizing ids/timestamps; same-input draft re-render byte-identical; offline example

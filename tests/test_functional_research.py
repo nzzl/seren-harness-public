@@ -1291,6 +1291,36 @@ class OwnerViewIdentity(unittest.TestCase):
         self.assertIsNone(functional.employee_identity(owner, created))   # only the shared_running mode
 
 
+class ResearchJourneyStatus(unittest.TestCase):
+    """The research journey's status contract for each non-blocked stage verdict. Whole journeys
+    through the entry point (above) cover the same statuses end to end."""
+
+    EXPECTED = {   # (stage, verdict): (status, status when observation ended unfinished)
+        ("brief", "passed"): ("awaiting_decision", "awaiting_decision"),   # the revision may follow
+        ("brief", "failed"): ("failed", "failed"),
+        ("brief", "format_only"): ("failed", "failed"),
+        ("brief", "uncertain"): ("unverified", "unfinished"),
+        ("revision", "passed"): ("facts_checked", "facts_checked"),   # never "accepted"
+        ("revision", "uncertain"): ("partially_verified", "partially_verified"),
+        ("revision", "failed"): ("failed", "unfinished"),
+        ("revision", "format_only"): ("failed", "unfinished"),
+    }
+
+    def test_every_stage_verdict_maps_to_its_status(self):
+        for (stage, verdict), (finished, unfinished) in self.EXPECTED.items():
+            with self.subTest(stage=stage, verdict=verdict):
+                self.assertEqual(research.journey_status(stage, verdict, None), finished)
+                self.assertEqual(research.journey_status(stage, verdict, False), finished)
+                self.assertEqual(research.journey_status(stage, verdict, True), unfinished)
+
+    def test_only_a_passed_brief_permits_the_single_revision(self):
+        for (stage, verdict), (status, _) in self.EXPECTED.items():
+            with self.subTest(stage=stage, verdict=verdict):
+                record = {"status": status, "revised": stage == "revision", "last_verdict": verdict}
+                self.assertEqual(research.permitted(record),
+                                 ["revise", "abandon"] if (stage, verdict) == ("brief", "passed") else [])
+
+
 def catalog_entry(name, **fields):
     return dict({"name": name, "effective_policy": {"status": "allowed"}, "approval_type": "none",
                  "checkpoint_required": False, "side_effecting": False}, **fields)
