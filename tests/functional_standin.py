@@ -337,10 +337,12 @@ def main(args):
     if args[:2] == ["agent", "managed-deployment-tools"]:
         item = deployment(args[2])
         approval = SCENARIO.get("tool_approval", "none")
-        out({"data": {"deployment_id": SCENARIO.get("catalog_deployment_id", item["deployment_id"]), "tools": [
-            {"name": name, "effective_policy": {"status": "allowed"}, "approval_type": approval,
-             "checkpoint_required": False, "side_effecting": False} for name in item.get("tools", [])],
-            "tool_presets": [], "approval_policy": "read_only"}})
+        tools = SCENARIO.get("catalog_tools")   # Raw entries in catalog order (duplicates allowed).
+        if tools is None:
+            tools = [{"name": name, "effective_policy": {"status": "allowed"}, "approval_type": approval,
+                      "checkpoint_required": False, "side_effecting": False} for name in item.get("tools", [])]
+        out({"data": {"deployment_id": SCENARIO.get("catalog_deployment_id", item["deployment_id"]),
+                      "tools": tools, "tool_presets": [], "approval_policy": "read_only"}})
     if args[:4] == ["agent", "cloud", "deployment", "status"]:
         item = deployment(args[4])
         out({"data": {"id": item["deployment_id"], "name": item["name"], "status": item["status"],

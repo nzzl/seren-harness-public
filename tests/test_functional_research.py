@@ -1291,5 +1291,57 @@ class OwnerViewIdentity(unittest.TestCase):
         self.assertIsNone(functional.employee_identity(owner, created))   # only the shared_running mode
 
 
+def catalog_entry(name, **fields):
+    return dict({"name": name, "effective_policy": {"status": "allowed"}, "approval_type": "none",
+                 "checkpoint_required": False, "side_effecting": False}, **fields)
+
+
+class RetrievalToolCatalogEntries(unittest.TestCase):
+    """Readiness judges the raw catalog entries in catalog order; the campaign judges its allowed
+    names through a name-to-contract map in which a later duplicate replaces an earlier one. Both
+    selections are kept as they are; only the per-entry policy is shared. The duplicate cases
+    record that existing difference, they do not endorse it."""
+
+    def setUp(self):
+        temp = tempfile.TemporaryDirectory()
+        self.addCleanup(temp.cleanup)
+        self.root = Path(temp.name)
+
+    def outcome(self, name, entries):
+        root = self.root / name
+        root.mkdir()
+        env = shared_env(root, research={"retrieval_tools": ["browser_navigate", "web_fetch"]})
+        env.scenario["catalog_tools"] = entries
+        env.scenario["replies"] = plans(*GOOD)
+        env.write()
+        code, out = run(env, Web(), action="readiness")
+        readiness = json.loads(sorted((env.folder / "readiness").glob("*.json"))[-1].read_text())
+        row = next(r for r in readiness["checks"] if r["check"] == "research retrieval tool")
+        run_code, run_out = run(env, Web(), extra=("--max-tasks", "0"))   # discovery only
+        self.assertEqual(env.starts(), [], run_out)
+        return code, row, run_code, env.state()["journey_support"][research.TEMPLATE]["supported"]
+
+    def test_entry_policy_order_and_duplicates(self):
+        browse, publish = "browser_navigate", "web_fetch"
+        cases = (
+            ("catalog order is reported", [catalog_entry(publish), catalog_entry(browse)],
+             "ok", "usable: %s, %s" % (publish, browse), True),
+            ("side-effecting first, read-only duplicate later", [
+                catalog_entry(browse, side_effecting=True), catalog_entry(browse)], "ok", "usable: " + browse, True),
+            ("read-only first, side-effecting duplicate later", [
+                catalog_entry(browse), catalog_entry(browse, side_effecting=True)], "ok", "usable: " + browse, False),
+            ("approval required", [catalog_entry(browse, approval_type="always")], "mismatch", "none of", False),
+            ("not allowed", [catalog_entry(browse, effective_policy={"status": "denied"})], "mismatch", "none of", False),
+            ("optional fields absent", [{"name": browse, "effective_policy": {"status": "allowed"}}],
+             "ok", "usable: " + browse, True))
+        for name, entries, status, detail, supported in cases:
+            with self.subTest(name):
+                code, row, run_code, observed = self.outcome(name.replace(" ", "-").replace(",", ""), entries)
+                self.assertEqual((row["status"], code), (status, 0 if status == "ok" else 1), row)
+                self.assertTrue(row["detail"].startswith(detail), row)
+                self.assertEqual(observed, supported)
+                self.assertEqual(run_code, 4 if supported else 2)
+
+
 if __name__ == "__main__":
     unittest.main()

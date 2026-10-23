@@ -488,6 +488,37 @@ ROUTING_GAP = ("The harness reads results through `cloud run get` and posts noth
                "posted anywhere before any assignment")
 
 
+def pin_mismatches(name, active_revision_id, expected):
+    """The operator-pinned fields ("name", "active_revision_id", in that order) that differ."""
+    return [key for key, value in (("name", name), ("active_revision_id", active_revision_id))
+            if value != expected[key]]
+
+
+def lifecycle_is(state, wanted):
+    """Both the observed status and the desired lifecycle state of a status read are `wanted`."""
+    return state.get("status") == wanted and state.get("desired_lifecycle_state") == wanted
+
+
+# Per-entry tool policy, shared by readiness (raw catalog entries, in catalog order) and the
+# campaign (tools_allowed plus the derived name-to-contract map). Callers keep their own selection.
+def tool_allowed(entry):
+    return (entry.get("effective_policy") or {}).get("status") == "allowed"
+
+
+def approval_free(entry):
+    return entry.get("approval_type") in (None, "none")
+
+
+def read_only_without_approval(entry):
+    """A research retrieval tool: no per-call approval and not side-effecting."""
+    return approval_free(entry) and not entry.get("side_effecting")
+
+
+def callable_without_approval(entry):
+    """The journey database tool: no per-call approval and no checkpoint."""
+    return approval_free(entry) and not entry.get("checkpoint_required")
+
+
 def employee_identity(detail, settings):
     """The identity a campaign binds to at discovery and rechecks before each assignment, or None.
 
@@ -503,8 +534,7 @@ def employee_identity(detail, settings):
         return full
     expected = settings["campaign"]["employee"]["expected"]
     if not settings.get("deployment_id") or detail.get("deployment_id") != settings["deployment_id"] \
-            or detail.get("name") != expected["name"] \
-            or detail.get("active_revision_id") != expected["active_revision_id"]:
+            or pin_mismatches(detail.get("name"), detail.get("active_revision_id"), expected):
         return None
     fields = contract.IDENTITY_FIELDS[:-1]
     result = {key: detail[key] for key in fields if key in detail}
@@ -817,8 +847,7 @@ class SerenAdapter:
         if not isinstance(tools, list):
             raise Stop("blocked", "tool catalog identity or shape not established",
                        "Run test-live to inspect the catalog response.")
-        allowed = sorted(t.get("name") for t in tools if isinstance(t, dict)
-                         and (t.get("effective_policy") or {}).get("status") == "allowed")
+        allowed = sorted(t.get("name") for t in tools if isinstance(t, dict) and tool_allowed(t))
         contracts = {t["name"]: {"approval_type": t.get("approval_type"),
                                  "checkpoint_required": t.get("checkpoint_required"),
                                  "side_effecting": t.get("side_effecting")}
@@ -949,7 +978,7 @@ class SerenAdapter:
         self.check_identity(run_id, detail)
         self.check_instructions(detail)
         state = self.status(run_id)
-        if state.get("status") != "running" or state.get("desired_lifecycle_state") != "running":
+        if not lifecycle_is(state, "running"):
             raise Stop("blocked", "the shared employee is %s (desired %s), not running; the harness "
                        "never starts or restores it" % (state.get("status"), state.get("desired_lifecycle_state")),
                        "Nothing was assigned. Its owner decides whether it should run.")
@@ -959,7 +988,7 @@ class SerenAdapter:
     def wait_running(self, run_id):
         for _ in range(8):
             state = self.status(run_id)
-            if state.get("status") == "running" and state.get("desired_lifecycle_state") == "running":
+            if lifecycle_is(state, "running"):
                 self.employee["lifecycle"] = "running"
                 self.ledger.save()
                 return
@@ -984,7 +1013,7 @@ class SerenAdapter:
                 return "stop_rejected"
         for attempt in range(5):
             state = self.status(run_id, cleanup=True)
-            if state.get("status") == "stopped" and state.get("desired_lifecycle_state") == "stopped":
+            if lifecycle_is(state, "stopped"):
                 detail = self.read_detail(run_id, cleanup=True)
                 if detail.get("status") == "stopped":
                     for item in items:
@@ -1976,12 +2005,11 @@ class Campaign:
         blocks: it is never a reason to start, restore or rewrite the employee."""
         employee, expected = self.ledger.data["employee"], self.config["employee"]["expected"]
         identity = employee.get("identity") or {}
-        problems = []
-        if employee.get("name") != expected["name"]:
-            problems.append("name")
-        if identity.get("active_revision_id") != expected["active_revision_id"]:
-            problems.append("active_revision_id (instructions or configuration changed since inspection)")
-        if state.get("status") != "running" or state.get("desired_lifecycle_state") != "running":
+        labels = {"name": "name",
+                  "active_revision_id": "active_revision_id (instructions or configuration changed since inspection)"}
+        problems = [labels[key] for key in pin_mismatches(employee.get("name"), identity.get("active_revision_id"),
+                                                          expected)]
+        if not lifecycle_is(state, "running"):
             problems.append("status %s/%s, not running" % (state.get("status"), state.get("desired_lifecycle_state")))
         if problems:
             raise Stop("blocked", "the shared employee differs from the inspected one: " + ", ".join(problems),
@@ -1997,15 +2025,14 @@ class Campaign:
         for template in self.config["journeys"]["templates"]:
             if template == research.TEMPLATE:
                 tools = [t for t in self.config["research"]["retrieval_tools"] if t in employee["tools_allowed"]
-                         and not (employee["tool_contracts"].get(t) or {}).get("side_effecting")
-                         and (employee["tool_contracts"].get(t) or {}).get("approval_type") in (None, "none")]
+                         and read_only_without_approval(employee["tool_contracts"].get(t) or {})]
                 reason = None if tools else ("none of the configured read-only retrieval tools (%s) is "
                                              "allowed without approval in the employee's catalog"
                                              % ", ".join(self.config["research"]["retrieval_tools"]))
             elif journeys.TOOL not in employee["tools_allowed"] or contract_ is None:
                 reason = ("the employee's catalog does not allow %s, so it cannot read the "
                           "dedicated database" % journeys.TOOL)
-            elif contract_.get("approval_type") not in (None, "none") or contract_.get("checkpoint_required"):
+            elif not callable_without_approval(contract_):
                 reason = ("%s requires approval (approval_type %s); CLI 0.10.0 can only approve or "
                           "reject all pending calls, so the harness does not run it"
                           % (journeys.TOOL, contract_.get("approval_type")))
@@ -3114,8 +3141,7 @@ class Readiness:
                  "managed-get returns the employee's identity for change detection")
         if self.shared:
             expected = self.settings["campaign"]["employee"]["expected"]
-            same = detail.get("name") == expected["name"] and \
-                detail.get("active_revision_id") == expected["active_revision_id"]
+            same = not pin_mismatches(detail.get("name"), detail.get("active_revision_id"), expected)
             self.row("inspected identity", "ok" if same else "mismatch",
                      "name and active revision %s the inspection" % ("match" if same else "differ from"),
                      "the employee is the inspected one; a change blocks and is never reverted")
@@ -3133,7 +3159,7 @@ class Readiness:
             known = state.get("status") in contract.DEPLOYMENT_STATUSES and \
                 state.get("desired_lifecycle_state") in contract.LIFECYCLE_STATES
             wanted = "running" if self.shared else "stopped"
-            idle = state.get("status") == wanted and state.get("desired_lifecycle_state") == wanted
+            idle = lifecycle_is(state, wanted)
             self.row("employee status", "ok" if state.get("id") == deployment and known and idle else
                      ("blocked" if self.shared else "mismatch"),
                      "status %s, desired %s" % (state.get("status"), state.get("desired_lifecycle_state")),
@@ -3156,16 +3182,15 @@ class Readiness:
         if self.shared:
             wanted = self.settings["campaign"]["research"]["retrieval_tools"]
             usable = [t["name"] for t in tools if isinstance(t, dict) and t.get("name") in wanted
-                      and (t.get("effective_policy") or {}).get("status") == "allowed"
-                      and t.get("approval_type") in (None, "none") and not t.get("side_effecting")]
+                      and tool_allowed(t) and read_only_without_approval(t)]
             self.row("research retrieval tool", "ok" if usable else "mismatch",
                      "usable: " + ", ".join(usable) if usable else "none of %s is allowed, read-only and "
                      "approval-free in the catalog" % ", ".join(wanted),
                      "the employee can retrieve the public sources itself (the trace shape is live-only)")
             return None
         entry = next((t for t in tools if isinstance(t, dict) and t.get("name") == journeys.TOOL), None)
-        allowed = entry is not None and (entry.get("effective_policy") or {}).get("status") == "allowed"
-        free = allowed and entry.get("approval_type") in (None, "none") and not entry.get("checkpoint_required")
+        allowed = entry is not None and tool_allowed(entry)
+        free = allowed and callable_without_approval(entry)
         templates = self.settings["campaign"]["journeys"]["templates"]
         self.row("journey tool %s" % journeys.TOOL, "ok" if free else ("mismatch" if templates else "skipped"),
                  "absent or not allowed" if not allowed else "approval_type %s, checkpoint_required %s"

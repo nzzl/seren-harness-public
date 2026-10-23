@@ -171,5 +171,51 @@ class Readiness(unittest.TestCase):
         self.assertIn("SKIPPED   employee", out)
 
 
+def catalog_entry(name, **fields):
+    return dict({"name": name, "effective_policy": {"status": "allowed"}, "approval_type": "none",
+                 "checkpoint_required": False, "side_effecting": False}, **fields)
+
+
+class JourneyToolCatalogEntries(unittest.TestCase):
+    """Readiness reports the first catalog entry for the journey tool; the campaign uses its
+    name-to-contract map, where a later duplicate replaces an earlier one. Both selections are
+    kept as they are; only the per-entry policy is shared. The duplicate cases record that
+    existing difference, they do not endorse it."""
+
+    def setUp(self):
+        temp = tempfile.TemporaryDirectory()
+        self.addCleanup(temp.cleanup)
+        self.root = Path(temp.name)
+
+    def test_entry_policy_and_duplicates(self):
+        tool = "seren_db_query"
+        cases = (
+            ("callable", [catalog_entry(tool)], "ok", True),
+            ("gated first, callable duplicate later", [catalog_entry(tool, approval_type="always"),
+                                                       catalog_entry(tool)], "mismatch", True),
+            ("callable first, gated duplicate later", [catalog_entry(tool), catalog_entry(tool, approval_type="always")],
+             "ok", False),
+            ("checkpoint required", [catalog_entry(tool, checkpoint_required=True)], "mismatch", False),
+            ("not allowed", [catalog_entry(tool, effective_policy={"status": "denied"})], "mismatch", False),
+            ("optional fields absent", [{"name": tool, "effective_policy": {"status": "allowed"}}], "ok", True))
+        for name, entries, status, supported in cases:
+            with self.subTest(name):
+                root = self.root / name.replace(" ", "-").replace(",", "")
+                root.mkdir()
+                env = journey_env(root, templates=["data_report_revision"])
+                env.scenario["catalog_tools"] = entries
+                env.write()
+                code, out = env.run(action="readiness")
+                report = json.loads(sorted((env.folder / "readiness").glob("*.json"))[-1].read_text())
+                row = next(r for r in report["checks"] if r["check"] == "journey tool " + tool)
+                self.assertEqual((row["status"], code), (status, 0 if status == "ok" else 1), out)
+                run_code, run_out = env.run("--max-tasks", "0")             # discovery only
+                support = env.state()["journey_support"]["data_report_revision"]
+                self.assertEqual(support["supported"], supported, support)
+                self.assertEqual(run_code, 4, run_out)
+                self.assertEqual([c for c in env.calls() if c[:4] == ["agent", "cloud", "run", "start"]
+                                  or c[:2] == ["agent", "managed-start"]], [])
+
+
 if __name__ == "__main__":
     unittest.main()
