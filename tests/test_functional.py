@@ -20,7 +20,7 @@ from unittest.mock import patch
 import uuid
 
 from seren_support import SOURCE, prerun, standin
-from seren_harness import cli, functional, functional_tasks as tasks
+from seren_harness import cli, functional, functional_issues, functional_tasks as tasks
 
 TESTS = Path(__file__).resolve().parent
 TARGET = "4c1d2e3f-5a6b-4c7d-8e9f-0a1b2c3d4e5f"
@@ -162,7 +162,7 @@ class CampaignEndToEnd(unittest.TestCase):
         self.addCleanup(temp.cleanup)
         self.root = Path(temp.name)
         NoTransport.created = 0
-        patcher = patch.object(functional, "GhTransport", NoTransport)
+        patcher = patch.object(functional_issues, "GhTransport", NoTransport)   # where submit_issue looks it up
         patcher.start()
         self.addCleanup(patcher.stop)
 
@@ -637,6 +637,20 @@ class Submission(unittest.TestCase):
         (self.env.folder / "submissions.json").unlink()
         self.assertEqual(self.submit(transport, approval)[0], 0)
         self.assertEqual(len(transport.posts), 1)
+
+    def test_without_an_injected_transport_the_patched_runtime_lookup_is_used(self):
+        """The campaign tests patch functional_issues.GhTransport (NoTransport); this proves that
+        is the name submit_issue constructs from, with the fake transport only."""
+        made, fake = [], self.Transport()
+
+        def factory(executable):
+            made.append(executable)
+            return fake
+        with patch.object(functional_issues, "GhTransport", factory):
+            code, out = self.submit(None, self.approval())
+        self.assertEqual(code, 0, out)
+        self.assertEqual(made, ["/usr/bin/false"])
+        self.assertEqual(len(fake.posts), 1)
 
     def test_ambiguous_create_is_never_retried_and_reconciles_by_marker(self):
         transport = self.Transport(fail_post=True)

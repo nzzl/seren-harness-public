@@ -6,8 +6,15 @@ Base 7bb0431. Three ordered commits, no observable behavior change, offline only
   Duplicate/ordered catalog entries pinned by new tests (they also pass on the base source).
   Comparison: 94 functional tests' artifacts in 79 scenario dirs equal to base; resume of
   base-made research and journey state equal (2 and 5 assignments, none repeated).
-- [ ] B: drafts, approval and GitHub submission in `functional_issues.py`; byte-identical
-  drafts and hashes; transport mocks retargeted to the real lookup.
+- [x] B: drafts, approval and GitHub submission in `functional_issues.py` (one shared
+  sanitize/pseudonymize helper, each renderer's call order kept); `ConfigError`, `iso`,
+  `parse_time`, `campaign_dir` and outcome categories in `functional_common.py`; one-way imports;
+  every moved name still importable from `functional`. Transport mocks retargeted to
+  `functional_issues.GhTransport`; a new fake-only test proves submission without an injected
+  transport constructs through that lookup. Comparison: moved definitions verbatim; 32 drafts
+  re-rendered from base-made stores/ledgers byte-identical (Markdown and metadata, hashes,
+  paths); base-made approvals give identical outcomes (filed once, expired/changed/draft-mode
+  refused, uncertain create not retried); functional suites and resume equal to base.
 - [ ] C: research verdict-to-status mapping as a pure function; explicit read-back branch.
 Acceptance: before/after comparison of the functional suites' synthetic artifacts (exit codes,
 CLI output, readiness rows, state, store rows, stand-in calls, drafts) equal after

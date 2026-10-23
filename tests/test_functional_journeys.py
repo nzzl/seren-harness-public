@@ -14,7 +14,7 @@ import unittest
 from unittest.mock import patch
 
 import seren_support  # noqa: F401  (imports the checkout's package first)
-from seren_harness import functional, functional_journeys as journeys, functional_tasks
+from seren_harness import functional, functional_issues, functional_journeys as journeys, functional_tasks
 from test_functional import Env, NoTransport
 
 PROJECT = "5a1b2c3d-0000-4000-8000-000000000001"
@@ -59,7 +59,7 @@ class Journeys(unittest.TestCase):
         self.addCleanup(temp.cleanup)
         self.root = Path(temp.name)
         NoTransport.created = 0
-        patcher = patch.object(functional, "GhTransport", NoTransport)
+        patcher = patch.object(functional_issues, "GhTransport", NoTransport)   # where submit_issue looks it up
         patcher.start()
         self.addCleanup(patcher.stop)
 
