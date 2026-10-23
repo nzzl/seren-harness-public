@@ -52,13 +52,11 @@ WORKER_PROFILE = """(version 1)
 """
 PROMPT = """You are an unattended Seren Harness discovery model worker.
 Session {session}; hard deadline {deadline} UTC (the supervisor ends the session then).
-Nobody will answer questions. Follow docs/MODEL-WORKER.md in this repository exactly; it
-derives everything from the repository and durable state. Start by reading AGENTS.md,
-.tiny-harness/CONTRACT.md, docs/DISCOVERY.md and docs/MODEL-WORKER.md, then run
+Nobody will answer questions. Derive everything from the repository and durable state.
+Start by reading AGENTS.md, .tiny-harness/CONTRACT.md and docs/ADVANCED.md, then run
 `python3 -m seren_harness worker status`.
 <working_directory>{repo}</working_directory>
 <objective>Own customer discovery, including the separately authorized Clock Test lane.
-Read docs/AUTONOMOUS-DISCOVERY.md and its Claude handoff procedure.
 Compare live and offline customer questions; inspect saved live status and outcomes.
 No disclosures or direct service calls. Finish one useful investigation or preparation
 step, save evidence and next action, then stop within this session deadline.</objective>
@@ -450,7 +448,7 @@ def print_journeys(home):
     except (ValueError, KeyError, OSError, TypeError, AttributeError) as error:
         print("\nCustomer journeys: unavailable (%s)" % type(error).__name__)
         return
-    print("\nCustomer journeys (compare before selecting; docs/AUTONOMOUS-DISCOVERY.md):")
+    print("\nCustomer journeys (compare before selecting; docs/ADVANCED.md):")
     for row in rows:
         since = saved.get(row["id"], {})
         dated = (" since " + since["blocked_since"] if since.get("fingerprint")

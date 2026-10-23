@@ -1,5 +1,5 @@
 {
-  "_template": "Isolated lifecycle live config for fixture Seren Harness Test. Incomplete by design: every null must be filled from the setup step named in docs/LIFECYCLE-SETUP.md, and the harness loader refuses this file until then. No secret values; the reader token is referenced by environment variable name only. Copy to ~/seren-harness-live/config.json when complete.",
+  "_template": "Isolated lifecycle live config for fixture Seren Harness Test. Incomplete by design: every null must be filled from the owner's setup (see docs/ADVANCED.md), and the harness loader refuses this file until then. No secret values; the reader token is referenced by environment variable name only. Copy to ~/seren-harness-live/config.json when complete.",
   "environment": "live",
   "seren": {
     "executable": "/opt/seren-handover",

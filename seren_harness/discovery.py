@@ -11,7 +11,7 @@ Roles, all local and user-owned:
 
 Durable state lives in a private directory (default ~/seren-harness-live/discovery):
 authority.json (the owner's standing scope; never written by the loop after init),
-state.json, attempts/, evidence/, findings/, log/, STOP. See docs/DISCOVERY.md.
+state.json, attempts/, evidence/, findings/, log/, STOP. See docs/ADVANCED.md.
 """
 from __future__ import annotations
 

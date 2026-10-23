@@ -76,6 +76,8 @@ class PathTests(unittest.TestCase):
         name = Path(maintenance.NARRATIVE).name
         for path in ("AGENTS.md", "CLAUDE.md", ".tiny-harness/CONTRACT.md",
                      "docs/MODEL-WORKER.md", "docs/AUTONOMOUS-DISCOVERY.md"):
+            if path.startswith("docs/") and not (SOURCE / path).exists():
+                continue   # Not in this release; the checked runner skips absent files the same way.
             self.assertNotIn(name, (SOURCE / path).read_text(), path)
         self.assertNotIn(name, maintenance.PROMPT + model_worker.PROMPT)
 

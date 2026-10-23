@@ -1341,7 +1341,7 @@ def judge_resources(facts):
         grade="unspecified", basis=[
             "agent spec marks compaction_configured required; the client's handling of a "
             "nonconformant reply is not documented",
-            "contract map 1.13 / docs/LIFECYCLE-SETUP.md: live managed-deployment-resources "
+            "contract map 1.13 / lifecycle setup notes (not in this release): live managed-deployment-resources "
             "failed with 'missing field compaction_configured'"],
         impact="bounds the live symptom: if the spec reply decodes and only this omission "
                "reproduces the message, the live failure points at a reply that omits a "

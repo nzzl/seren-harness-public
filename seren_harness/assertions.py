@@ -28,8 +28,8 @@ _CONTRACTS = {
         "claim": "The owner-approved credential binding is applied to the intended test "
                  "employee and to the configuration (identity, revision, policy) under test.",
         "basis": [
-            {"kind": REQUIREMENT, "reference": "docs/SEREN-PILOT.md: owner approval is an "
-             "explicit checkpoint; docs/IMPLEMENTATION-PLAN.md provisioning step 5"},
+            {"kind": REQUIREMENT, "reference": "pilot notes (not in this release): owner approval is an "
+             "explicit checkpoint; implementation plan (not in this release) provisioning step 5"},
             {"kind": SOURCE, "reference": "serenorg/seren v0.10.0 cli/src/commands/agent.rs "
              "managed_agent_secrets_apply and sdk/src/shared.rs "
              "managed_agent_secrets_application, where apply reports success only after "
@@ -58,8 +58,8 @@ _CONTRACTS = {
         "version": 1,
         "claim": "The intended employee answered this specific probe in the test channel.",
         "basis": [
-            {"kind": REQUIREMENT, "reference": "docs/IMPLEMENTATION-PLAN.md operational "
-             "step 5; docs/SEREN-PILOT.md acceptance: a verified response"},
+            {"kind": REQUIREMENT, "reference": "implementation plan (not in this release) operational "
+             "step 5; pilot notes (not in this release) acceptance: a verified response"},
             {"kind": DOCUMENTED, "reference": "https://docs.discord.com/developers/reference "
              "(Snowflakes: unique ids, millisecond timestamp)"},
             {"kind": DOCUMENTED, "reference": "https://docs.discord.com/developers/resources/"
@@ -111,7 +111,7 @@ _CONTRACTS = {
         "version": 1,
         "claim": "The test runtime this run started is stopped at the end of the run.",
         "basis": [
-            {"kind": REQUIREMENT, "reference": "docs/IMPLEMENTATION-PLAN.md operational "
+            {"kind": REQUIREMENT, "reference": "implementation plan (not in this release) operational "
              "step 6 and stop conditions: verify shutdown; unconfirmed cleanup is visible"},
             {"kind": SOURCE, "reference": "serenorg/seren v0.10.0 bundled OpenAPI: deployment "
              "status enum includes stopped"},

@@ -408,15 +408,26 @@ def check_prefix():
     return value
 
 
+# A check whose executable is exactly this token runs with the interpreter running this
+# runner, so Python checks and their tools (`{python} -m ruff`) use the environment that
+# launched validation, never an unrelated python3 or tool found on PATH.
+PYTHON = "{python}"
+
+
+def check_argv(argv):
+    return [sys.executable, *argv[1:]] if argv[0] == PYTHON else list(argv)
+
+
 def run_check(check, snapshot, log=None):
     prefix = check_prefix()
-    say(log, "RUN " + check["name"] + ": " + json.dumps(check["argv"])
+    argv = check_argv(check["argv"])
+    say(log, "RUN " + check["name"] + ": " + json.dumps(argv)
         + (" (confined by " + json.dumps(prefix) + ")" if prefix else ""))
     # The prefix confines this check only. Its children inherit that confinement, and a
     # nested runner (tests drive run.py) must not re-apply it: macOS refuses nested sandboxes.
     env = {k: v for k, v in os.environ.items() if k != "TINY_HARNESS_CHECK_PREFIX"}
     try:
-        process = subprocess.Popen(prefix + check["argv"], cwd=snapshot, start_new_session=True,
+        process = subprocess.Popen(prefix + argv, cwd=snapshot, start_new_session=True,
                                    stdin=subprocess.DEVNULL, stdout=subprocess.PIPE,
                                    stderr=subprocess.PIPE,
                                    env=dict(env, PYTHONUNBUFFERED="1"))

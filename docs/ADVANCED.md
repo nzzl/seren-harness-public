@@ -19,7 +19,8 @@ Other test sentinel IDs are also fictional. Never guess which production resourc
 
 ## Optional advanced development setup
 
-Use Python 3.11+ and Git. From this folder:
+Use Python 3.11+ and Git on macOS ([platform support](../README.md#platform-support): native
+Windows is not supported and Linux is untested). From this folder:
 
 ```sh
 python3 -m venv .venv

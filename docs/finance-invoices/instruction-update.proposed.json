@@ -1,5 +1,5 @@
 {
-  "_status": "PROPOSED, not authorized and not executed. Setup half of the clock-fixture invoice test (CLOCK-RUN.md). Usable by the existing `instruction-update` route only with a separate private config naming this deployment, created inside the future authorization.",
+  "_status": "PROPOSED, not authorized and not executed. Setup half of the clock-fixture invoice test. Usable by the existing `instruction-update` route only with a separate private config naming this deployment, created inside the future authorization.",
   "kind": "instruction_update_package",
   "id": "seren.finance.clock-instruction",
   "version": 1,

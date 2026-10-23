@@ -42,3 +42,8 @@ The 2026-10-23 compatibility update includes only generalized code, synthetic te
 summary of a separately authorized public issue. The validation summary describes a real
 failed attempt; it does not include the private configuration, raw receipts, identifiers or
 logs. The public issue link is intentional. Private prompts and handover records were not copied.
+
+Placeholder pages that only said design notes were not included were removed; references now
+point to the operator or advanced guide, or say the source is not in this release. The two
+hash-bound proposed packages in `docs/journeys/employee-retrieval/` keep their original text,
+including a historical mention of a design note that is not shipped.

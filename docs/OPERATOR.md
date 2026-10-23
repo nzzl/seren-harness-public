@@ -60,7 +60,9 @@ never touches other runs, never writes a database and never posts messages.
 
 ### Prerequisites
 
-- Python 3.11+.
+- Python 3.11+ on macOS, where this release is developed and tested. It uses Unix-specific
+  facilities such as `fcntl`; native Windows is not supported, Linux is untested and WSL
+  compatibility is not guaranteed.
 - Seren CLI 0.10.0, logged in with your own account. Other versions need a compatibility
   review; the harness checks the version and a SHA-256 pin of the executable.
 - A **running** employee you own or are authorized to test, with a read-only public research

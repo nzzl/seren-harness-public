@@ -25,7 +25,7 @@ import uuid
 
 HOST = "api.serendb.com"
 BASE = "https://" + HOST + "/publishers/seren-agent"
-KEYCHAIN_SERVICE = "seren-harness-api-key"  # docs/LIFECYCLE-SETUP.md P7; owner-controlled
+KEYCHAIN_SERVICE = "seren-harness-api-key"  # lifecycle setup step P7 (notes not in this release); owner-controlled
 MAX_BYTES = 1_000_000
 DEFINITE = (400, 403, 404, 409)  # documented responses that leave no mutation behind
 

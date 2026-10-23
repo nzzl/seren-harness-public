@@ -36,6 +36,13 @@ work done. The testing agent acts like a customer:
 
 It tests employee workflows through the CLI/API. It does not test Seren's website screens.
 
+## Platform support
+
+This release is developed and tested on macOS. It uses Unix-specific facilities such as
+`fcntl` and does not support native Windows. Linux has not been tested, and WSL compatibility
+is not guaranteed. Python 3.11 is the minimum supported version; the full test suite was run
+on Python 3.14.7 only.
+
 ## Try it offline (no account needed)
 
 Requires Python 3.11+ and nothing else: no packages, account, network or credentials.

@@ -178,7 +178,7 @@
           "id": "L1-recovery-question",
           "status": "unmet",
           "need": "new owner authority to exercise the failed / desired-stopping recovery path; not covered by the Clock Test grant",
-          "source": "docs/supplied-fixture/README.md"
+          "source": "docs/ADVANCED.md"
         }
       ],
       "status": "candidate",
@@ -291,7 +291,7 @@
       "uncertainty": "No recipient deployment has been tested by this handover. Verify current service compatibility and expected behavior before relying on a result.",
       "expected_result": {
         "statement": "Catalog metadata for seren-db answered from the correlated result.",
-        "established_by": "docs/publisher-lookup/README.md"
+        "established_by": "docs/publisher-lookup/prompt.md fixed request and the publisher_lookup executor's correlated result check"
       },
       "decision_if_pass": "Already passed; not proof of data retrieval.",
       "decision_if_fail": "Not applicable to a completed test.",

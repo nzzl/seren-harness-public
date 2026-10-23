@@ -91,6 +91,16 @@ validate successful employee research, evidence checking or a live follow-up. A 
 `complete` status or exit code 0 means orchestration ended, not that the journey succeeded.
 Private operator configuration, raw receipts, run identifiers and logs are not included here.
 
+## Release housekeeping — 2026-10-23
+
+Lint now targets Python 3.11. Required checks run with the interpreter that launched the
+checked runner (`.venv/bin/python .tiny-harness/run.py commit ...`), including its pinned Ruff;
+new runner tests cover misleading or absent `python3`/`ruff` on PATH. Placeholder design-note
+pages were removed and their references repaired; internal Markdown links resolve. The offline
+example still ends `facts_checked` with both stages passed and the revision bound to the
+brief's SHA-256. The change is gated by the checked commit's lint and full offline suite on
+macOS with Python 3.14.7. No live request was made.
+
 ## Not validated
 
 - A successful complete live journey, including a verified brief and revision.
@@ -103,3 +113,4 @@ Private operator configuration, raw receipts, run identifiers and logs are not i
   output is forwarded by deployment-side integrations, are not established by the harness.
   The operator records evidence for routing; the harness does not enforce it.
 - Request and time limits are not a cost cap. Ending observation does not cancel a remote run.
+- Platforms other than macOS: Linux and WSL are untested; native Windows is not supported.

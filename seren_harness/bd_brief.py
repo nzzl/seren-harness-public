@@ -4,11 +4,11 @@ Three frozen variants for the existing supplied-answer route on Seren Harness Cl
 correct synthesis with attribution, conflicting and missing evidence, and an unavailable
 source next to a record that does not exist. The dossier is supplied in the message: this
 tests synthesis, source attribution and uncertainty handling, not retrieval (no supported
-tool can read controlled records for this employee today; see docs/bd-brief/README.md).
+tool can read controlled records for this employee today).
 
 The checker is deterministic for facts, sources, conflicts, unknowns, qualification
 criteria and the recommendation category. Free-text quality (next step, summary) is
-judged afterwards with the rubric in docs/bd-brief/README.md, not by exact wording.
+judged afterwards by a reviewer (the rubric is not in this release), not by exact wording.
 All companies, records and amounts are synthetic.
 """
 import copy

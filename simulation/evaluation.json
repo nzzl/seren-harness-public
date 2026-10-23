@@ -25,7 +25,7 @@
         "clean_completion": true
       },
       "rationale": "The employee answering this probe, with confirmed shutdown, is the customer acceptance condition.",
-      "source": "docs/IMPLEMENTATION-PLAN.md operational steps 4-6; docs/SEREN-PILOT.md acceptance",
+      "source": "implementation plan (not in this release) operational steps 4-6; pilot notes (not in this release) acceptance",
       "existing_tests": [
         "test_seren_journeys.ReadinessTests.test_successful_simulated_journey"
       ],
@@ -48,7 +48,7 @@
         "clean_completion": false
       },
       "rationale": "Start accepted and health ok while connector dispatch fails must not pass.",
-      "source": "serenorg/seren issue #232 (incident pattern); docs/IMPLEMENTATION-PLAN.md stage 3 acceptance",
+      "source": "serenorg/seren issue #232 (incident pattern); implementation plan (not in this release) stage 3 acceptance",
       "existing_tests": [
         "test_seren_journeys.ReadinessTests.test_accepted_start_and_healthy_flag_cannot_hide_failed_connector"
       ],
@@ -71,7 +71,7 @@
         "clean_completion": false
       },
       "rationale": "A message not from the employee, or not bound to this probe, is not an answer.",
-      "source": "docs/IMPLEMENTATION-PLAN.md operational step 5: old or unrelated messages cannot pass",
+      "source": "implementation plan (not in this release) operational step 5: old or unrelated messages cannot pass",
       "existing_tests": [
         "test_seren_journeys.CorrelationTests.test_wrong_author_and_unrelated_replies_cannot_pass",
         "test_seren_foundation.CorrelationTests.test_stale_unrelated_wrong_author_and_late_replies_cannot_pass"
@@ -99,7 +99,7 @@
         "clean_completion": false
       },
       "rationale": "Without channel read access the reply cannot be observed; that is a blocked observation, not proof of an employee defect.",
-      "source": "docs/IMPLEMENTATION-PLAN.md stage 3 acceptance: inaccessible Discord is blocked",
+      "source": "implementation plan (not in this release) stage 3 acceptance: inaccessible Discord is blocked",
       "existing_tests": [
         "test_seren_journeys.ObservationAccessTests.test_missing_reader_access_blocks_without_an_employee_defect"
       ],
@@ -124,7 +124,7 @@
         "managed_start_calls": 1
       },
       "rationale": "An unanswered start is reconciled by reading state, never retried blindly; here it applied, so the journey continues.",
-      "source": "docs/IMPLEMENTATION-PLAN.md result and recovery contract: inspect state before retrying",
+      "source": "implementation plan (not in this release) result and recovery contract: inspect state before retrying",
       "existing_tests": [
         "test_seren_journeys.MutationTests.test_unanswered_start_that_applied_is_reconciled_not_retried"
       ],
@@ -147,7 +147,7 @@
         "clean_completion": false
       },
       "rationale": "A journey that passed but whose shutdown is unconfirmed must not be reported as a clean completion.",
-      "source": "docs/IMPLEMENTATION-PLAN.md: failed or unconfirmed shutdown is visible",
+      "source": "implementation plan (not in this release): failed or unconfirmed shutdown is visible",
       "existing_tests": [
         "test_seren_journeys.CleanupTests.test_failed_cleanup_stays_visible_and_blocks_the_next_run"
       ],

@@ -544,7 +544,7 @@ def parser():
                          help=argparse.SUPPRESS)
     command = commands.add_parser("discovery", help="persistent offline bug discovery (the "
                                   "default path): status, stop, resume, supervise, work, "
-                                  "run-case, init, agent-plist; see docs/DISCOVERY.md")
+                                  "run-case, init, agent-plist; see docs/ADVANCED.md")
     command.add_argument("action", choices=("status", "stop", "resume", "supervise", "work",
                                             "run-case", "init", "agent-plist", "due",
                                             "model-work", "enable-model-worker", "work-host",
@@ -565,7 +565,7 @@ def parser():
     command.add_argument("--pinned-source-repo", help="enable-model-worker: Seren source repo")
     command.add_argument("--pinned-commit", default="2317949", help="enable-model-worker")
     command = commands.add_parser("worker", help="model-worker verbs, each run inside the "
-                                  "worker sandbox; see docs/MODEL-WORKER.md")
+                                  "worker sandbox; see docs/ADVANCED.md")
     command.add_argument("verb", choices=("status", "test", "validate", "run-case", "commit",
                                           "discard", "candidate", "note", "wait", "followup",
                                           "live-request", "live-review", "synthetic-check",
@@ -596,7 +596,7 @@ def parser():
     command.add_argument("--journey", help="live-request: an eligible granted journey package "
                          "id from worker status (instead of --case)")
     command.add_argument("--comparison", help="live-request: JSON cross-journey comparison "
-                         "(see docs/AUTONOMOUS-DISCOVERY.md)")
+                         "(see docs/ADVANCED.md)")
     command.add_argument("--classification", help="live-review: passed|seren_functional_failure|"
                          "model_answer_failure|unresolved_contract_or_attribution|incomplete")
     command.add_argument("--summary", help="live-review: concise expected versus observed, 20-300 chars")

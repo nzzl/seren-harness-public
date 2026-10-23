@@ -62,7 +62,7 @@
         "SELECT pg_catalog.json_build_object('database', pg_catalog.current_database(), 'answer', 6 * 7, 'read_only', pg_catalog.current_setting('transaction_read_only'));"
       ],
       "expectation_sources": [
-        "fixed SQL result defined in the case before execution (docs/COLLECTION.md)"
+        "fixed SQL result defined in the case before execution"
       ],
       "prerequisites": [
         {

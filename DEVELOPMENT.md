@@ -46,12 +46,25 @@ The suite uses disposable fixtures and loopback services; it does not exercise a
 Seren account. A full run takes roughly eight to ten minutes on a recent Mac. Some tests are
 timing-sensitive under heavy load. Tests do not run before each operator command.
 
+Development and testing happen on macOS. The code uses Unix-specific facilities such as
+`fcntl`; native Windows is not supported, Linux is untested and WSL is not guaranteed to work.
+
 ## Maintainer release checks and advanced supervision
 
 The checked runner validates the staged Git tree in a temporary snapshot. Stage intended
-changes, activate the development environment and use `.tiny-harness/run.py validate` or its
-checked `commit` command as described in `.tiny-harness/CONTRACT.md`. Full regression and lint checks remain
-required for releases and checked commits. Do not delete safety tests to hide failures.
+changes, then run it with the development environment's Python; no shell activation is needed:
+
+```sh
+.venv/bin/python .tiny-harness/run.py validate
+.venv/bin/python .tiny-harness/run.py commit -m "Reason for this change"
+```
+
+A check whose executable is `{python}` in `.tiny-harness/checks.json` runs with the interpreter
+that launched the runner, so lint uses that environment's pinned Ruff (`{python} -m ruff`) and
+the suite its pytest, never another `python3` or `ruff` on PATH. If the pinned tool is missing
+from that environment, the check fails; nothing is installed or skipped. See
+`.tiny-harness/CONTRACT.md`. Full regression and lint checks remain required for releases and
+checked commits. Do not delete safety tests to hide failures.
 
 The advanced live supervisor requires a clean committed tree with a matching full-suite
 validation record. It reuses that record for the unchanged tree; it does not run the whole

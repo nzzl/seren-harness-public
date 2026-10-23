@@ -169,6 +169,76 @@ class HarnessTests(unittest.TestCase):
                 self.git("add", ".tiny-harness/checks.json")
                 self.assert_failed(self.harness("commit", "-m", "Must fail"), evidence)
 
+    def misleading_path(self, absent):
+        """PATH holding only git plus, unless `absent`, python3 and ruff that would pass."""
+        directory = Path(self.temporary.name) / ("absent-bin" if absent else "misleading-bin")
+        directory.mkdir()
+        (directory / "git").symlink_to(shutil.which("git"))
+        if not absent:
+            for name in ("python3", "ruff", "tiny_harness_absent_tool"):
+                (directory / name).write_text("#!/bin/sh\necho misleading-path-tool\nexit 0\n")
+                (directory / name).chmod(0o755)
+        return str(directory)
+
+    def test_python_token_runs_the_launching_interpreter_on_snapshot_source(self):
+        self.install()
+        (self.root / "probe.py").write_text("import sys\nprint('probe', __file__, sys.executable)\n")
+        (self.root / "probe_untracked.py").write_text("")
+        self.write_checks([
+            {"name": "interpreter", "argv": ["{python}", "-c", "import probe, sys; print(sys.argv[1:])",
+                                             "{python}"], "timeout_seconds": 10},
+            {"name": "snapshot only", "argv": ["{python}", "-c", "import probe_untracked"],
+             "timeout_seconds": 10}])
+        self.git("add", ".tiny-harness", "probe.py")
+        for absent in (True, False):
+            with self.subTest(absent=absent):
+                self.env["PATH"] = self.misleading_path(absent)
+                result = self.harness("validate")
+                output = result.stdout + result.stderr
+                self.assertIn("RUN interpreter: " + json.dumps([sys.executable, "-c"])[:-1], output)
+                probe = next(line for line in output.splitlines() if line.startswith("probe "))
+                self.assertIn("tiny-harness-", probe)                    # imported from the snapshot,
+                self.assertTrue(probe.split(" ")[1].endswith("/snapshot/probe.py"), probe)
+                self.assertNotIn(str(self.root), probe)                  # not the working tree
+                self.assertTrue(probe.endswith(" " + sys.executable), probe)   # by this interpreter
+                self.assertIn("['{python}']", output)                     # only argv[0] is resolved
+                self.assertNotIn("misleading-path-tool", output)
+                self.assertIn("PASS interpreter (exit 0)", output)
+                self.assert_failed(result, "FAIL snapshot only (exit 1)")  # untracked: not in snapshot
+
+    def test_python_token_failures_and_missing_tools_fail_and_generic_commands_keep_path(self):
+        self.install()
+        self.env["PATH"] = self.misleading_path(absent=False)
+        self.write_checks([
+            {"name": "failing", "argv": ["{python}", "-c", "raise SystemExit(7)"], "timeout_seconds": 10},
+            {"name": "missing tool", "argv": ["{python}", "-m", "tiny_harness_absent_tool"], "timeout_seconds": 10},
+            {"name": "generic", "argv": ["python3"], "timeout_seconds": 10}])
+        self.git("add", ".tiny-harness")
+        result = self.harness("validate")
+        output = result.stdout + result.stderr
+        self.assert_failed(result, "FAIL failing (exit 7)")
+        self.assertIn("FAIL missing tool (exit 1)", output)          # never the PATH command of that name
+        self.assertIn("No module named tiny_harness_absent_tool", output)
+        self.assertIn("PASS generic (exit 0)", output)                # plain names still resolve on PATH
+        self.assertEqual(output.count("misleading-path-tool"), 1)
+        result = self.harness("commit", "-m", "Must fail")
+        self.assert_failed(result, "Stopping after the first failed check")
+        self.assertNotIn("RUN missing tool", result.stdout)
+
+    def test_python_token_runs_inside_the_confinement_prefix(self):
+        self.configure()
+        self.write_checks([{"name": "confined", "argv": ["{python}", "-c", "print('inner-ran')"],
+                            "timeout_seconds": 10}])
+        self.git("add", ".tiny-harness/checks.json")
+        wrapper = ("import subprocess, sys; print('wrapped', sys.argv[1] == sys.executable); "
+                   "raise SystemExit(subprocess.call(sys.argv[1:]))")
+        self.env["TINY_HARNESS_CHECK_PREFIX"] = json.dumps([sys.executable, "-c", wrapper])
+        result = self.harness("validate")
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn("wrapped True", result.stdout)
+        self.assertIn("inner-ran", result.stdout)
+        self.assertIn("(confined by ", result.stdout)
+
     def test_checks_get_empty_input_while_caller_input_stays_open(self):
         self.configure("import sys; assert sys.stdin.read() == ''", timeout=10)
         process = subprocess.Popen([sys.executable, str(RUNNER), "validate"], cwd=self.root,

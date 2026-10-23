@@ -33,7 +33,7 @@ import tempfile
 
 SELECTION = "maintenance-goal.json"
 FOLDER = "maintenance"
-# The approved consolidated goal's files only (docs/maintenance/consolidated-goal.md):
+# The approved consolidated goal's files only (the goal document is not in this release):
 # A pytest runner, B validation reuse, C offline evaluation, D release candidate, checkpoint.
 # TASK.md is operational (agents are told to read it) and is never a maintenance path; the
 # session checkpoints through `worker progress`. Validation reuse (step B) applies only to
@@ -160,8 +160,7 @@ CLAUDE_ENV = {"BASH_MAX_TIMEOUT_MS": "1800000", "CLAUDE_CODE_PRINT_BG_WAIT_CEILI
 PROMPT = """You are an unattended Seren Harness maintenance worker (offline only).
 Session {session}; hard deadline {deadline} UTC (the supervisor ends the session then).
 Nobody will answer questions. Goal {goal}: follow {plan} in this repository exactly. Start by
-reading AGENTS.md, .tiny-harness/CONTRACT.md, docs/MODEL-WORKER.md (Maintenance sessions)
-and {plan}, then run `python3 -m seren_harness worker status`.
+reading AGENTS.md, .tiny-harness/CONTRACT.md, docs/ADVANCED.md and {plan}, then run `python3 -m seren_harness worker status`.
 <working_directory>{repo}</working_directory>
 <objective>Advance the next unfinished step of the plan. You may edit only the paths
 `worker status` lists. Verify with `worker test`, check with `worker check`, commit with

@@ -1,7 +1,7 @@
 """One read-only replay of a completed Clock Test run through `seren agent cloud run stream`.
 
 Customer question: does pinned CLI 0.10.0 end a completed tool-using run's replay before it
-shows the final answer? (F-C1-tool-completed, F-C1-stream-closing; docs/stream-replay.)
+shows the final answer? (F-C1-tool-completed, F-C1-stream-closing.)
 
 `stream-replay prepare --record <invocation.json> --output <package.json>` is offline: it
 derives the package (identities, expected event structure, answer hash) from a saved

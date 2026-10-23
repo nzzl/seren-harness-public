@@ -3,6 +3,8 @@
     {
       "name": "basic Python lint",
       "argv": [
+        "{python}",
+        "-m",
         "ruff",
         "check",
         "--no-cache",
@@ -19,7 +21,7 @@
     {
       "name": "runner behavior and disposable adoption",
       "argv": [
-        "python3",
+        "{python}",
         "tests/run.py"
       ],
       "timeout_seconds": 600
@@ -44,7 +46,7 @@
       {
         "name": "Tier 0, discovery and model-worker tests (focused case-only route)",
         "argv": [
-          "python3",
+          "{python}",
           "tests/run.py",
           "test_tier0",
           "test_discovery",
