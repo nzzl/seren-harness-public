@@ -96,6 +96,11 @@ calls, no reproductions. The configuration loader rejects anything looser before
 - 900 s of wall time;
 - at most 96 Seren CLI calls, plus readiness's 3.
 
+Some managed employee responses omit `agent_identity_id`. In `shared_running` mode, the
+harness can bind this owner view to the configured deployment and inspected name/revision,
+while separately verifying the instruction content and hash. Missing fields are recorded as
+unavailable, not invented. Missing required evidence or changed identity blocks assignment.
+
 ### Three separate steps
 
 ```sh

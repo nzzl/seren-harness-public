@@ -1182,5 +1182,114 @@ class OwnerDesignatedTestUse(unittest.TestCase):
         self.assertNotIn("task isolation", names)
         self.assertIn("not a guarantee of fresh context", readiness["only_a_live_journey_shows"][0])
 
+
+# Synthetic owner-view response shape: some identity and policy fields are unavailable.
+OWNER_VIEW_OMITS = ["agent_identity_id", "secret_resolution_result_id", "runtime_policy"]
+
+
+class OwnerViewIdentity(unittest.TestCase):
+    """An owner view without agent_identity_id binds to the configured deployment and the pinned
+    name, revision and instructions; it never passes by comparing two missing identities."""
+
+    def setUp(self):
+        temp = tempfile.TemporaryDirectory()
+        self.addCleanup(temp.cleanup)
+        self.root = Path(temp.name)
+
+    untouched = SharedResearch.assert_untouched
+
+    def env(self, name, change=None, omit=OWNER_VIEW_OMITS, **scenario):
+        root = self.root / name
+        root.mkdir()
+        env = shared_env(root, isolation=False)
+        env.campaign["employee"].update(use="owner_designated_test", designation=DESIGNATION)
+        env.scenario["deployments"][0]["omit_fields"] = list(omit)
+        env.scenario["replies"] = plans(*GOOD)
+        if change:
+            change(env)
+        env.scenario.update(scenario)
+        env.write()
+        return env
+
+    def test_owner_view_passes_readiness_and_both_stages_without_inventing_identity(self):
+        env = self.env("journey")
+        code, out = run(env, Web(), action="readiness")
+        self.assertEqual(code, 0, out)
+        self.assertIn("ok        employee detail (managed-get): owner view bound to the configured deployment", out)
+        self.assertIn("unavailable: agent_identity_id, secret_resolution_result_id", out)
+        self.assertEqual(env.starts(), [])
+        code, out = run(env, Web())
+        self.assertEqual(code, 0, out)
+        state = env.state()
+        self.assertEqual(state["journeys"][0]["status"], "facts_checked")
+        self.assertEqual(len(env.starts()), 2)
+        identity = state["employee"]["identity"]
+        self.assertEqual(identity["binding"], "owner_view")
+        self.assertNotIn("agent_identity_id", identity)           # never invented or substituted
+        self.assertEqual(identity["unavailable"], ["agent_identity_id", "secret_resolution_result_id"])
+        self.assertEqual(identity["policy_unavailable"], ["runtime_policy"])
+        self.untouched(env)
+        allowed = [list(c) for c in functional.SHARED_READS] + [list(functional.SHARED_ASSIGN)]
+        for argv in service_calls(env):                           # reads and the two assignments only
+            plain = argv[2:] if argv[:2] == ["-o", "json"] else argv
+            self.assertTrue(any(plain[:len(a)] == a for a in allowed), argv)
+
+    def test_wrong_or_missing_target_or_pins_block_before_the_brief(self):
+        cases = {
+            "pinned revision differs": lambda e: e.campaign["employee"]["expected"].update(
+                active_revision_id=str(uuid.uuid4())),
+            "pinned name differs": lambda e: e.campaign["employee"]["expected"].update(name="Someone Else"),
+            "instructions differ": lambda e: e.campaign["employee"]["expected"].update(instructions_sha256="ff" * 32),
+            "no deployment id returned": lambda e: e.scenario["deployments"][0]["omit_fields"].append("deployment_id"),
+            "no revision returned": lambda e: e.scenario["deployments"][0]["omit_fields"].append("active_revision_id"),
+        }
+        for name, change in cases.items():
+            with self.subTest(name):
+                env = self.env(name.replace(" ", "-"), change)
+                code, out = run(env, Web(), action="readiness")
+                self.assertNotEqual(code, 0, out)
+                code, out = run(env, Web())
+                self.assertEqual(code, 2, out)
+                self.assertEqual(env.starts(), [])
+                self.untouched(env)
+
+    def test_a_change_before_the_revision_blocks_it(self):
+        cases = {
+            "revision changed": ({"active_revision_id": str(uuid.uuid4())}, "does not establish the employee's identity"),
+            "instructions changed": ({"bundle": bundle(INSTRUCTIONS + "Changed.\n")}, "instructions changed"),
+            "identity newly exposed": ({"omit_fields": []}, "new evidence: agent_identity_id"),
+        }
+        for name, (update, reason) in cases.items():
+            with self.subTest(name):
+                env = self.env(name.replace(" ", "-"), update_after_first_run=update)
+                code, out = run(env, Web())
+                self.assertEqual(code, 2, out)
+                state = env.state()
+                self.assertIn(reason, state["stop"]["reason"])
+                self.assertEqual(len(env.starts()), 1)            # the revision is never sent
+                self.untouched(env)
+
+    def test_losing_a_recorded_full_identity_blocks_the_revision(self):
+        env = self.env("lost", omit=(), update_after_first_run={"omit_fields": OWNER_VIEW_OMITS})
+        code, out = run(env, Web())
+        self.assertEqual(code, 2, out)
+        self.assertIn("previously recorded evidence lost: agent_identity_id", env.state()["stop"]["reason"])
+        self.assertEqual(len(env.starts()), 1)
+        self.untouched(env)
+
+    def test_missing_identities_never_compare_equal_and_full_identity_is_unchanged(self):
+        self.assertEqual(functional.identity_problem(None, None), "no identity was recorded at discovery")
+        self.assertIn("does not establish", functional.identity_problem({"deployment_id": TARGET}, None))
+        settings = functional.load_config(self.env("unit").path)
+        full = {"deployment_id": TARGET, "agent_identity_id": "a", "active_revision_id": "r"}
+        self.assertEqual(functional.employee_identity(full, settings), functional.contract.identity(full))
+        owner = {"deployment_id": TARGET, "name": settings["campaign"]["employee"]["expected"]["name"],
+                 "active_revision_id": settings["campaign"]["employee"]["expected"]["active_revision_id"]}
+        self.assertEqual(functional.employee_identity(owner, settings)["binding"], "owner_view")
+        created = copy.deepcopy(settings)
+        created["campaign"]["employee"]["mode"] = "create"
+        self.assertIsNone(functional.employee_identity(owner, created))   # only the shared_running mode
+
+
 if __name__ == "__main__":
     unittest.main()

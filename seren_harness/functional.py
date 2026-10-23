@@ -488,6 +488,48 @@ ROUTING_GAP = ("The harness reads results through `cloud run get` and posts noth
                "posted anywhere before any assignment")
 
 
+def employee_identity(detail, settings):
+    """The identity a campaign binds to at discovery and rechecks before each assignment, or None.
+
+    A full `ManagedAgentDeploymentDetail` gives the shared contract identity. Some deployments
+    return an owner view without `agent_identity_id`. For an existing shared_running employee
+    only, that view binds to the configured deployment plus the operator-pinned name and active
+    revision (the instruction bundle is checked separately); identity fields the view does not
+    return are listed as unavailable, never invented or substituted. Anything less is None and
+    blocks."""
+    full = contract.identity(detail)
+    if full is not None or not isinstance(detail, dict) \
+            or settings["campaign"]["employee"]["mode"] != SHARED:
+        return full
+    expected = settings["campaign"]["employee"]["expected"]
+    if not settings.get("deployment_id") or detail.get("deployment_id") != settings["deployment_id"] \
+            or detail.get("name") != expected["name"] \
+            or detail.get("active_revision_id") != expected["active_revision_id"]:
+        return None
+    fields = contract.IDENTITY_FIELDS[:-1]
+    result = {key: detail[key] for key in fields if key in detail}
+    result.update(binding="owner_view", name=detail["name"],
+                  unavailable=[key for key in fields if key not in detail],
+                  policy_unavailable=[key for key in contract.POLICY_FIELDS if key not in detail],
+                  policy_digest=contract.policy_digest(detail))
+    return result
+
+
+def identity_problem(recorded, current):
+    """Why a recheck does not confirm the identity recorded at discovery, or None. Two missing
+    identities never compare equal; lost, new and changed evidence are each named."""
+    if recorded is None:
+        return "no identity was recorded at discovery"
+    if current is None:
+        return "this read does not establish the employee's identity"
+    lost = sorted(set(recorded) - set(current))
+    new = sorted(set(current) - set(recorded))
+    changed = sorted(k for k in set(recorded) & set(current) if recorded[k] != current[k])
+    parts = [label + ": " + ", ".join(keys) for label, keys in
+             (("changed", changed), ("previously recorded evidence lost", lost), ("new evidence", new)) if keys]
+    return "; ".join(parts) or None
+
+
 def instruction_evidence(detail, expected):
     """(problem or None, evidence) for the employee's instruction binding.
 
@@ -762,7 +804,11 @@ class SerenAdapter:
         detail = self.read_detail(run_id)
         if self.shared:
             self.check_instructions(detail)
-        identity = contract.identity(detail)
+        identity = employee_identity(detail, self.settings)
+        if identity is None and self.shared:
+            raise Stop("blocked", "the employee read does not establish the identity this campaign "
+                       "binds to (configured deployment, inspected name and active revision)",
+                       "Nothing was assigned; a changed employee needs a new inspection and approval.")
         result = self.call(["agent", "managed-deployment-tools", self.target], run_id)
         catalog = self.body(result)
         if not result.ok:
@@ -797,10 +843,10 @@ class SerenAdapter:
 
     def check_identity(self, run_id, detail=None):
         """Identity recorded at discovery must still hold before each start."""
-        current = contract.identity(detail if detail is not None else self.read_detail(run_id))
-        changes = contract.identity_changes(self.employee.get("identity"), current)
-        if changes:
-            raise Stop("blocked", "employee identity changed since discovery: " + ", ".join(changes),
+        current = employee_identity(detail if detail is not None else self.read_detail(run_id), self.settings)
+        problem = identity_problem(self.employee.get("identity"), current)
+        if problem:
+            raise Stop("blocked", "employee identity changed or not confirmed since discovery: " + problem,
                        "Confirm the change was intended; a new campaign id is needed to test the "
                        "changed employee.")
 
@@ -3057,10 +3103,14 @@ class Readiness:
         detail = contract.unwrap(result.data) if result.ok else None
         if not isinstance(detail, dict):
             return self.failed("employee detail (managed-get)", result, "the configured employee is readable")
-        identity = contract.identity(detail)
+        identity = employee_identity(detail, self.settings)
+        if identity and identity.get("binding") == "owner_view":
+            found = "owner view bound to the configured deployment and inspected name and active " \
+                    "revision; unavailable: %s" % (", ".join(identity["unavailable"]) or "none")
+        else:
+            found = "identity fields %s" % ("present" if identity else "missing")
         self.row("employee detail (managed-get)", "ok" if detail.get("deployment_id") == deployment
-                 and identity else "mismatch", "identity fields %s; name %s" % (
-                     "present" if identity else "missing", detail.get("name")),
+                 and identity else "mismatch", "%s; name %s" % (found, detail.get("name")),
                  "managed-get returns the employee's identity for change detection")
         if self.shared:
             expected = self.settings["campaign"]["employee"]["expected"]

@@ -14,7 +14,7 @@ reviews, task checkpoints, handoffs and validation history. Also excluded:
 - machine-specific paths;
 - an adapter for a private application.
 
-**Data in the repository is synthetic.** Research scenarios, companies, invoices and
+**Test data in the repository is synthetic.** Research scenarios, companies, invoices and
 service-response fixtures are fictional or generalized. They test the harness's handling,
 not any real customer, record or execution.
 - Identifiers such as `7a00…`, `0000…` and repeated-digit UUIDs are placeholders.
@@ -37,3 +37,8 @@ review; they cannot prove the absence of all sensitive data.
 
 The Tiny Harness MIT notices in `LICENSE` and `.tiny-harness/LICENSE` are preserved unchanged.
 Public provider URLs and hostnames are intentional.
+
+The 2026-10-23 compatibility update includes only generalized code, synthetic tests and a
+summary of a separately authorized public issue. The validation summary describes a real
+failed attempt; it does not include the private configuration, raw receipts, identifiers or
+logs. The public issue link is intentional. Private prompts and handover records were not copied.

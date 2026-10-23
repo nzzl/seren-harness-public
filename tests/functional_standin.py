@@ -16,7 +16,9 @@ and builds its reply from the rows it read and from the previous deliverable quo
 `psql` emulates the pinned harness route over world tables; writes need the write session.
 Other scenario keys:
 `start`, `stop`, `apply` ("ok" | "timeout"), `stop_never` (status stays running),
-`identity_change_after_start` (a new active revision after the first start).
+`identity_change_after_start` (a new active revision after the first start),
+`update_after_first_run` (deployment fields changed by its owner after the first run start).
+A deployment's `omit_fields` drops those keys from managed-get (an owner view).
 """
 from datetime import date, timedelta
 import json
@@ -81,7 +83,7 @@ def detail(item):
     keys = ("deployment_id", "name", "status", "active_revision_id", "agent_identity_id",
             "secret_resolution_result_id", "approval_policy", "capability_policy",
             "runtime_policy", "side_effect_policy", "requirements")
-    value = {k: item.get(k) for k in keys}
+    value = {k: item.get(k) for k in keys if k not in item.get("omit_fields", ())}   # owner view
     if "bundle" in item:   # Instruction documents, as managed-get returns them.
         value["bundle"] = item["bundle"]
     return value
@@ -409,6 +411,8 @@ def main(args):
                                                        deployment(target).get("tools", []))
         if SCENARIO.get("bundle_after_first_run") and len(WORLD["runs"]) == 1 + len(SCENARIO.get("production_runs", {})):
             deployment(target)["bundle"] = SCENARIO["bundle_after_first_run"]   # changed by its owner
+        if SCENARIO.get("update_after_first_run") and len(WORLD["runs"]) == 1 + len(SCENARIO.get("production_runs", {})):
+            deployment(target).update(SCENARIO["update_after_first_run"])
         if reply.get("research"):
             WORLD["runs"][run_id]["events"], WORLD["runs"][run_id]["output"] = researcher(
                 message, reply["research"], deployment(target).get("tools", []))

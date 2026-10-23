@@ -2,9 +2,9 @@
 
 What was checked for this release, and what was not.
 
-## Offline checks performed
+## Initial release offline checks
 
-All checks ran on macOS against a fresh copy of the released files, in a temporary location
+The initial release checks ran on macOS against a fresh copy of the released files, in a temporary location
 with a temporary `HOME` and no Seren, Claude or GitHub credentials. No real service was
 contacted.
 
@@ -51,17 +51,54 @@ safety stops. They do not measure the real service or real employee quality.
 Python 3.11 or later is the supported minimum. The full suite was run on 3.14.7 only. The
 offline example also ran on 3.9.6 and 3.10.14, which does not extend the supported range.
 
+## Identity compatibility update — 2026-10-23
+
+The functional campaign now accepts the supported owner view without `agent_identity_id` in
+`shared_running` mode. Readiness, discovery and pre-assignment checks use the same binding.
+It preserves deployment, inspected name/revision and instruction verification, records
+unavailable fields explicitly, and blocks missing identities and changed/lost/new evidence.
+Other employee modes retain the full identity contract.
+
+Five synthetic regressions cover readiness and both journey stages, wrong or missing identity
+and pins, changes before the revision, loss of a recorded full identity, and the invalid case
+where two missing identities would otherwise compare equal. The implementation passed the
+94-test functional suite and the full 1028-test suite (880 subtests) in the working copy.
+The clean public update is also gated by the checked-commit runner's lint and full offline
+suite; private validation logs are not shipped. No credential or runtime fixture is imported.
+
+## Bounded live attempt — 2026-10-23
+
+Using Seren CLI 0.10.0, read-only readiness passed and the harness submitted one research-brief
+assignment. Seren accepted it and returned a terminal dispatch error before employee execution:
+
+```text
+Core dispatch requires its exact prepared framework run_id
+```
+
+The service reported `execution_observation: not_started`, zero iterations and no employee
+tool calls. No brief was produced, so the conditional revision was not sent. The harness
+recorded the failure without retrying; temporary operator permissions were disabled afterward.
+There were three readiness reads and nine campaign CLI calls, including one submission.
+No verifier source request or harness Discord/GitHub posting call occurred during that run.
+
+See [Seren issue #244](https://github.com/serenorg/seren/issues/244), filed separately with the
+owner's explicit approval. One occurrence does not establish reproducibility or root cause;
+the report's automatic `product_defect` label remains provisional. The request omitted `run_id`
+as the published deployment-scoped contract requires. No speculative ID workaround was added.
+
+This demonstrates live readiness, submission, polling and failure recording. It does not
+validate successful employee research, evidence checking or a live follow-up. A campaign's
+`complete` status or exit code 0 means orchestration ended, not that the journey succeeded.
+Private operator configuration, raw receipts, run identifiers and logs are not included here.
+
 ## Not validated
 
-- No complete live journey against the real Seren service is included in this release.
-- Not exercised with a real account:
-  - employee, run trace or assignment;
-  - official web pages;
-  - `seren_db_query`, `seren psql` or onboarding;
-  - the Claude CLI planner;
-  - GitHub submission.
-- Compatibility is established only by offline contracts for Seren CLI 0.10.0. Other versions,
-  or later service changes, may differ.
+- A successful complete live journey, including a verified brief and revision.
+- Live official-source retrieval and claim verification for this research journey.
+- The release's other live routes: `seren_db_query`, `seren psql`, onboarding, the Claude CLI
+  planner and GitHub submission through the harness.
+- General live compatibility beyond this bounded CLI 0.10.0 observation. Other versions,
+  deployments or later service changes may differ.
 - Context and memory isolation between runs of the same employee, and whether an employee's
   output is forwarded by deployment-side integrations, are not established by the harness.
   The operator records evidence for routing; the harness does not enforce it.
