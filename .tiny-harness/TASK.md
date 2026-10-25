@@ -1,6 +1,7 @@
-# Research verifier: organization binding and redacted traces — 2026-10-25 (in progress)
+# Research verifier: organization binding and redacted traces — 2026-10-25 (complete; awaiting review)
 
-Base d6de0ce. Offline only; two commits, one per defect. No live call, push or publication.
+Base d6de0ce. Offline only; two commits, one per defect (D1 8ef9b67, D2 this commit). No live
+call, push or publication.
 - [x] D1: the assignment named both an organization id and a name without saying which to use
   in `organization`, and the verifier and reread look organizations up by id only. Exact-name
   labels therefore refused allowlisted pages ("not allowlisted"), reread nothing and checked no
@@ -15,12 +16,38 @@ Base d6de0ce. Offline only; two commits, one per defect. No live call, push or p
   unit test errored, absent); after, all 6 pass with the existing functional suites. Spec and criteria digests are unchanged (base and new `generate` equal).
   A base-made campaign interrupted after a name-labelled brief resumes under the new code to
   facts_checked with its spec unchanged.
-- [ ] D2: redacted trace (withheld arguments/contents) read as retrieval=False, or as completed
-  retrieval when only contents were withheld (a false pass).
+- [x] D2: a privacy-redacted trace was misread. Withheld arguments were read as
+  retrieval=False and a `product_defect`. With only contents withheld, the
+  `[contents withheld]` placeholder counted as a completed retrieval, which was a false
+  **pass**. That placeholder also served as the employee's page, so a changed page failed
+  instead of staying undecided.
+  Fix: `retrievals` marks a finished call `withheld` when empty arguments come with a withheld
+  `argument_summary`, or when the result is the placeholder or has a withheld
+  `result_summary`. These are the observed field shapes, matched on those fields only. Such a
+  call is never a completed retrieval and its placeholder is never page text.
+  In `verify`, any withheld retrieval call makes an unattributable cited page undecided
+  (None). True still needs every cited page in a visible completed retrieval. Errored calls
+  are ignored, and no call at all is still False. The evaluation records
+  `withheld_retrievals`, and its summary says so. The report's "employee retrieved" line says
+  "nothing visible; N retrieval call(s) the run trace withholds (unverifiable)" instead of
+  "nothing"; the additive report.json key is `employee_withheld_retrievals`. The category follows the verdict
+  (`uncertain`, not draftable) unless another criterion genuinely fails.
+  Stand-in: an opt-in `withheld`/`withhold` research plan option emits the observed shape.
+  Evidence: before, all 4 new tests failed. Both-parts and arguments-only failed; content-only
+  passed; partial gave False; the placeholder made the excerpt False; the unredacted test
+  failed only on the absent new field. After, they pass, and so do 109
+  functional tests (`-W error::ResourceWarning`). The offline example is facts_checked in 2
+  assignments.
+  A private offline replay of a saved live brief result (empty reread, no network) changed from
+  base {performed_retrieval False, sources_allowlisted False, coverage False} to
+  {None, True, None} with 10 withheld calls and name aliases recorded.
+  Limit: while a deployment withholds tool arguments, Stage A cannot pass there, so Stage B is
+  never sent.
 Acceptance: before/after reproduction through the real entry point; unbound, case-changed and
 cross-organization labels still fail without extra reads; redacted evidence unverified, never
 passed or failed; checked commits; SHA256SUMS current.
 Deferred (observed, out of scope): the platform per-run tool budget; a cited 404-titled page.
+Next: independent review. Any live attempt needs fresh authorization.
 
 ## Previous completed change
 

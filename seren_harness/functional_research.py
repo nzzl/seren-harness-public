@@ -524,9 +524,21 @@ def _urls(value):
     return []
 
 
+WITHHELD_CONTENT = "[contents withheld]"
+
+
+def _says_withheld(summary):
+    return isinstance(summary, str) and re.search(r"(?i)\bwithheld\b", summary) is not None
+
+
 def retrievals(events, tools):
     """Completed retrievals in the run trace: (calls, traced). `traced` is False when the run
-    carries no event trace at all, so retrieval evidence is missing rather than absent."""
+    carries no event trace at all, so retrieval evidence is missing rather than absent.
+
+    A managed run may withhold tool payloads: a call's empty arguments come with an
+    argument_summary saying they were withheld, and a result's content is the withheld
+    placeholder or its result_summary says so. Such a call is `withheld`: what it read is
+    unknown, so it never counts as a completed retrieval and its placeholder is never page text."""
     if not isinstance(events, list):
         return [], False
     calls, results = {}, {}
@@ -541,7 +553,9 @@ def retrievals(events, tools):
                 except ValueError:
                     arguments = {"raw": arguments}
             calls[event.get("id")] = {"tool": event.get("name"), "status": event.get("status"),
-                                      "urls": _urls(arguments)}
+                                      "urls": _urls(arguments),
+                                      "arguments_withheld": arguments in (None, {}, "")
+                                      and _says_withheld(event.get("argument_summary"))}
         elif event.get("type") == "tool_result":
             results[event.get("id")] = event
     summary = []
@@ -549,11 +563,13 @@ def retrievals(events, tools):
         result = results.get(identifier) or {}
         content = result.get("content")
         content = content if isinstance(content, str) else json.dumps(content) if content is not None else ""
-        completed = call["status"] in (None, "completed") and identifier in results \
-            and not result.get("is_error") and bool(content.strip())
+        finished = call["status"] in (None, "completed") and identifier in results and not result.get("is_error")
+        content_withheld = content.strip() == WITHHELD_CONTENT or _says_withheld(result.get("result_summary"))
+        completed = finished and bool(content.strip()) and not content_withheld
         summary.append({"tool": call["tool"], "retrieval_tool": call["tool"] in tools,
                         "urls": [normalize_url(u) for u in call["urls"] if normalize_url(u)],
                         "completed": completed, "error": bool(result.get("is_error")),
+                        "withheld": finished and (call["arguments_withheld"] or content_withheld),
                         "content_text": page_text(content) if completed and call["tool"] in tools else None})
     return summary, True
 
@@ -809,12 +825,19 @@ def verify(journey, stage, data, reread, previous):
     earlier = {normalize_url(s.get("url")) for s in (previous or {}).get("sources") or [] if isinstance(s, dict)}
     cited = {normalize_url(s.get("url")) for s in sources} - {None}
     needed = cited - earlier if stage == "revision" else cited
+    completed = any(c["retrieval_tool"] and c["completed"] for c in calls)
+    # Retrievals whose payloads the trace withholds: they may cover any cited page, so a page
+    # not attributable to a visible retrieval is undecided rather than missing.
+    withheld = sum(1 for c in calls if c["retrieval_tool"] and c["withheld"])
+    detail["withheld_retrievals"] = withheld
     if not traced:
         results["performed_retrieval"] = None
-    elif not any(c["retrieval_tool"] and c["completed"] for c in calls) or not cited:
+    elif not cited or not (completed or withheld):
         results["performed_retrieval"] = False
-    elif needed <= retrieved:
+    elif completed and needed <= retrieved:
         results["performed_retrieval"] = True
+    elif withheld:
+        results["performed_retrieval"] = None
     else:
         hosts = {urlsplit(u).hostname for u in retrieved}
         results["performed_retrieval"] = None if all(urlsplit(u).hostname in hosts for u in needed - retrieved) else False

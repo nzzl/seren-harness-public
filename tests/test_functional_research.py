@@ -500,6 +500,78 @@ class OrganizationLabels(unittest.TestCase):
         self.assertIsNone(research.organization_id(organizations, ["alpha"]))
 
 
+class RedactedTraces(unittest.TestCase):
+    """A trace whose tool payloads are withheld leaves retrieval unverifiable, never failed or met."""
+
+    def setUp(self):
+        temp = tempfile.TemporaryDirectory()
+        self.addCleanup(temp.cleanup)
+        self.root = Path(temp.name)
+
+    def brief_stage(self, name, plan, web=None):
+        root = self.root / name
+        root.mkdir()
+        env = shared_env(root)
+        env.scenario["replies"] = plans(dict({"retrieve": [EF, W3F], "answer": brief()}, **plan), GOOD[1])
+        env.write()
+        code, out = run(env, web or Web())
+        self.assertEqual(code, 0, out)
+        state = env.state()
+        return env, state, state["tasks"][0]["evaluation"]
+
+    def test_withheld_arguments_or_contents_leave_retrieval_unverified_and_spend_no_revision(self):
+        for parts in (["arguments", "content"], ["arguments"], ["content"]):
+            with self.subTest(parts):
+                env, state, evaluation = self.brief_stage("-".join(parts), {"withheld": [EF, W3F], "withhold": parts})
+                self.assertEqual(evaluation["verdict"], "uncertain", evaluation["summary"])
+                self.assertEqual(evaluation["category"], functional.UNCERTAIN_RESULT)
+                self.assertIsNone(evaluation["criteria"]["performed_retrieval"])
+                self.assertTrue(evaluation["criteria"]["excerpts_verified"])       # the harness's own reread
+                self.assertIn("trace withholds", evaluation["summary"])
+                self.assertEqual(evaluation["withheld_retrievals"], 2)
+                self.assertEqual(state["journeys"][0]["status"], "unverified")
+                self.assertEqual(len(env.starts()), 1)
+                report = (env.folder / "report.md").read_text()
+                self.assertIn("employee retrieved: nothing visible; 2 retrieval call(s) the run trace "
+                              "withholds (unverifiable)", report)
+                self.assertNotIn("[product_defect]", report)
+
+    def test_partial_redaction_never_counts_a_cited_page_as_retrieved(self):
+        _env, _state, evaluation = self.brief_stage("partial", {"withheld": [W3F]})
+        self.assertIsNone(evaluation["criteria"]["performed_retrieval"])
+        self.assertEqual(evaluation["not_retrieved"], [W3F])
+        self.assertEqual(evaluation["withheld_retrievals"], 1)
+
+    def test_a_withheld_placeholder_is_never_read_as_the_employees_page(self):
+        changed = Web({EF: EF_PAGE.replace("Individuals, teams and organizations can apply",
+                                           "Applications are paused"), W3F: W3F_PAGE})
+        _env, _state, evaluation = self.brief_stage("placeholder", {"withheld": [EF], "withhold": ["content"]}, changed)
+        self.assertIsNone(evaluation["criteria"]["excerpts_verified"])     # not False: content unavailable
+        self.assertEqual(evaluation["unsupported"], [])
+        self.assertEqual(evaluation["source_changes"], [])
+
+    def test_unredacted_traces_keep_their_outcomes(self):
+        _env, _state, missing = self.brief_stage("missing", {"retrieve": [EF]})
+        self.assertIs(missing["criteria"]["performed_retrieval"], False)
+        self.assertEqual(missing["withheld_retrievals"], 0)
+        self.assertNotIn("trace withholds", missing["summary"])
+        _env, _state, none = self.brief_stage("none", {"retrieve": []})
+        self.assertIs(none["criteria"]["performed_retrieval"], False)
+        # A redacted call that failed is not a retrieval and makes nothing unverifiable.
+        root = self.root / "errored"
+        root.mkdir()
+        env = shared_env(root)
+        env.scenario["pages"] = {EF: EF_PAGE}
+        env.scenario["replies"] = plans({"retrieve": [EF, W3F], "answer": brief(), "withheld": [W3F],
+                                         "withhold": ["arguments"]}, GOOD[1])
+        env.write()
+        code, out = run(env, Web())
+        self.assertEqual(code, 0, out)
+        evaluation = env.state()["tasks"][0]["evaluation"]
+        self.assertIs(evaluation["criteria"]["performed_retrieval"], False)
+        self.assertEqual(evaluation["withheld_retrievals"], 0)
+
+
 class ClaimSupport(unittest.TestCase):
     """Review P1: excerpt overlap is not support. Through the real entry point."""
 

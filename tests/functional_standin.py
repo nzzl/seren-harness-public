@@ -299,12 +299,21 @@ def researcher(message, plan, tools):
     context = json.loads(message)["task"]["context"]
     events = []
     tool = plan.get("tool", "browser_navigate")
+    # `withheld`: URLs whose calls carry the privacy-redacted trace shape (`withhold` names the
+    # parts: arguments and/or content), as a managed run reports them when it withholds payloads.
+    withheld, parts = plan.get("withheld", []), plan.get("withhold", ["arguments", "content"])
     for url in plan.get("retrieve", []):
+        redact = url in withheld
         events.append({"type": "tool_call", "id": "call-%d" % len(events), "name": tool,
                        "arguments": json.dumps({"url": url}), "status": "completed"})
+        if redact and "arguments" in parts:
+            events[-1].update(arguments="{}", argument_summary="Arguments withheld for privacy")
         page = SCENARIO.get("pages", {}).get(url) if tool in tools else None
         events.append({"type": "tool_result", "id": events[-1]["id"], "is_error": page is None,
                        "content": page if page is not None else "error: not retrieved"})
+        if redact and "content" in parts and page is not None:
+            events[-1].update(content="[contents withheld]",
+                              result_summary="Tool completed; contents withheld for privacy")
     if "answer" in plan:
         value = plan["answer"]
     else:

@@ -1652,6 +1652,9 @@ def evaluate_research(record, item, previous, clean=None):
         verdict, category = "passed", None
         summary = ("%d claim(s) checked as word-for-word quotations of their full source clauses in the "
                    "harness's own reread (not semantic verification); %d interpretation(s) not verified" % (len(detail["checked_claims"]), len(detail["interpretations"])))
+    if detail["withheld_retrievals"] and results.get("performed_retrieval") is None:
+        summary += ("; retrieval unverifiable: the run trace withholds the arguments or contents of "
+                    "%d retrieval call(s)" % detail["withheld_retrievals"])
     return dict(base, verdict=verdict, category=category, summary=summary, failed_criteria=failed,
                 content_failed=content_failed, uncertain_criteria=unknown, criteria=results,
                 calls=detail["retrievals"], reply_excerpt=excerpt, deliverable=value,
@@ -1659,6 +1662,7 @@ def evaluate_research(record, item, previous, clean=None):
                 unsupported=detail["unsupported"], not_retrieved=detail["not_retrieved"],
                 changed_claims=detail.get("changed_claims"), checked_claims=detail["checked_claims"],
                 interpretations=detail["interpretations"], organization_aliases=detail["organization_aliases"],
+                withheld_retrievals=detail["withheld_retrievals"],
                 reply_sha256=hashlib.sha256((text or "").encode()).hexdigest())
 
 
@@ -2613,6 +2617,8 @@ def journey_summary(ledger, record):
                                                             and not c.get("other_relations") for c in calls),
                        "employee_retrievals": [u for c in calls if c.get("retrieval_tool") and c.get("completed")
                                                for u in c.get("urls", [])],
+                       "employee_withheld_retrievals": sum(1 for c in calls if c.get("retrieval_tool")
+                                                           and c.get("withheld")),
                        "sources": [{k: r.get(k) for k in ("url", "status", "detail", "retrieved_at", "sha256",
                                                           "bytes", "truncated", "hops")}
                                    for r in ((item.get("readback") or {}).get("sources") or {}).values()]
@@ -2675,7 +2681,10 @@ def render_report(report):
                 "; claimed success contradicted by read-back" if stage["claim_contradicted"] else "",
                 " — " + stage["summary"].replace("|", "/") if stage["summary"] else ""))
             if stage["sources"] is not None:
-                lines.append("  - employee retrieved: %s" % (", ".join(stage["employee_retrievals"]) or "nothing"))
+                withheld = stage["employee_withheld_retrievals"]
+                lines.append("  - employee retrieved: %s%s" % (
+                    ", ".join(stage["employee_retrievals"]) or ("nothing visible" if withheld else "nothing"),
+                    "; %d retrieval call(s) the run trace withholds (unverifiable)" % withheld if withheld else ""))
                 lines += ["  - harness reread %s: %s%s%s" % (
                     r["url"], r["status"], " at %s sha256 %s (%d bytes%s)" % (
                         r["retrieved_at"], (r["sha256"] or "")[:16], r["bytes"] or 0,
