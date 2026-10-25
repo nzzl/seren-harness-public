@@ -152,10 +152,14 @@ What the verdicts mean:
   id. The exact listed name is also accepted and recorded in the stage's
   `organization_aliases`. Any other label (a different case, an abbreviation) binds to no
   organization: its sources are refused without being read and its claims fail.
-- If the run trace withholds a retrieval call's arguments or contents (for privacy), which
-  pages the employee read cannot be shown. Retrieval is then reported as unverifiable, with
-  the number of withheld calls, never as passed or failed. The stage is at best uncertain, so
-  the revision is not sent.
+- If the run trace withholds a retrieval call's arguments or contents (for privacy), that
+  call never counts as a retrieval, in either stage, and the report gives the number of
+  withheld calls. A cited page it might have read is reported as unverifiable, not passed:
+  - with hidden arguments, it might have read any page;
+  - with only hidden contents, it might have read just the page it visibly requested (or
+    another page on that host).
+  A cited page that no call could have read still fails. A brief that is at best uncertain
+  gets no revision.
 - A fully passing journey ends `facts_checked`, never "accepted". It can also end failed,
   unverified or partially verified, and each is a valid result.
 - **Timeouts.** If observation ends before a run finishes, the run is not cancelled. The report

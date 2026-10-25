@@ -1,7 +1,28 @@
 # Research verifier: organization binding and redacted traces — 2026-10-25 (complete; awaiting review)
 
-Base d6de0ce. Offline only; two commits, one per defect (D1 8ef9b67, D2 this commit). No live
-call, push or publication.
+Base d6de0ce. Offline only. Commits: D1 8ef9b67, D2 ad98524, D3 this commit. No live call, push
+or publication.
+- [x] D3 (review follow-up to D2): two redaction edge cases, reproduced through the entry point.
+  (1) A call with hidden arguments but visible contents was still `completed`. A revision
+  reusing the brief's sources (nothing new needed) then passed retrieval, giving
+  facts_checked with no visible retrieval in that stage.
+  (2) Any withheld call made every missing page undecided. A known requested page with hidden
+  contents therefore turned a citation never requested at all, on another host, from False
+  into None.
+  Fix:
+  - Every withheld call (arguments or contents) is ineligible as a completed retrieval, in
+    both stages.
+  - `target_withheld` separates an unknown target from a known target with a hidden result.
+  - A missing page is undecided only if some call's target is hidden, or if it shares a host
+    with a visible or hidden-result requested page (the existing same-host rule, extended to
+    known hidden targets). Otherwise it fails.
+  - Visible retrieval beside hidden calls still passes legitimate reuse of prior sources.
+  Evidence: before, 3 of 5 new tests failed (revision with hidden arguments: True; known page
+  with hidden contents: None instead of False, also with a visible call beside it). After, 56
+  research and 114 functional tests pass (`-W error::ResourceWarning`), and the offline example
+  is facts_checked.
+  The private replay of the saved live brief is unchanged (None, 10 calls with hidden
+  arguments).
 - [x] D1: the assignment named both an organization id and a name without saying which to use
   in `organization`, and the verifier and reread look organizations up by id only. Exact-name
   labels therefore refused allowlisted pages ("not allowlisted"), reread nothing and checked no

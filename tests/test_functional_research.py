@@ -572,6 +572,78 @@ class RedactedTraces(unittest.TestCase):
         self.assertEqual(evaluation["withheld_retrievals"], 0)
 
 
+EF_OTHER = "https://esp.ethereum.foundation/about"
+
+
+class RedactionScope(unittest.TestCase):
+    """Hidden evidence never satisfies retrieval and never erases a provable miss, in either stage."""
+
+    def setUp(self):
+        temp = tempfile.TemporaryDirectory()
+        self.addCleanup(temp.cleanup)
+        self.root = Path(temp.name)
+
+    def journey(self, name, *replies):
+        root = self.root / name
+        root.mkdir()
+        env = shared_env(root)
+        env.scenario["pages"] = {EF: EF_PAGE, W3F: W3F_PAGE, EF_OTHER: EF_PAGE}
+        env.scenario["replies"] = plans(*replies)
+        env.write()
+        code, out = run(env, Web())
+        self.assertEqual(code, 0, out)
+        state = env.state()
+        items = [next(t for t in state["tasks"] if t["id"] == s["item"]) for s in state["journeys"][0]["stages"]]
+        return env, state["journeys"][0], [i["evaluation"] for i in items]
+
+    def test_a_redacted_revision_call_never_passes_the_revision(self):
+        for parts in (["arguments"], ["content"], ["arguments", "content"]):
+            with self.subTest(parts):
+                env, record, (brief_stage, revision) = self.journey(
+                    "revision-" + "-".join(parts), GOOD[0], dict(GOOD[1], withheld=[EF], withhold=parts))
+                self.assertEqual(brief_stage["verdict"], "passed")
+                self.assertIsNone(revision["criteria"]["performed_retrieval"], revision["summary"])
+                self.assertEqual(revision["verdict"], "uncertain")
+                self.assertEqual(revision["withheld_retrievals"], 1)
+                self.assertNotEqual(record["status"], "facts_checked")
+                self.assertEqual(len(env.starts()), 2)
+
+    def test_a_visible_retrieval_beside_a_hidden_one_still_passes_a_revision_reusing_its_sources(self):
+        _env, record, (_brief, revision) = self.journey(
+            "revision-mixed", GOOD[0], dict(GOOD[1], retrieve=[EF, W3F], withheld=[W3F], withhold=["arguments"]))
+        self.assertIs(revision["criteria"]["performed_retrieval"], True)
+        self.assertEqual(revision["verdict"], "passed", revision["summary"])
+        self.assertEqual(record["status"], "facts_checked")
+
+    def test_hidden_content_of_a_known_page_does_not_excuse_a_source_on_another_host(self):
+        for parts in (["content"], ["arguments", "content"]):
+            with self.subTest(parts):
+                _env, record, (brief_stage,) = self.journey(
+                    "known-" + "-".join(parts), dict(GOOD[0], retrieve=[EF], withheld=[EF], withhold=parts))
+                if parts == ["content"]:          # the call's target is known: W3F was never requested
+                    self.assertIs(brief_stage["criteria"]["performed_retrieval"], False)
+                    self.assertEqual(brief_stage["verdict"], "failed")
+                    self.assertEqual(record["status"], "failed")
+                else:                             # its target is unknown: it may have been W3F
+                    self.assertIsNone(brief_stage["criteria"]["performed_retrieval"])
+                    self.assertEqual(brief_stage["verdict"], "uncertain")
+                self.assertEqual(brief_stage["not_retrieved"], sorted([EF, W3F]))
+
+    def test_a_visible_miss_on_another_host_fails_beside_a_hidden_known_page(self):
+        _env, _record, (brief_stage,) = self.journey(
+            "mixed-miss", dict(GOOD[0], retrieve=[EF_OTHER, EF], withheld=[EF], withhold=["content"]))
+        self.assertIs(brief_stage["criteria"]["performed_retrieval"], False)    # W3F: no call at all
+
+    def test_same_host_uncertainty_is_kept_for_visible_and_hidden_known_pages(self):
+        for name, plan in (("visible", {"retrieve": [EF_OTHER, W3F]}),
+                           ("hidden", {"retrieve": [EF_OTHER, W3F], "withheld": [EF_OTHER], "withhold": ["content"]})):
+            with self.subTest(name):
+                _env, _record, (brief_stage,) = self.journey("same-host-" + name, dict(GOOD[0], **plan))
+                self.assertIsNone(brief_stage["criteria"]["performed_retrieval"])
+                self.assertEqual(brief_stage["not_retrieved"], [EF])
+                self.assertEqual(brief_stage["verdict"], "uncertain")
+
+
 class ClaimSupport(unittest.TestCase):
     """Review P1: excerpt overlap is not support. Through the real entry point."""
 
