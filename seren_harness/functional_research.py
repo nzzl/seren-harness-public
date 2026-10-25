@@ -82,6 +82,44 @@ def official_origins():
     return [origin for org in ORGANIZATIONS for origin in org["origins"]]
 
 
+ORGANIZATION_FIELDS = ("sources", "claims", "unknowns", "nextSteps", "priority")
+
+
+def organization_labels(organizations):
+    """{label: organization id}. The assignment asks for ids; each id is its own label, and the
+    exact listed name is accepted as an alias only when no other organization has that name and
+    it is no organization's id. Nothing else binds: no case folding, no partial matches."""
+    labels = {o["id"]: o["id"] for o in organizations}
+    names = [o.get("name") for o in organizations]
+    for org in organizations:
+        if isinstance(org.get("name"), str) and org["name"] not in labels and names.count(org["name"]) == 1:
+            labels[org["name"]] = org["id"]
+    return labels
+
+
+def organization_id(organizations, label):
+    """The journey organization a reply's `organization` label names, or None."""
+    return organization_labels(organizations).get(label) if isinstance(label, str) else None
+
+
+def _bind_organizations(value, labels, aliases):
+    """A copy of a deliverable whose bound labels are the organization ids. An unbound label is
+    kept as written, so it never equals an id; the verifier treats it as no organization."""
+    bound = dict(value)
+    for key in ORGANIZATION_FIELDS:
+        if not isinstance(value.get(key), list):
+            continue
+        items = []
+        for item in value[key]:
+            label = item.get("organization") if isinstance(item, dict) else None
+            org = labels.get(label) if isinstance(label, str) else None
+            if org is not None and org != label:
+                aliases[label] = org
+            items.append(dict(item, organization=org) if org is not None else item)
+        bound[key] = items
+    return bound
+
+
 # ============================================================================= generation
 def generate(seed, journey_id, allowed_origins, retrieval_tools, max_sources):
     """The journey with every stage's criteria, frozen by digest before anything is sent."""
@@ -166,11 +204,13 @@ def criteria(journey):
 
 
 # ============================================================================= messages
-def outcome_schema(stage):
-    """The JSON outcome contract handed to the employee (Scott's envelope field outcomeSchema)."""
+def outcome_schema(stage, organizations=None):
+    """The JSON outcome contract handed to the employee (Scott's envelope field outcomeSchema).
+    With the journey's organization ids, every `organization` field is limited to those ids."""
+    org = {"enum": list(organizations)} if organizations else {"type": "string"}
     claim = {"type": "object", "required": ["id", "organization", "topic", "statement", "basis",
                                             "sourceId", "supportingExcerpt"],
-             "properties": {"id": {"type": "string"}, "organization": {"type": "string"},
+             "properties": {"id": {"type": "string"}, "organization": org,
                             "topic": {"enum": list(TOPICS) + ([SMALL_TEAM] if stage == "revision" else [])},
                             "statement": {"type": "string", "description": (
                                 "for basis explicit, the complete source sentence or clause "
@@ -184,16 +224,17 @@ def outcome_schema(stage):
         "kind": {"const": "research_brief"},
         "sources": {"type": "array", "items": {"type": "object", "required": [
             "id", "url", "organization", "title", "publishedAt"], "properties": {
-            "id": {"type": "string"}, "url": {"type": "string"}, "organization": {"type": "string"},
+            "id": {"type": "string"}, "url": {"type": "string"}, "organization": org,
             "title": {"type": "string"}, "publishedAt": {"type": ["string", "null"]}}}},
         "claims": {"type": "array", "items": claim},
         "unknowns": {"type": "array", "items": {"type": "object", "required": [
-            "organization", "topic", "detail"]}},
-        "nextSteps": {"type": "array", "items": {"type": "object", "required": ["organization", "step"]}},
+            "organization", "topic", "detail"], "properties": {"organization": org}}},
+        "nextSteps": {"type": "array", "items": {"type": "object", "required": ["organization", "step"],
+                                                 "properties": {"organization": org}}},
         "summary": {"type": "string"}}
     if stage == "revision":
         properties["priority"] = {"type": "array", "items": {"type": "object", "required": [
-            "organization", "rank", "reason"]}}
+            "organization", "rank", "reason"], "properties": {"organization": org}}}
         properties["changes"] = {"type": "array", "items": {"type": "object", "required": [
             "claimId", "change", "reason"], "properties": {"change": {"enum": ["added", "modified", "removed"]}}}}
     return {"type": "object", "required": sorted(properties), "additionalProperties": False,
@@ -222,8 +263,10 @@ def message(journey, stage, reference, previous=None):
                               "or clause containing its excerpt, copied exactly; mark anything "
                               "reworded or concluded as inference with reasoning. Use null for "
                               "unknown publication dates. Record what "
-                              "the sources do not establish as unknowns." % (
-                                  journey["max_sources"], MAX_EXCERPT_WORDS)}
+                              "the sources do not establish as unknowns. In every organization "
+                              "field write the organization id exactly as listed (for example %s), "
+                              "not its name." % (journey["max_sources"], MAX_EXCERPT_WORDS,
+                                                 journey["organizations"][0]["id"])}
     if stage == "revision":
         context.update(previousDeliverable=previous, previousDeliverableSha256=digest(previous),
                        changeRequest=journey["revision_request"])
@@ -236,7 +279,7 @@ def message(journey, stage, reference, previous=None):
                        "is delegated.",
         "objective": "Public-source research brief (" + stage + "). Fit is research only, never "
                      "approval or a commitment.",
-        "outcomeSchema": outcome_schema(stage),
+        "outcomeSchema": outcome_schema(stage, [o["id"] for o in journey["organizations"]]),
         "task": {"kind": "research_brief", "stage": stage, "context": context},
         "currentTime": datetime.now(timezone.utc).isoformat()}
     return json.dumps(envelope, sort_keys=False)
@@ -737,8 +780,12 @@ def verify(journey, stage, data, reread, previous):
     URL to the harness's own read record; `previous` is the journey's recorded brief."""
     check_criteria(journey)
     text, problem = reply(data)
-    strict, value = parse(text or "")
+    strict, delivered = parse(text or "")
     orgs = {o["id"]: o for o in journey["organizations"]}
+    # Every check below compares organization ids; labels bind once, here, for both stages.
+    labels, aliases = organization_labels(journey["organizations"]), {}
+    value = _bind_organizations(delivered, labels, aliases)
+    previous = _bind_organizations(previous, labels, aliases) if isinstance(previous, dict) else previous
     sources = value.get("sources") if isinstance(value.get("sources"), list) else []
     sources = [s for s in sources if isinstance(s, dict)]
     claims = [c for c in (value.get("claims") if isinstance(value.get("claims"), list) else [])
@@ -779,7 +826,8 @@ def verify(journey, stage, data, reread, previous):
     for claim in claims:
         source = by_id.get(claim.get("sourceId"))
         words = len(str(claim.get("supportingExcerpt") or "").split())
-        if source is None or source.get("organization") != claim.get("organization") \
+        if source is None or source.get("organization") not in orgs \
+                or source.get("organization") != claim.get("organization") \
                 or not 0 < words <= MAX_EXCERPT_WORDS or claim.get("basis") not in BASES:
             cited_ok = False
             detail["claims"][str(claim.get("id"))] = "not cited to a listed source of its organization"
@@ -854,7 +902,8 @@ def verify(journey, stage, data, reread, previous):
     wanted = [c["id"] for c in journey["criteria"][stage]]
     detail["problem"] = problem
     detail["blocked"] = value.get("blocked") if set(value) == {"blocked"} else None
-    return {k: results.get(k) for k in wanted}, detail, value, text
+    detail["organization_aliases"] = dict(sorted(aliases.items()))
+    return {k: results.get(k) for k in wanted}, detail, delivered, text
 
 
 def _all(states):

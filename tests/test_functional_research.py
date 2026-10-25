@@ -381,6 +381,125 @@ class SharedResearch(unittest.TestCase):
         self.assertEqual(state["journeys"][0]["status"], "facts_checked")
 
 
+NAMES = {"ethereum_foundation": "Ethereum Foundation", "web3_foundation": "Web3 Foundation"}
+
+
+def relabelled(value, labels, only=None):
+    """A copy of a deliverable whose `organization` fields use other labels (`only`: those lists)."""
+    value = copy.deepcopy(value)
+    for key in only or ("sources", "claims", "unknowns", "nextSteps", "priority"):
+        for item in value.get(key) or []:
+            item["organization"] = labels.get(item["organization"], item["organization"])
+    return value
+
+
+class OrganizationLabels(unittest.TestCase):
+    """Sources and claims bind to the journey's organizations by one explicit label contract."""
+
+    def setUp(self):
+        temp = tempfile.TemporaryDirectory()
+        self.addCleanup(temp.cleanup)
+        self.root = Path(temp.name)
+
+    def journey(self, name, answer, revision=GOOD[1], web=None):
+        root = self.root / name
+        root.mkdir()
+        env = shared_env(root)
+        env.scenario["replies"] = plans({"retrieve": [EF, W3F], "answer": answer}, revision)
+        env.write()
+        web = web or Web()
+        code, out = run(env, web)
+        self.assertEqual(code, 0, out)
+        state = env.state()
+        items = [next(t for t in state["tasks"] if t["id"] == s["item"]) for s in state["journeys"][0]["stages"]]
+        return env, web, state, items
+
+    def test_the_assignment_names_the_organization_ids_for_every_organization_field(self):
+        env, _web, _state, _items = self.journey("contract", brief())
+        for start, stage in zip(env.starts(), ("brief", "revision")):
+            envelope = json.loads(start[start.index("--message") + 1])
+            self.assertIn("organization id", envelope["task"]["context"]["sourceRules"])
+            schema = envelope["outcomeSchema"]["properties"]
+            fields = ["sources", "claims", "unknowns", "nextSteps"] + (["priority"] if stage == "revision" else [])
+            for field in fields:
+                self.assertEqual(schema[field]["items"]["properties"]["organization"]["enum"],
+                                 ["ethereum_foundation", "web3_foundation"], (stage, field))
+
+    def test_exact_listed_names_bind_reread_and_check_and_are_recorded(self):
+        env, web, state, items = self.journey("names", relabelled(brief(), NAMES))
+        brief_stage = items[0]["evaluation"]
+        self.assertEqual(brief_stage["verdict"], "passed", brief_stage["summary"])
+        self.assertTrue(brief_stage["criteria"]["sources_allowlisted"])
+        self.assertTrue(brief_stage["criteria"]["coverage"])
+        self.assertEqual(brief_stage["organization_aliases"], {"Ethereum Foundation": "ethereum_foundation",
+                                                               "Web3 Foundation": "web3_foundation"})
+        self.assertEqual(sorted(web.log), sorted([EF, W3F]))
+        # The revision keeps the name-labelled claims unchanged while adding id-labelled ones.
+        self.assertEqual(items[1]["evaluation"]["verdict"], "passed", items[1]["evaluation"]["summary"])
+        self.assertEqual(items[1]["evaluation"]["changed_claims"], ["C10", "C9"])
+        self.assertEqual(state["journeys"][0]["status"], "facts_checked")
+
+    def test_unknown_case_changed_and_cross_organization_labels_fail_without_widening_the_allowlist(self):
+        cases = {"case-changed name": {"ethereum_foundation": "ethereum foundation"},
+                 "unknown label": {"ethereum_foundation": "EF"},
+                 "other organization's id": {"ethereum_foundation": "web3_foundation"}}
+        for name, labels in cases.items():
+            with self.subTest(name):
+                answer = relabelled(brief(), labels, only=("sources",))
+                env, web, state, items = self.journey(name.replace(" ", "-").replace("'", ""), answer)
+                evaluation = items[0]["evaluation"]
+                self.assertEqual(evaluation["verdict"], "failed", evaluation["summary"])
+                self.assertIs(evaluation["criteria"]["sources_allowlisted"], False)
+                self.assertIs(evaluation["criteria"]["claims_cited"], False)
+                self.assertNotIn(EF, web.log)                       # the mislabelled page is never read
+                self.assertEqual(web.log, [W3F])
+                read = state["tasks"][0]["readback"]["sources"][EF]
+                self.assertEqual(read["status"], "refused")
+                if name == "other organization's id":
+                    self.assertIn("not allowlisted", read["detail"])
+                else:
+                    self.assertIn("is not one of this journey's organization ids or names", read["detail"])
+                self.assertEqual(len(env.starts()), 1)
+
+    def test_unresolved_labels_never_match_each_other(self):
+        answer = relabelled(brief(), {"ethereum_foundation": "EF"}, only=("sources", "claims"))
+        _env, _web, _state, items = self.journey("both-unknown", answer)
+        evaluation = items[0]["evaluation"]
+        self.assertIs(evaluation["criteria"]["claims_cited"], False)
+        self.assertIs(evaluation["criteria"]["coverage"], False)
+
+    def test_an_interrupted_name_labelled_brief_resumes_under_its_recorded_spec(self):
+        root = self.root / "resume"
+        root.mkdir()
+        env = shared_env(root)
+        env.scenario["replies"] = plans({"research": {"retrieve": [EF, W3F], "answer": relabelled(brief(), NAMES)},
+                                         "running_polls": 2}, GOOD[1])
+        env.write()
+
+        def interrupt(_seconds):
+            raise KeyboardInterrupt()
+        code, out = run(env, Web(), sleep=interrupt)
+        self.assertEqual(code, 4, out)
+        recorded = env.state()["journeys"][0]["spec"]
+        code, out = run(env, Web())
+        self.assertEqual(code, 0, out)
+        state = env.state()
+        self.assertEqual(state["journeys"][0]["spec"], recorded)
+        research.check_criteria(state["journeys"][0]["spec"])
+        self.assertEqual(state["journeys"][0]["status"], "facts_checked")
+        self.assertEqual(len(env.starts()), 2)
+
+    def test_a_label_binds_only_when_it_is_unambiguous(self):
+        organizations = [{"id": "alpha", "name": "Shared"}, {"id": "beta", "name": "Shared"},
+                         {"id": "gamma", "name": "alpha"}]
+        self.assertEqual(research.organization_id(organizations, "alpha"), "alpha")   # an id is its own
+        self.assertEqual(research.organization_id(organizations, "gamma"), "gamma")
+        self.assertIsNone(research.organization_id(organizations, "Shared"))          # two organizations
+        self.assertIsNone(research.organization_id(organizations, "shared"))
+        self.assertIsNone(research.organization_id(organizations, None))
+        self.assertIsNone(research.organization_id(organizations, ["alpha"]))
+
+
 class ClaimSupport(unittest.TestCase):
     """Review P1: excerpt overlap is not support. Through the real entry point."""
 

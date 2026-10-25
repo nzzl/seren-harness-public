@@ -1,3 +1,29 @@
+# Research verifier: organization binding and redacted traces — 2026-10-25 (in progress)
+
+Base d6de0ce. Offline only; two commits, one per defect. No live call, push or publication.
+- [x] D1: the assignment named both an organization id and a name without saying which to use
+  in `organization`, and the verifier and reread look organizations up by id only. Exact-name
+  labels therefore refused allowlisted pages ("not allowlisted"), reread nothing and checked no
+  claim. Two identical unbound labels also passed `claims_cited`. Fix: the sourceRules ask for
+  the id, and the schema enum lists the ids in every organization field.
+  `organization_labels`/`organization_id` bind ids, plus exact names that are unique and no
+  other organization's id; no folding or partial match. Labels bind once in `verify` (both
+  stages, previous brief included), and the same resolver drives the reread. An unbound label
+  is refused unread, with the label named. A claim needs a source of the same *bound*
+  organization. Aliases are recorded as `organization_aliases`.
+  Evidence: before the fix, the 4 new entry-point tests failed as described (the resolver's own
+  unit test errored, absent); after, all 6 pass with the existing functional suites. Spec and criteria digests are unchanged (base and new `generate` equal).
+  A base-made campaign interrupted after a name-labelled brief resumes under the new code to
+  facts_checked with its spec unchanged.
+- [ ] D2: redacted trace (withheld arguments/contents) read as retrieval=False, or as completed
+  retrieval when only contents were withheld (a false pass).
+Acceptance: before/after reproduction through the real entry point; unbound, case-changed and
+cross-organization labels still fail without extra reads; redacted evidence unverified, never
+passed or failed; checked commits; SHA256SUMS current.
+Deferred (observed, out of scope): the platform per-run tool budget; a cited 404-titled page.
+
+## Previous completed change
+
 # Behavior-preserving maintenance refactor — 2026-10-23 (complete; awaiting review)
 
 Base 7bb0431. Three ordered commits, no observable behavior change, offline only:

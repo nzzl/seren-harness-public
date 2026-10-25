@@ -148,6 +148,10 @@ What the verdicts mean:
   inferences, rankings, next steps and reasons are listed as **not verified**.
 - A page that changed since the employee read it, or could not be reread, is reported as
   undecided.
+- The assignment asks the employee to label every source and claim with the organization's
+  id. The exact listed name is also accepted and recorded in the stage's
+  `organization_aliases`. Any other label (a different case, an abbreviation) binds to no
+  organization: its sources are refused without being read and its claims fail.
 - A fully passing journey ends `facts_checked`, never "accepted". It can also end failed,
   unverified or partially verified, and each is a valid result.
 - **Timeouts.** If observation ends before a run finishes, the run is not cancelled. The report

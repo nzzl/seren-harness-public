@@ -1658,7 +1658,7 @@ def evaluate_research(record, item, previous, clean=None):
                 source_changes=detail["source_changes"], inaccessible=detail["inaccessible"],
                 unsupported=detail["unsupported"], not_retrieved=detail["not_retrieved"],
                 changed_claims=detail.get("changed_claims"), checked_claims=detail["checked_claims"],
-                interpretations=detail["interpretations"],
+                interpretations=detail["interpretations"], organization_aliases=detail["organization_aliases"],
                 reply_sha256=hashlib.sha256((text or "").encode()).hexdigest())
 
 
@@ -2111,7 +2111,9 @@ class Campaign:
             url = research.normalize_url(source.get("url")) if isinstance(source, dict) else None
             if url is None or url in reads:
                 continue
-            problem = research.origin_problem(url, orgs.get(source.get("organization"), []))
+            org = research.organization_id(record["spec"]["organizations"], source.get("organization"))
+            problem = "organization %r is not one of this journey's organization ids or names" % (
+                str(source.get("organization"))[:80],) if org is None else research.origin_problem(url, orgs[org])
             if problem:
                 reads[url] = {"url": url, "status": "refused", "detail": problem}
                 continue
