@@ -121,6 +121,41 @@ research status mapping and the GitHub transport patch point. The offline exampl
 passed the checked runner's lint and full offline suite on macOS with Python 3.14.7. No live
 request was made, and nothing here changes what is listed below as not validated.
 
+## Research verifier fixes — 2026-10-25
+
+Organization fields now explicitly request canonical IDs. Exact, uniquely matching listed
+names are accepted as recorded aliases; unknown or ambiguous labels cannot widen source
+access. The same binding applies to claims, source rereads and the revision.
+
+Hidden retrieval arguments or results cannot satisfy verification in either stage. Hidden
+arguments leave the target unknown; hidden results for a known target only leave that target
+and the existing same-host case uncertain. Hidden evidence cannot erase a provable missing
+citation or falsely pass a revision that reuses prior sources.
+
+The implementation passed the checked runner's lint and full offline suite: 1051 tests and
+923 subtests on staged tree `d880715855de27e49dce29b78f101260a7dd9cd2`. Independent review
+also ran 15 organization/redaction regression tests and 13 subtests. All inputs were synthetic.
+This release documentation update changes no executable code; it is subject to the same
+required checked-commit validation. Private logs and runtime evidence are not shipped.
+
+## Bounded live retry — 2026-10-25
+
+Using the existing CLI 0.10.0 route, readiness passed and one research-brief assignment ran
+to completion. The earlier issue #244 dispatch error did not recur in this attempt; this
+observation does not establish platform-wide rollout or compatibility. The employee returned
+a structured brief, but the returned trace withheld retrieval arguments and results.
+
+The run exposed organization-binding and redaction-classification errors in the harness,
+corrected offline in the fixes above. The original verification therefore did not establish
+research quality. An offline replay of the saved brief with the corrected verifier and no
+source rereads leaves retrieval uncertain; it is not a newly verified live result.
+
+The conditional revision was not sent. Temporary permissions were disabled afterward, and
+no harness Discord or GitHub posting call occurred during the attempt. This demonstrates
+live assignment and brief execution, not a verified brief-and-revision journey. No further
+employee assignment was made during the subsequent evidence-access investigation. Private
+configuration, employee/run identifiers, receipts, trace contents and logs remain excluded.
+
 ## Not validated
 
 - A successful complete live journey, including a verified brief and revision.

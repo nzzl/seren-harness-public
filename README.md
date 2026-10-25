@@ -18,9 +18,11 @@ workflow supports issue drafting, reports can become GitHub-ready local drafts; 
 submitted automatically.
 
 **Early release:** the automated workflow has been tested offline with synthetic stand-ins.
-A bounded live attempt passed readiness and submitted one assignment, but Seren returned a
-dispatch error before employee execution ([upstream issue #244](https://github.com/serenorg/seren/issues/244)).
-A complete live journey against the real Seren service has not yet been validated.
+A bounded live retry completed the employee's research brief; the earlier dispatch error
+([upstream issue #244](https://github.com/serenorg/seren/issues/244)) did not recur in that attempt.
+Retrieval evidence was withheld in the returned trace, so the brief remains unverified and
+no revision was sent. A complete live journey against the real Seren service has not yet
+been validated. See [validation details](VALIDATION.md).
 
 Seren Harness is an independent project; it is not made, reviewed or endorsed by Seren.
 An individual API call that succeeds, or a fluent answer, does not show that a user got real

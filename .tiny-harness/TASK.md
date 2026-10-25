@@ -1,3 +1,16 @@
+# Publish reviewed verifier fixes and accurate validation status — 2026-10-25
+
+Scope: release the reviewed local fixes 8ef9b67, ad98524 and f89523d, with this documentation
+update. No new development or live execution. Independent review found no blocking issue;
+15 targeted tests and 13 subtests passed, and the implementation's full checked run passed
+1051 tests and 923 subtests. README and VALIDATION now distinguish a completed live brief
+from independent verification; no revision ran. Private evidence and access details remain
+outside this repository. Checksums refreshed; this documentation commit uses required
+checked validation before publication. Stop after verifying the public branch matches the
+local release; the complete live journey remains unvalidated.
+
+## Previous completed work
+
 # Research verifier: organization binding and redacted traces — 2026-10-25 (complete; awaiting review)
 
 Base d6de0ce. Offline only. Commits: D1 8ef9b67, D2 ad98524, D3 this commit. No live call, push
